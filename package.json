@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "netlify": "netlify dev",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.44.2",
+    "pinia": "^2.1.7",
     "showdown": "^2.1.0",
+    "typescript": "^5.5.3",
     "vue": "^3.4.29"
   },
   "devDependencies": {
