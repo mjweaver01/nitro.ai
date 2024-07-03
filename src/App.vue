@@ -106,7 +106,7 @@ export default {
         isUser: true,
       })
 
-      await fetch(`/ask-kb${window.location.search}`, {
+      await fetch(`/netlify/functions/ask${window.location.search}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +157,7 @@ export default {
     },
 
     async getConversation(sentConversation) {
-      fetch(`/get-conversation${window.location.search}`, {
+      fetch(`/netlify/functions/get-conversation${window.location.search}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
