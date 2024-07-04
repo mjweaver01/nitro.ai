@@ -38,7 +38,7 @@
             v-model="messagesStore.question"
           />
           <div class="select">
-            <select v-model="messagesStore.llm" @change="setLlm">
+            <select v-model="messagesStore.llm" @change="messagesStore.setLlm">
               <option value="openai">GPT-4o</option>
               <option value="anthropic">Claude Sonnet</option>
             </select>
