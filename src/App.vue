@@ -34,6 +34,16 @@ export default {
     Login,
     Questions,
   },
+  async beforeMount() {
+    if (!this.userStore.user.id) {
+      const s = await this.clientStore.auth.getSession()
+      if (s.data?.session?.user) {
+        this.userStore.user = s.data.session.user
+      } else {
+        await this.authUser()
+      }
+    }
+  },
   mounted() {
     const params = new URLSearchParams(window.location.search)
     const conversationId = params.get('conversationId')

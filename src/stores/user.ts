@@ -43,7 +43,7 @@ export const useUserStore = defineStore('user', {
         this.loginError = u.error.message
       } else if (u.data?.user?.id) {
         this.user = u.data.user
-        localStorage.setItem('user', JSON.stringify(this.user))
+        localStorage.setItem('user', JSON.stringify(u.data.user))
         this.loginError = ''
       }
     },
@@ -58,7 +58,7 @@ export const useUserStore = defineStore('user', {
       if (u.error && u.error.message) {
         this.loginError = u.error.message
       } else if (u.data?.user?.id) {
-        localStorage.setItem('user', JSON.stringify(this.user))
+        localStorage.setItem('user', JSON.stringify(u.data.user))
         this.user = u.data.user
         this.loginError = ''
       }
