@@ -41,7 +41,7 @@ yarn start
 
 ## 🤖 LLM Server Methods
 
-The LLM methods are lambda functions, located in the `functions` folder; they are currently hosted by Netlify. However, the server logic is located in `server`. It is relatively amorphous, and can be adapted to AWS, GCP, Vercel, etc. easily.
+The LLM methods are lambda functions, located in the `functions` folder; they are currently hosted by Netlify. However, the server logic is located in `server`. It is relatively amorphous code, and can be adapted to AWS, GCP, Vercel, etc. easily.
 
 NOTE: ensure you have `netlifi-cli` installed, and are signed in.
 
