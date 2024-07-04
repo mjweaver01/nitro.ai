@@ -36,11 +36,11 @@ export default {
   },
   async beforeMount() {
     if (!this.userStore.user.id) {
-      const s = await this.clientStore.auth.getSession()
+      const s = await this.clientStore.client.auth.getSession()
       if (s.data?.session?.user) {
         this.userStore.user = s.data.session.user
       } else {
-        await this.authUser()
+        await this.userStore.authUser()
       }
     }
   },

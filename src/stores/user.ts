@@ -91,6 +91,15 @@ export const useUserStore = defineStore('user', {
       this.loggingOut = false
     },
 
+    async authUser() {
+      const client = useClientStore()
+      const u = await client.client.auth.getUser()
+      if (u?.data?.user) {
+        this.user = u.data.user
+        localStorage.setItem('user', JSON.stringify(this.user))
+      }
+    },
+
     async authSecret() {
       const s = await fetch('/.netlify/functions/secret', {
         method: 'POST',
