@@ -101,8 +101,11 @@ export const useMessagesStore = defineStore('messages', {
 
     scrollToBottom() {
       if (window.innerWidth < 500) {
-        document.getElementById('question-input').focus()
-        this.$el.scrollTop = this.$el.scrollHeight
+        document.getElementById('question-input')?.focus()
+        const app = document.getElementById('app')
+        if (app) {
+          app.scrollTop = app.scrollHeight
+        }
       }
     },
 

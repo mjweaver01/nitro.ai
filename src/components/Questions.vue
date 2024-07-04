@@ -4,7 +4,7 @@
       <div
         class="question"
         v-for="question in defaultQuestions"
-        @click="messagesStore.ask(question, true)"
+        @click="messagesStore.ask(question)"
       >
         {{ question }}
       </div>

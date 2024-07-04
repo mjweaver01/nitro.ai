@@ -11,6 +11,7 @@
     </p>
     <Questions v-if="userStore.user?.id" />
     <Login v-else />
+    <Messages v-if="userStore.user?.id" />
   </div>
   <Chat v-if="userStore.user?.id" />
 </template>
@@ -24,6 +25,7 @@ import { useMessagesStore } from './stores/messages'
 import Chat from './components/Chat.vue'
 import Login from './components/Login.vue'
 import Questions from './components/Questions.vue'
+import Messages from './components/Messages.vue'
 
 export default {
   computed: {
@@ -33,6 +35,7 @@ export default {
     Chat,
     Login,
     Questions,
+    Messages,
   },
   async beforeMount() {
     if (!this.userStore.user.id) {
