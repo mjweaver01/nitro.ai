@@ -19,6 +19,7 @@
 import { mapStores } from 'pinia'
 import { useClientStore } from './stores/client'
 import { useUserStore } from './stores/user'
+import { useMessagesStore } from './stores/messages'
 
 import Chat from './components/Chat.vue'
 import Login from './components/Login.vue'
@@ -26,12 +27,20 @@ import Questions from './components/Questions.vue'
 
 export default {
   computed: {
-    ...mapStores(useClientStore, useUserStore),
+    ...mapStores(useClientStore, useUserStore, useMessagesStore),
   },
   components: {
     Chat,
     Login,
     Questions,
+  },
+  mounted() {
+    const params = new URLSearchParams(window.location.search)
+    const conversationId = params.get('conversationId')
+    if (conversationId?.length > 0) this.messagesStore.getConversation(conversationId)
+
+    const selectedModel = params.get('model') || params.get('llm')
+    if (selectedModel?.length > 0) this.messagesStore.llm = selectedModel
   },
 }
 </script>

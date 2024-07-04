@@ -1,6 +1,8 @@
-# 🦜🔗 Langchain Sitemap Knowledge Base - SERVERLESS
+<img src="./public/wsbb.png" width="50" />
 
-> A knowledge base chatbot, pre-trained on blogs from sitemap XML
+# Louie.ai
+
+> A knowledge base chatbot, pre-trained on WSBB's blog, via sitemap XML
 
 Using filtered results from [Westside Barbell's Shopify Blog Sitemap](https://raw.githubusercontent.com/mjweaver01/langchain-kb/master/src/assets/sitemap_blogs_1.xml)
 
