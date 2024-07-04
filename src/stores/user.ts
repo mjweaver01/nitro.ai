@@ -9,6 +9,7 @@ export const useUserStore = defineStore('user', {
         email: '',
         password: '',
         isNew: false,
+        secret: '',
       },
       loggingIn: false,
       loggingOut: false,
@@ -21,6 +22,17 @@ export const useUserStore = defineStore('user', {
   },
   actions: {
     async createUser(state) {
+      if (this.login.secret.trim() === '') {
+        this.loginError = 'Please enter a secret'
+        return
+      }
+
+      const hasCorrectSecret = await this.authSecret()
+      if (!hasCorrectSecret) {
+        this.loginError = 'Incorrect secret'
+        return
+      }
+
       const client = useClientStore()
       const u = await client.client.auth.signUp({
         email: this.login.email,
@@ -46,14 +58,15 @@ export const useUserStore = defineStore('user', {
       if (u.error && u.error.message) {
         this.loginError = u.error.message
       } else if (u.data?.user?.id) {
-        this.user = u.data.user
         localStorage.setItem('user', JSON.stringify(this.user))
+        this.user = u.data.user
         this.loginError = ''
       }
     },
 
     async signInOrCreateUser(state) {
       this.loggingIn = true
+      this.loginError = ''
 
       if (this.login.isNew) {
         await this.createUser()
@@ -76,6 +89,15 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('user')
 
       this.loggingOut = false
+    },
+
+    async authSecret() {
+      const s = await fetch('/.netlify/functions/secret', {
+        method: 'POST',
+        body: JSON.stringify({ secret: this.login.secret }),
+      }).then((res) => res.json())
+
+      return s?.code === 200
     },
   },
 })

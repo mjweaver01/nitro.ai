@@ -16,6 +16,15 @@
         v-model="userStore.login.password"
         :disabled="userStore.loggingIn"
       />
+      <input
+        id="secret"
+        name="secret"
+        placeholder="Secret"
+        type="input"
+        v-model="userStore.login.secret"
+        :disabled="userStore.loggingIn"
+        v-if="userStore.login.isNew"
+      />
       <button type="submit" disabled v-if="userStore.loggingIn">Logging in</button>
       <button type="submit" v-else-if="userStore.login.isNew">Sign up</button>
       <button type="submit" v-else>Log in</button>
