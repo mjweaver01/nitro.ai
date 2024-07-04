@@ -1,3 +1,4 @@
+import { nextTick } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useMessagesStore = defineStore('messages', {
@@ -100,13 +101,15 @@ export const useMessagesStore = defineStore('messages', {
     },
 
     scrollToBottom() {
-      if (window.innerWidth < 500) {
-        document.getElementById('question-input')?.focus()
-        const app = document.getElementById('app')
-        if (app) {
-          app.scrollTop = app.scrollHeight
+      nextTick(() => {
+        if (window.innerWidth < 500) {
+          document.getElementById('question-input')?.focus()
+          const app = document.getElementById('app')
+          if (app) {
+            app.scrollTop = app.scrollHeight
+          }
         }
-      }
+      })
     },
 
     clearConversation() {
