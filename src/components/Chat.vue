@@ -28,7 +28,7 @@
     >
       Clear conversation
     </div>
-    <div class="ask-question">
+    <div class="ask-question" v-if="userStore.user?.id">
       <form @submit.prevent="messagesStore.ask()">
         <div class="input-wrapper">
           <input

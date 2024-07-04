@@ -1,8 +1,8 @@
 <template>
   <div class="top">
     <div class="logout" v-if="userStore.user?.id">
-      <p v-if="loggingOut">Logging out</p>
-      <p @click="signOutUser" v-else>Logout</p>
+      <p v-if="userStore.loggingOut">Logging out</p>
+      <p @click="userStore.signOutUser" v-else>Logout</p>
     </div>
     <h1 class="hero"><img src="/wsbb.png" width="75" height="75" /> Louie.ai</h1>
     <p>
