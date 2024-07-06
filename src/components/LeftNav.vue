@@ -1,8 +1,13 @@
 <template>
   <div class="left-nav" :class="{ 'force-show': !!forceShow }">
     <h2 class="left-nav-hero"><img src="/wsbb.png" width="40" height="40" /> Louie.ai</h2>
+    <div class="new-conversation">
+      <div class="conversation" @click="messagesStore.clearConversation()">
+        <span>New Conversation</span>
+        <i class="pi pi-plus" style="font-size: 0.8rem"></i>
+      </div>
+    </div>
     <div class="left-nav-items">
-      <div class="conversation" @click="messagesStore.clearConversation()">+ New Conversation</div>
       <h3 class="left-nav-header">Previous Conversations</h3>
       <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
         <div

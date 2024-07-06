@@ -321,6 +321,17 @@ a {
   cursor: pointer;
 }
 
+.new-conversation {
+  border-bottom: 1px solid var(--light-blue);
+  padding: 0.5rem;
+}
+
+.new-conversation .conversation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .left-nav .conversation:hover {
   background: var(--light-blue);
 }

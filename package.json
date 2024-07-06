@@ -21,6 +21,7 @@
     "langchain": "^0.2.7",
     "langfuse": "^3.4.0",
     "pinia": "^2.1.7",
+    "primeicons": "^7.0.0",
     "showdown": "^2.1.0",
     "typescript": "^5.5.3",
     "vue": "^3.4.29"

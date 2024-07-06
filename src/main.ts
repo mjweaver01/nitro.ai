@@ -5,6 +5,7 @@ import App from './App.vue'
 import './styles/index.css'
 import './styles/imessage.css'
 import './styles/loading.css'
+import 'primeicons/primeicons.css'
 
 const pinia = createPinia()
 setMapStoreSuffix('')
