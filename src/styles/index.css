@@ -375,13 +375,13 @@ a {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .questions {
     grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1100px) {
   .questions {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
