@@ -1,19 +1,25 @@
 <template>
-  <div class="top">
-    <div class="logout" v-if="userStore.user?.id">
-      <p v-if="userStore.loggingOut">Logging out</p>
-      <p @click="userStore.signOutUser" v-else>Logout</p>
+  <div class="app-wrapper">
+    <LeftNav v-if="userStore.user?.id" />
+    <div class="app">
+      <div class="top">
+        <div
+          class="top-hero"
+          v-if="messagesStore?.conversationId?.length <= 0 || !userStore.user?.id"
+        >
+          <h1 class="hero"><img src="/wsbb.png" width="75" height="75" /> Louie.ai</h1>
+          <p>
+            An AI chatbot pretrained on Westside Barbell's
+            <a href="https://westside-barbell.com/blogs/the-blog/" target="_blank">Blog</a>.
+          </p>
+        </div>
+        <Questions v-if="userStore.user?.id" />
+        <Login v-else />
+        <Messages v-if="userStore.user?.id" />
+      </div>
+      <Chat v-if="userStore.user?.id" />
     </div>
-    <h1 class="hero"><img src="/wsbb.png" width="75" height="75" /> Louie.ai</h1>
-    <p>
-      An AI chatbot pretrained on Westside Barbell's
-      <a href="https://westside-barbell.com/blogs/the-blog/" target="_blank">Blog</a>.
-    </p>
-    <Questions v-if="userStore.user?.id" />
-    <Login v-else />
-    <Messages v-if="userStore.user?.id" />
   </div>
-  <Chat v-if="userStore.user?.id" />
 </template>
 
 <script>
@@ -24,6 +30,7 @@ import { useMessagesStore } from './stores/messages'
 
 import Chat from './components/Chat.vue'
 import Login from './components/Login.vue'
+import LeftNav from './components/LeftNav.vue'
 import Questions from './components/Questions.vue'
 import Messages from './components/Messages.vue'
 
@@ -34,11 +41,12 @@ export default {
   components: {
     Chat,
     Login,
+    LeftNav,
     Questions,
     Messages,
   },
   async beforeMount() {
-    if (!this.userStore.user.id) {
+    if (!this.userStore?.user?.id) {
       const s = await this.clientStore.client.auth.getSession()
       if (s.data?.session?.user) {
         this.userStore.user = s.data.session.user

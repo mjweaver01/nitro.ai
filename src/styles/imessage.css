@@ -2,9 +2,10 @@
 .imessage {
   display: flex;
   flex-direction: column;
-  margin: 0 auto 1rem;
-  max-width: 600px;
+  margin: 0 auto;
+  max-width: 800px;
   padding: 0;
+  text-align: left;
 }
 
 .imessage p {

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="userStore.user?.id">
+  <div v-if="userStore?.user?.id">
     <div class="questions" v-if="messagesStore.messages.length <= 0">
       <div
         class="question"

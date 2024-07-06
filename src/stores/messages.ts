@@ -1,5 +1,7 @@
 import { nextTick } from 'vue'
 import { defineStore } from 'pinia'
+import { useUserStore } from './user'
+import { useConversationsStore } from './conversations'
 
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
@@ -11,6 +13,9 @@ export const useMessagesStore = defineStore('messages', {
   }),
   actions: {
     async ask(sentQuestion = '') {
+      const user = useUserStore()
+      const conversations = useConversationsStore()
+
       const question =
         sentQuestion?.trim() !== ''
           ? sentQuestion?.trim()
@@ -37,7 +42,7 @@ export const useMessagesStore = defineStore('messages', {
           question,
           conversationId: this.conversationId,
           model: this.llm,
-          user: this.isDefaultQuestion ? 'anonymous' : this.user?.id,
+          user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
         }),
       })
         .then((res) => res.json())
@@ -59,6 +64,8 @@ export const useMessagesStore = defineStore('messages', {
                 isCached: parsedData.isCached || false,
                 time: parsedData.time || false,
               })
+
+              conversations.getConversations()
             }
 
             this.question = ''
@@ -79,6 +86,7 @@ export const useMessagesStore = defineStore('messages', {
     },
 
     async getConversation(sentConversation) {
+      const user = useUserStore()
       fetch(`/.netlify/functions/get-conversation${window.location.search}`, {
         method: 'POST',
         headers: {
@@ -86,7 +94,7 @@ export const useMessagesStore = defineStore('messages', {
         },
         body: JSON.stringify({
           conversationId: sentConversation,
-          user: this.isDefaultQuestion ? 'anonymous' : this.user?.id,
+          user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
         }),
       })
         .then((res) => res.json())
@@ -120,6 +128,16 @@ export const useMessagesStore = defineStore('messages', {
 
       const url = new URL(window.location.href)
       url.searchParams.delete('conversationId')
+      window.history.pushState(null, '', url.toString())
+    },
+
+    setConversation(sentConversation) {
+      this.messages = sentConversation.messages
+      this.conversationId = sentConversation.id
+      this.scrollToBottom()
+
+      const url = new URL(window.location.href)
+      url.searchParams.set('conversationId', this.conversationId)
       window.history.pushState(null, '', url.toString())
     },
 

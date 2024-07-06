@@ -7,24 +7,26 @@
     >
       Clear conversation
     </div>
-    <div class="ask-question" v-if="userStore.user?.id">
-      <form @submit.prevent="messagesStore.ask()">
-        <div class="input-wrapper">
-          <input
-            id="question-input"
-            name="question"
-            placeholder="Ask anything..."
-            v-model="messagesStore.question"
-          />
-          <div class="select">
-            <select v-model="messagesStore.llm" @change="messagesStore.setLlm">
-              <option value="openai">GPT-4o</option>
-              <option value="anthropic">Claude Sonnet</option>
-            </select>
+    <div class="current-message-inner">
+      <div class="ask-question" v-if="userStore.user?.id">
+        <form @submit.prevent="messagesStore.ask()">
+          <div class="input-wrapper">
+            <input
+              id="question-input"
+              name="question"
+              placeholder="Ask anything..."
+              v-model="messagesStore.question"
+            />
+            <div class="select">
+              <select v-model="messagesStore.llm" @change="messagesStore.setLlm">
+                <option value="openai">GPT-4o</option>
+                <option value="anthropic">Claude Sonnet</option>
+              </select>
+            </div>
           </div>
-        </div>
-        <button type="submit">Ask</button>
-      </form>
+          <button type="submit">Ask</button>
+        </form>
+      </div>
     </div>
   </div>
 </template>

@@ -58,6 +58,8 @@ h1 {
 .hero {
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-top: 0;
 }
 
 @media (min-width: 500px) {
@@ -118,13 +120,21 @@ form {
 }
 
 .logout {
-  text-align: right;
   width: 100%;
+  border-top: 1px solid var(--light-blue);
 }
 
 .logout p {
   text-decoration: underline !important;
   cursor: pointer;
+  margin: 1em;
+  padding: 0;
+}
+
+@media (min-width: 500px) {
+  .logout p {
+    margin: 25px;
+  }
 }
 
 .input-wrapper {
@@ -171,7 +181,7 @@ select {
   display: block;
   padding: 1em;
   background: var(--white);
-  border: 1px solid var(--blue);
+  border: 1px solid var(--light-blue);
   border-radius: 5px;
   width: 100%;
   font-size: 1rem;
@@ -185,22 +195,21 @@ select {
   padding-right: 1.75em;
   background-color: transparent;
   -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .select:after {
-    content: " ";
-    position: absolute;
-    top: 50%;
-    margin-top: -2px;
-    right: 12px;
-    width: 0; 
-    height: 0; 
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--blue);
-  }
+  content: ' ';
+  position: absolute;
+  top: 50%;
+  margin-top: -2px;
+  right: 12px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--blue);
 }
 
 input,
@@ -235,33 +244,97 @@ a {
   color: var(--black);
 }
 
-#app {
-  margin: 0 auto;
-  max-width: 600px;
+.app {
+  display: flex;
+  flex-flow: column;
+  height: 100dvh;
+  width: 100%;
+  overflow: scroll;
+}
+
+.top {
+  flex-grow: 1;
+  overflow: scroll;
   padding: 1em;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.current-message {
+  position: relative;
+  padding: 0.5em;
+  border-top: 1px solid var(--light-blue);
 }
 
 @media (max-width: 499px) {
-  #app {
-    display: flex;
-    flex-flow: column;
-    height: 100dvh;
-    padding: 0;
-  }
-
-  .top {
-    flex-grow: 1;
-    overflow: scroll;
-    padding: 1em;
-  }
-
   .imessage {
     margin: 0 !important;
   }
+}
 
-  .current-message {
-    padding: 0.5em;
+.app-wrapper {
+  display: flex;
+}
+
+.left-nav {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  width: 50vw;
+  max-width: 350px;
+  border-right: 1px solid var(--light-blue);
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.left-nav-hero {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  border-bottom: 1px solid var(--light-blue);
+  padding: 0.5rem;
+}
+
+.left-nav-header {
+  padding: 0 0.5rem;
+  margin: 0.5em 0;
+}
+
+.left-nav-items {
+  padding: 0.5rem;
+  height: auto;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.left-nav .conversations {
+  overflow: auto;
+}
+
+.left-nav .conversation {
+  padding: 0.5em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.left-nav .conversation:hover {
+  background: var(--light-blue);
+}
+
+@media (max-width: 767px) {
+  .left-nav {
+    display: none;
+    width: 100vw;
+    max-width: 100vw;
+    border-right: none;
   }
+}
+
+.left-nav.force-show {
+  display: block !important;
 }
 
 .clear {
@@ -271,30 +344,50 @@ a {
   cursor: pointer;
 }
 
+@media (min-width: 768px) {
+  .clear {
+    position: absolute;
+    top: -1.5rem;
+  }
+}
+
 .questions {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 1em;
   overflow: auto;
   padding: 1em 1em 0.5em;
-  margin: -1em -1em 1em;
+  margin: -1em -1em -0.5em;
+  text-align: left;
 }
 
 .question {
   padding: 1em;
   border-radius: 5px;
-  border: 1px solid var(--dark-blue);
+  border: 1px solid var(--light-blue);
   cursor: pointer;
 }
 
 @media (min-width: 500px) {
   .questions {
     grid-template-columns: 1fr 1fr;
-    max-height: 50vh;
   }
 }
 
-.question:hover {
+@media (min-width: 768px) {
+  .questions {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .questions {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+.question:hover,
+.question.hover {
   box-shadow: 1px 5px 10px var(--blue);
   border-color: var(--blue);
 }

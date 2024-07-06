@@ -74,5 +74,6 @@ export const getConversation = async (conversationId: string, user: string) => {
     query = query.eq('user', user)
   }
   const { data } = await query
+  console.log('data', data, conversationId, user)
   return data?.[0]
 }

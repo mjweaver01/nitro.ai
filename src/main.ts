@@ -1,7 +1,10 @@
 import { createApp } from 'vue'
 import { createPinia, setMapStoreSuffix } from 'pinia'
-import './style.css'
 import App from './App.vue'
+
+import './styles/index.css'
+import './styles/imessage.css'
+import './styles/loading.css'
 
 const pinia = createPinia()
 setMapStoreSuffix('')

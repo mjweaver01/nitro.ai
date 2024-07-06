@@ -87,6 +87,7 @@ export const useUserStore = defineStore('user', {
 
       this.user = null
       localStorage.removeItem('user')
+      localStorage.removeItem('conversations')
 
       this.loggingOut = false
     },
