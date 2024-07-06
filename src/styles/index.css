@@ -258,6 +258,7 @@ a {
   padding: 1em;
   margin: 0 auto;
   text-align: center;
+  width: 100%;
 }
 
 .current-message {
