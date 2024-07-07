@@ -22,6 +22,7 @@ export const useConversationsStore = defineStore('conversations', {
         .from('conversations')
         .select('*')
         .eq('user', user.user.id)
+        .order('created_at', { ascending: false })
         .then((res) => {
           this.conversations = res.data
           localStorage.setItem('conversations', JSON.stringify(res.data))
