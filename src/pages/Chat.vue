@@ -26,5 +26,13 @@ export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
   },
+  beforeMount() {
+    const conversationId = this.$route.params.id
+    if (conversationId?.length > 0) this.messagesStore.getConversation(conversationId)
+
+    const params = new URLSearchParams(window.location.search)
+    const selectedModel = params.get('model') || params.get('llm')
+    if (selectedModel?.length > 0) this.messagesStore.llm = selectedModel
+  },
 }
 </script>

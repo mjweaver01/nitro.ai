@@ -2,7 +2,7 @@
   <div class="app-wrapper">
     <LeftNav v-if="userStore.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
     <div class="app" :class="{ 'force-hide': forceShow }">
-      <MobileNav v-if="userStore.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
+      <MobileNav v-if="userStore?.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
       <RouterView />
     </div>
   </div>

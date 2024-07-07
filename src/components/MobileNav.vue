@@ -20,7 +20,7 @@ export default {
   computed: {
     ...mapStores(useMessagesStore),
   },
-  created() {
+  beforeMount() {
     this.$watch(
       () => this.$route.path,
       () => {
