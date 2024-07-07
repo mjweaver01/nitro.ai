@@ -45,6 +45,7 @@ export const useUserStore = defineStore('user', {
         this.user = u.data.user
         localStorage.setItem('user', JSON.stringify(u.data.user))
         this.loginError = ''
+        this.router.push('/')
       }
     },
 
@@ -61,6 +62,7 @@ export const useUserStore = defineStore('user', {
         localStorage.setItem('user', JSON.stringify(u.data.user))
         this.user = u.data.user
         this.loginError = ''
+        this.router.push('/')
       }
     },
 
@@ -73,8 +75,6 @@ export const useUserStore = defineStore('user', {
       } else {
         await this.signInUser()
       }
-
-      this.router.push('/')
 
       this.loggingIn = false
     },
