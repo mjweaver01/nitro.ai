@@ -30,7 +30,7 @@ export default {
     LeftNav,
     MobileNav,
   },
-  async beforeMount() {
+  async created() {
     if (!this.userStore?.user?.id) {
       const s = await this.clientStore?.client?.auth.getSession()
       if (s.data?.session?.user) {

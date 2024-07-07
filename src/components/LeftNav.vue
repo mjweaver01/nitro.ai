@@ -74,7 +74,7 @@ export default {
       search: '',
     }
   },
-  mounted() {
+  beforeMount() {
     this.conversationsStore.getConversations()
   },
 }

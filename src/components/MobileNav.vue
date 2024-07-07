@@ -1,6 +1,6 @@
 <template>
   <div class="mobile-nav">
-    <h2 class="mobile-nav-hero" @click="messagesStore.clearConversation()">
+    <h2 class="mobile-nav-hero" @click.prevent="messagesStore.clearConversation()">
       <img src="/wsbb.png" width="40" height="40" alt="Louie.ai" /> Louie.ai
     </h2>
     <i
@@ -12,8 +12,14 @@
 </template>
 
 <script>
+import { mapStores } from 'pinia'
+import { useMessagesStore } from '../stores/messages'
+
 export default {
   props: ['forceShow', 'setForceShow'],
+  computed: {
+    ...mapStores(useMessagesStore),
+  },
   created() {
     this.$watch(
       () => this.$route.path,
