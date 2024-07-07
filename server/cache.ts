@@ -53,7 +53,7 @@ export const saveToCache = async (
 }
 
 export const getConversation = async (conversationId: string, user: string) => {
-  let query = supabase.from('conversations').select('*').eq('id', conversationId)
+  let query = supabase.from('conversations').select('*').eq('id', parseInt(conversationId))
   if (user) {
     query = query.eq('user', user)
   }

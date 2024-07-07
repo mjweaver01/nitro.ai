@@ -26,7 +26,7 @@ export const ask = async (
   const currentPromptTemplate = kbSystemPromptTemplate(isAnthropic)
   const currentModelWithFunctions = isAnthropic ? anthropicKbModelWithTools : kbModelWithFunctions
 
-  let query = supabase.from('conversations').select('*').eq('id', conversationId)
+  let query = supabase.from('conversations').select('*').eq('id', parseInt(conversationId))
   if (user && user !== 'anonymous') {
     query = query.eq('user', user)
   }
@@ -84,7 +84,7 @@ export const ask = async (
           ],
         },
       ])
-      .eq('id', conversationId)
+      .eq('id', parseInt(conversationId))
       .eq('user', user)
 
     if (error) {
@@ -92,7 +92,7 @@ export const ask = async (
     }
   } else {
     const { error } = await supabase.from('conversations').upsert({
-      id: conversationId,
+      id: parseInt(conversationId),
       user,
       messages: [
         ...messages,
