@@ -3,7 +3,7 @@
     <div v-if="userStore?.user?.id">
       <h2>Account</h2>
       <h3 class="account-header">{{ userStore?.user?.email }}</h3>
-      <h4 class="account-header">{{ userStore?.user?.id }}</h4>
+      <!-- <h4 class="account-header">{{ userStore?.user?.id }}</h4> -->
       <div class="logout">
         <p v-if="userStore.loggingOut">
           <i class="pi pi-sign-out" style="font-size: 0.9rem; margin-right: 0.5rem"></i> Logging out
