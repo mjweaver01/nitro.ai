@@ -1,6 +1,6 @@
 <template>
-  <div class="top">
-    <Hero />
+  <div class="chat-wrapper top">
+    <Hero v-if="!messagesStore.loading" />
     <Questions v-if="userStore.user?.id" />
     <Messages v-if="userStore.user?.id" :messages="messagesStore?.messages" />
   </div>

@@ -1,8 +1,6 @@
 <template>
   <div class="left-nav" :class="{ 'force-show': !!forceShow }">
-    <h2 class="left-nav-hero" @click="messagesStore.clearConversation()">
-      <img src="/wsbb.png" width="40" height="40" /> Louie.ai
-    </h2>
+    <MobileNav :forceShow="forceShow" :setForceShow="setForceShow" />
     <div class="new-conversation">
       <div class="conversation" @click="messagesStore.clearConversation()">
         <span>New Conversation</span>
@@ -52,6 +50,7 @@ import { RouterLink } from 'vue-router'
 import { useConversationsStore } from '../stores/conversations'
 import { useMessagesStore } from '../stores/messages'
 import { useUserStore } from '../stores/user'
+import MobileNav from './MobileNav.vue'
 
 export default {
   props: {
@@ -59,6 +58,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    setForceShow: {
+      type: Function,
+      default: () => {},
+    },
+  },
+  components: {
+    MobileNav,
   },
   computed: {
     ...mapStores(useConversationsStore, useMessagesStore, useUserStore),
@@ -68,12 +74,9 @@ export default {
       search: '',
     }
   },
-
   mounted() {
     this.conversationsStore.getConversations()
   },
-
-  methods: {},
 }
 </script>
 

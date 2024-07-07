@@ -282,6 +282,16 @@ a {
   overflow: scroll;
 }
 
+.app.force-hide {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .app.force-hide {
+    display: flex;
+  }
+}
+
 .top {
   flex-grow: 1;
   overflow: scroll;
@@ -305,6 +315,20 @@ a {
 
 .app-wrapper {
   display: flex;
+  position: relative;
+}
+
+.mobile-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  background: var(--white);
+  top: 0;
+  width: 100%;
+  padding-right: 1em;
+  border-bottom: 1px solid var(--light-blue);
+  z-index: 2;
 }
 
 .left-nav {
@@ -318,13 +342,20 @@ a {
   overflow: hidden;
 }
 
-.left-nav-hero {
+.mobile-nav-hero {
   display: flex;
   align-items: center;
   margin: 0;
   border-bottom: 1px solid var(--light-blue);
   padding: 0.5rem;
   cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .mobile-nav i,
+  .app .mobile-nav {
+    display: none;
+  }
 }
 
 .left-nav-header {

@@ -1,7 +1,8 @@
 <template>
   <div class="app-wrapper">
-    <LeftNav v-if="userStore.user?.id" />
-    <div class="app">
+    <LeftNav v-if="userStore.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
+    <div class="app" :class="{ 'force-hide': forceShow }">
+      <MobileNav v-if="userStore.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
       <RouterView />
     </div>
   </div>
@@ -14,13 +15,20 @@ import { useClientStore } from './stores/client'
 import { useUserStore } from './stores/user'
 import { useMessagesStore } from './stores/messages'
 import LeftNav from './components/LeftNav.vue'
+import MobileNav from './components/MobileNav.vue'
 
 export default {
   computed: {
     ...mapStores(useClientStore, useUserStore, useMessagesStore),
   },
+  data() {
+    return {
+      forceShow: false,
+    }
+  },
   components: {
     LeftNav,
+    MobileNav,
   },
   async beforeMount() {
     if (!this.userStore?.user?.id) {
@@ -35,6 +43,11 @@ export default {
         this.$router.push('/login')
       }
     }
+  },
+  methods: {
+    setForceShow(show) {
+      show ? (this.forceShow = true) : (this.forceShow = false)
+    },
   },
 }
 </script>
