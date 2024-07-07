@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="left-nav-items">
-      <h3 class="left-nav-header">Previous Conversations</h3>
+      <h3 class="left-nav-header">Past Conversations</h3>
       <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
         <div
           class="conversation"

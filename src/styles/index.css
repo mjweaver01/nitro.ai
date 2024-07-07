@@ -24,10 +24,13 @@
   --blue: #306cf4;
   --red: #ea0000;
   --light-blue: #dbe8f7;
+  --mid-blue: #2a95fa;
   --dark-blue: #1d2024;
   --black: #000;
   --white: #fff;
   --transparent: rgba(255, 255, 255, 0);
+
+  --border-color: var(--light-blue);
 }
 
 * {
@@ -133,7 +136,7 @@ form {
 
 .account {
   width: 100%;
-  border-top: 1px solid var(--light-blue);
+  border-top: 1px solid var(--border-color);
 }
 
 .account a,
@@ -160,7 +163,7 @@ form {
 
 .account-conversation {
   border-radius: 5px;
-  border: 1px solid var(--light-blue);
+  border: 1px solid var(--border-color);
 }
 
 .account-conversation .imessage {
@@ -173,7 +176,7 @@ form {
   justify-content: space-between;
   gap: 1em;
   padding: 1em;
-  border-bottom: 1px solid var(--light-blue);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .account-conversation-item-header * {
@@ -317,7 +320,7 @@ a {
 .current-message {
   position: relative;
   padding: 0.5em;
-  border-top: 1px solid var(--light-blue);
+  border-top: 1px solid var(--border-color);
 }
 
 @media (max-width: 499px) {
@@ -340,7 +343,7 @@ a {
   top: 0;
   width: 100%;
   padding-right: 1em;
-  border-bottom: 1px solid var(--light-blue);
+  border-bottom: 1px solid var(--border-color);
   z-index: 2;
 }
 
@@ -350,7 +353,7 @@ a {
   justify-content: space-between;
   width: 50vw;
   max-width: 350px;
-  border-right: 1px solid var(--light-blue);
+  border-right: 1px solid var(--border-color);
   height: 100dvh;
   overflow: hidden;
 }
@@ -359,7 +362,6 @@ a {
   display: flex;
   align-items: center;
   margin: 0;
-  border-bottom: 1px solid var(--light-blue);
   padding: 0.5rem;
   cursor: pointer;
 }
@@ -397,7 +399,7 @@ a {
 }
 
 .new-conversation {
-  border-bottom: 1px solid var(--light-blue);
+  border-bottom: 1px solid var(--border-color);
   padding: 0.5rem;
 }
 
@@ -451,7 +453,7 @@ a {
 .question {
   padding: 1em;
   border-radius: 5px;
-  border: 1px solid var(--light-blue);
+  border: 1px solid var(--border-color);
   cursor: pointer;
 }
 
