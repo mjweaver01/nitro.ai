@@ -42,7 +42,7 @@ export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
   },
-  beforeMount() {
+  created() {
     const conversationId = this.$route.params.id
     if (conversationId?.length > 0) this.messagesStore.getConversation(conversationId)
 
