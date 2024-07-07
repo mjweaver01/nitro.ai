@@ -97,9 +97,7 @@ export const useMessagesStore = defineStore('messages', {
         .then((res) => res.json())
         .then((data) => {
           if (data.conversation && data.conversation.messages) {
-            this.messages = data.conversation.messages
-            this.conversationId = data.conversation.id
-            this.router.push(`/chat/${this.conversationId}`)
+            this.setConversation(data.conversation)
           } else {
             this.clearConversation()
           }
@@ -129,8 +127,8 @@ export const useMessagesStore = defineStore('messages', {
     setConversation(sentConversation) {
       this.messages = sentConversation.messages
       this.conversationId = sentConversation.id
-      this.scrollToBottom()
       this.router.push(`/chat/${this.conversationId}`)
+      this.scrollToBottom()
     },
 
     sanitizeMessage(message) {
