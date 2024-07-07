@@ -1,20 +1,20 @@
 @font-face {
   font-family: 'Knockout';
-  src: url('./Knockout-74.otf') format('opentype');
+  src: url('/Knockout-74.otf') format('opentype');
   font-display: swap;
   font-weight: 900;
 }
 
 @font-face {
   font-family: 'Knockout';
-  src: url('./Knockout-54.otf') format('opentype');
+  src: url('/Knockout-54.otf') format('opentype');
   font-display: swap;
   font-weight: bold;
 }
 
 @font-face {
   font-family: 'Knockout';
-  src: url('./Knockout-32.otf') format('opentype');
+  src: url('/Knockout-32.otf') format('opentype');
   font-display: swap;
   font-weight: normal;
 }
@@ -96,6 +96,10 @@ form {
   gap: 0.5em;
 }
 
+.login {
+  max-width: 600px;
+}
+
 .login-form form {
   display: flex;
   flex-flow: column;
@@ -119,12 +123,14 @@ form {
   text-align: center;
 }
 
-.logout {
+.account {
   width: 100%;
   border-top: 1px solid var(--light-blue);
 }
 
+.account a,
 .logout p {
+  display: block;
   text-decoration: underline !important;
   cursor: pointer;
   margin: 1em;
@@ -132,9 +138,44 @@ form {
 }
 
 @media (min-width: 500px) {
-  .logout p {
+  .account a {
     margin: 25px;
   }
+}
+
+.account-conversations {
+  display: flex;
+  flex-flow: column;
+  gap: 1em;
+  margin-top: 2em;
+}
+
+.account-conversation {
+  border-radius: 5px;
+  border: 1px solid var(--light-blue);
+}
+
+.account-conversation .imessage {
+  padding-bottom: 0.5em;
+}
+
+.account-conversation-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  padding: 1em;
+  border-bottom: 1px solid var(--light-blue);
+}
+
+.account-conversation-item-header * {
+  margin: 0;
+}
+
+.account-conversation-item {
+  max-height: 300px;
+  overflow: auto;
+  padding: 0.5em 1em;
 }
 
 .input-wrapper {

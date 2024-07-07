@@ -1,6 +1,8 @@
 <template>
   <div class="left-nav" :class="{ 'force-show': !!forceShow }">
-    <h2 class="left-nav-hero"><img src="/wsbb.png" width="40" height="40" /> Louie.ai</h2>
+    <h2 class="left-nav-hero" @click="messagesStore.clearConversation()">
+      <img src="/wsbb.png" width="40" height="40" /> Louie.ai
+    </h2>
     <div class="new-conversation">
       <div class="conversation" @click="messagesStore.clearConversation()">
         <span>New Conversation</span>
@@ -19,11 +21,13 @@
           {{ conversation.messages[0].content }}
         </div>
       </div>
+      <div v-else>
+        <div class="conversation">No previous conversations</div>
+      </div>
     </div>
     <div class="left-nav-bottom">
-      <div class="logout" v-if="userStore.user?.id">
-        <p v-if="userStore.loggingOut">Logging out</p>
-        <p @click="userStore.signOutUser" v-else>Logout</p>
+      <div class="account" v-if="userStore.user?.id">
+        <RouterLink to="/account">Account</RouterLink>
       </div>
     </div>
   </div>
@@ -31,6 +35,7 @@
 
 <script>
 import { mapStores } from 'pinia'
+import { RouterLink } from 'vue-router'
 import { useConversationsStore } from '../stores/conversations'
 import { useMessagesStore } from '../stores/messages'
 import { useUserStore } from '../stores/user'

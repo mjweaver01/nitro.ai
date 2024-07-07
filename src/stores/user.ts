@@ -74,6 +74,8 @@ export const useUserStore = defineStore('user', {
         await this.signInUser()
       }
 
+      this.router.push('/')
+
       this.loggingIn = false
     },
 
@@ -88,6 +90,8 @@ export const useUserStore = defineStore('user', {
       this.user = null
       localStorage.removeItem('user')
       localStorage.removeItem('conversations')
+
+      this.router.push('/login')
 
       this.loggingOut = false
     },

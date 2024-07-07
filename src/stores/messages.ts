@@ -53,9 +53,7 @@ export const useMessagesStore = defineStore('messages', {
             if (parsedData.answer) {
               if (parsedData.answer.conversationId) {
                 this.conversationId = parsedData.answer.conversationId
-                const url = new URL(window.location.href)
-                url.searchParams.set('conversationId', parsedData.answer.conversationId)
-                window.history.pushState(null, '', url.toString())
+                this.router.push(`/chat/${this.conversationId}`)
               }
 
               this.messages.push({
@@ -64,8 +62,6 @@ export const useMessagesStore = defineStore('messages', {
                 isCached: parsedData.isCached || false,
                 time: parsedData.time || false,
               })
-
-              conversations.getConversations()
             }
 
             this.question = ''
@@ -73,6 +69,7 @@ export const useMessagesStore = defineStore('messages', {
           } finally {
             this.loading = false
             this.scrollToBottom()
+            conversations.getConversations()
           }
         })
         .catch((err) => {
@@ -102,6 +99,7 @@ export const useMessagesStore = defineStore('messages', {
           if (data.conversation && data.conversation.messages) {
             this.messages = data.conversation.messages
             this.conversationId = data.conversation.id
+            this.router.push(`/chat/${this.conversationId}`)
           } else {
             this.clearConversation()
           }
@@ -125,20 +123,14 @@ export const useMessagesStore = defineStore('messages', {
       this.question = ''
       this.conversationId = ''
       this.scrollToBottom()
-
-      const url = new URL(window.location.href)
-      url.searchParams.delete('conversationId')
-      window.history.pushState(null, '', url.toString())
+      this.router.push(`/chat`)
     },
 
     setConversation(sentConversation) {
       this.messages = sentConversation.messages
       this.conversationId = sentConversation.id
       this.scrollToBottom()
-
-      const url = new URL(window.location.href)
-      url.searchParams.set('conversationId', this.conversationId)
-      window.history.pushState(null, '', url.toString())
+      this.router.push(`/chat/${this.conversationId}`)
     },
 
     sanitizeMessage(message) {
@@ -146,9 +138,6 @@ export const useMessagesStore = defineStore('messages', {
     },
 
     setLlm() {
-      const url = new URL(window.location.href)
-      url.searchParams.set('model', this.llm)
-      window.history.pushState(null, '', url.toString())
       this.clearConversation()
     },
   },

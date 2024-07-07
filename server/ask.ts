@@ -1,17 +1,9 @@
 import langfuse from './langfuse'
 import { supabase } from './supabase'
-import { tools, kbTools } from './llm/tools'
-import {
-  gptSystemPromptTemplate,
-  gistSystemPromptTemplate,
-  kbSystemPromptTemplate,
-} from './llm/prompts'
-import { modelWithFunctions, kbModelWithFunctions } from './llm/openai'
-import {
-  llm as anthropicLlm,
-  modelWithTools as anthropicModelWithTools,
-  kbModelWithTools as anthropicKbModelWithTools,
-} from './llm/anthropic'
+import { kbTools } from './llm/tools'
+import { kbSystemPromptTemplate } from './llm/prompts'
+import { kbModelWithFunctions } from './llm/openai'
+import { llm as anthropicLlm, kbModelWithTools as anthropicKbModelWithTools } from './llm/anthropic'
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 
@@ -25,35 +17,16 @@ import { Runnable } from '@langchain/core/runnables'
 
 export const ask = async (
   input: string,
-  source: SourceType,
   user: string,
   conversationId?: string,
   model?: string,
 ): Promise<Answer> => {
-  const isGist = source === 'gist'
-  const isKb = source === 'kb'
+  console.log(`[ask] Asking ${model || 'openai'}: ${JSON.stringify(input).substring(0, 100)}`)
   const isAnthropic = model === 'anthropic'
+  const currentPromptTemplate = kbSystemPromptTemplate(isAnthropic)
+  const currentModelWithFunctions = isAnthropic ? anthropicKbModelWithTools : kbModelWithFunctions
 
-  console.log(`[${source}] Asking ${model || 'openai'}: ${JSON.stringify(input).substring(0, 100)}`)
-
-  const currentPromptTemplate = isKb
-    ? kbSystemPromptTemplate(isAnthropic)
-    : isGist
-    ? gistSystemPromptTemplate
-    : gptSystemPromptTemplate
-  const currentModelWithFunctions = isKb
-    ? isAnthropic
-      ? anthropicKbModelWithTools
-      : kbModelWithFunctions
-    : isAnthropic
-    ? anthropicModelWithTools
-    : modelWithFunctions
-
-  let query = supabase
-    .from('conversations')
-    .select('*')
-    .eq('id', conversationId)
-    .eq('source', source)
+  let query = supabase.from('conversations').select('*').eq('id', conversationId).eq('user', user)
   if (user && user !== 'anonymous') {
     query = query.eq('user', user)
   }
@@ -85,7 +58,7 @@ export const ask = async (
     ? new AgentExecutor({ agent: runnableAgent, tools: kbTools })
     : AgentExecutor.fromAgentAndTools({
         agent: runnableAgent,
-        tools: isKb ? kbTools : tools,
+        tools: kbTools,
       })
   const invokee = await executor.invoke(
     {
@@ -98,67 +71,45 @@ export const ask = async (
   )
 
   // save to supabase
-  if (conversationId && messages.length > 0) {
-    const { error } = await supabase
-      .from('conversations')
-      .update([
-        {
-          messages: [
-            ...messages,
-            { role: 'user', content: invokee.input },
-            { role: 'ai', content: invokee.output },
-          ],
-        },
-      ])
-      .eq('id', conversationId)
-      .eq('user', user)
-      .eq('source', source)
+  const { error } = await supabase.from('conversations').upsert({
+    id: conversationId,
+    model,
+    user,
+    messages: [
+      ...messages,
+      { role: 'user', content: invokee.input },
+      { role: 'ai', content: invokee.output },
+    ],
+  })
 
-    if (error) {
-      console.error(error.message)
-    }
-  } else {
-    const { error } = await supabase.from('conversations').upsert({
-      id: conversationId,
-      source,
-      user,
-      messages: [
-        ...messages,
-        { role: 'user', content: invokee.input },
-        { role: 'ai', content: invokee.output },
-      ],
-    })
-
-    if (error) {
-      console.error(error.message)
-    }
+  if (error) {
+    console.error(error.message)
   }
 
   return {
     ...(invokee as any),
     conversationId,
-    source,
+    model,
   }
 }
 
 export async function askQuestion(
   input: string = defaultQuestion,
-  source: SourceType,
   user: string,
   conversationId?: string,
   model?: string,
 ): Promise<Answer> {
   const sessionId = conversationId || random()
   const trace = langfuse.trace({
-    name: `ask-${source}`,
+    name: `ask`,
     input: JSON.stringify(input),
     sessionId,
     metadata: {
-      source,
+      model,
     },
   })
 
-  const response = await ask(input, source, user, sessionId, model)
+  const response = await ask(input, user, sessionId, model)
 
   trace.update({
     output: JSON.stringify(response?.output ?? response),

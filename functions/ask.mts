@@ -11,7 +11,6 @@ export default async (req: Request, context: Context) => {
   const input = body?.question?.trim() ?? null
   const conversationId = body?.conversationId ?? qs.get('conversationId') ?? null
 
-  const ctxt = 'kb'
   const fallbackAnswer = '42'
 
   if (!input) {
@@ -21,7 +20,7 @@ export default async (req: Request, context: Context) => {
   const currentTime = Date.now()
 
   if (!nocache) {
-    const cachedData = await getCache(ctxt, currentTime, model, conversationId, user, input)
+    const cachedData = await getCache(model, conversationId, user, input)
     const latestCacheHit = cachedData?.[0]
 
     if (latestCacheHit && latestCacheHit.answer) {
@@ -34,8 +33,8 @@ export default async (req: Request, context: Context) => {
   }
 
   try {
-    const answer = await askQuestion(input, ctxt, user, conversationId, model)
-    saveToCache(ctxt, currentTime, input, answer, model, user)
+    const answer = await askQuestion(input, user, conversationId, model)
+    saveToCache(currentTime, input, answer, model, user)
 
     return Response.json({
       answer: answer ?? fallbackAnswer,
@@ -44,6 +43,4 @@ export default async (req: Request, context: Context) => {
     console.error(e)
     return Response.error()
   }
-
-  return Response.json({ answer: '42', model, user, nocache })
 }

@@ -1,17 +1,29 @@
-import { createApp } from 'vue'
+import { createApp, markRaw } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
 import { createPinia, setMapStoreSuffix } from 'pinia'
-import App from './App.vue'
 
+import App from './App.vue'
+import { routes } from './routes'
+
+import 'primeicons/primeicons.css'
 import './styles/index.css'
 import './styles/imessage.css'
 import './styles/loading.css'
-import 'primeicons/primeicons.css'
-
-const pinia = createPinia()
-setMapStoreSuffix('')
 
 const app = createApp(App)
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: routes as any,
+})
+
+const pinia = createPinia().use(({ store }) => {
+  store.router = markRaw(router)
+})
+setMapStoreSuffix('')
+
 app.use(pinia)
+app.use(router)
 
 app.mount('#app')
 

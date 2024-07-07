@@ -24,7 +24,8 @@
     "primeicons": "^7.0.0",
     "showdown": "^2.1.0",
     "typescript": "^5.5.3",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vue-router": "^4.4.0"
   },
   "devDependencies": {
     "@netlify/functions": "^2.8.0",
