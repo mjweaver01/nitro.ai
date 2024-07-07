@@ -26,7 +26,7 @@ export const ask = async (
   const currentPromptTemplate = kbSystemPromptTemplate(isAnthropic)
   const currentModelWithFunctions = isAnthropic ? anthropicKbModelWithTools : kbModelWithFunctions
 
-  let query = supabase.from('conversations').select('*').eq('id', conversationId).eq('user', user)
+  let query = supabase.from('conversations').select('*').eq('id', conversationId)
   if (user && user !== 'anonymous') {
     query = query.eq('user', user)
   }
@@ -71,19 +71,38 @@ export const ask = async (
   )
 
   // save to supabase
-  const { error } = await supabase.from('conversations').upsert({
-    id: conversationId,
-    model,
-    user,
-    messages: [
-      ...messages,
-      { role: 'user', content: invokee.input },
-      { role: 'ai', content: invokee.output },
-    ],
-  })
+  // save to supabase
+  if (conversationId && messages.length > 0) {
+    const { error } = await supabase
+      .from('conversations')
+      .update([
+        {
+          messages: [
+            ...messages,
+            { role: 'user', content: invokee.input },
+            { role: 'ai', content: invokee.output },
+          ],
+        },
+      ])
+      .eq('id', conversationId)
+      .eq('user', user)
 
-  if (error) {
-    console.error(error.message)
+    if (error) {
+      console.error(error.message)
+    }
+  } else {
+    const { error } = await supabase.from('conversations').upsert({
+      id: conversationId,
+      user,
+      messages: [
+        ...messages,
+        { role: 'user', content: invokee.input },
+        { role: 'ai', content: invokee.output },
+      ],
+    })
+    if (error) {
+      console.error(error.message)
+    }
   }
 
   return {
