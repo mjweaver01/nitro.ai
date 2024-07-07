@@ -107,7 +107,7 @@ form {
   gap: 0.5em;
 }
 
-.login {
+.login-page {
   max-width: 600px;
 }
 
@@ -134,6 +134,10 @@ form {
   text-align: center;
 }
 
+.account-header {
+  word-break: break-word;
+}
+
 .account {
   width: 100%;
   border-top: 1px solid var(--border-color);
@@ -144,13 +148,19 @@ form {
   display: block;
   text-decoration: none !important;
   cursor: pointer;
-  margin: 1em;
-  padding: 0;
+  margin: 0.5em;
+  padding: 0.5em;
+  border-radius: 5px;
+}
+
+.account:hover a,
+.logout:hover p {
+  background: var(--light-blue);
 }
 
 @media (min-width: 500px) {
   .account a {
-    margin: 25px;
+    margin: 17px;
   }
 }
 
@@ -158,6 +168,9 @@ form {
   display: flex;
   flex-flow: column;
   gap: 1em;
+}
+
+.account-conversations-header {
   margin-top: 2em;
 }
 
@@ -274,6 +287,10 @@ button {
   background: var(--blue);
   color: var(--white);
   cursor: pointer;
+}
+
+button:disabled {
+  background: var(--light-blue);
 }
 
 button:hover {
@@ -477,6 +494,6 @@ a {
 
 .question:hover,
 .question.hover {
-  box-shadow: 1px 5px 10px var(--blue);
-  border-color: var(--blue);
+  box-shadow: 1px 5px 10px var(--light-blue);
+  background: var(--light-blue);
 }

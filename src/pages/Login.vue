@@ -1,5 +1,5 @@
 <template>
-  <div class="top login">
+  <div class="top login-page">
     <Hero />
     <div class="login-form">
       <form @submit.prevent="userStore.signInOrCreateUser">
@@ -28,8 +28,12 @@
           v-if="userStore.login.isNew"
         />
         <button type="submit" disabled v-if="userStore.loggingIn">Logging in</button>
-        <button type="submit" v-else-if="userStore.login.isNew">Sign up</button>
-        <button type="submit" v-else>Log in</button>
+        <button type="submit" v-else-if="userStore.login.isNew">
+          <i class="pi pi-user-plus" style="font-size: 0.9rem; margin-right: 0.5rem"></i> Sign up
+        </button>
+        <button type="submit" v-else>
+          <i class="pi pi-sign-in" style="font-size: 0.9rem; margin-right: 0.5rem"></i> Log in
+        </button>
         <p v-if="userStore.loginError.length > 0" class="login-error">{{ userStore.loginError }}</p>
         <div class="checkbox">
           <input type="checkbox" id="new-user" name="new-user" v-model="userStore.login.isNew" />

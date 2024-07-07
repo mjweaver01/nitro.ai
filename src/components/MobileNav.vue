@@ -6,6 +6,7 @@
     <i
       class="pi"
       :class="{ 'pi-bars': !forceShow, 'pi-times': forceShow }"
+      style="font-size: 1.25rem"
       @click="setForceShow(!forceShow)"
     ></i>
   </div>

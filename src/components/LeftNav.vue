@@ -4,11 +4,11 @@
     <div class="new-conversation">
       <div class="conversation" @click="messagesStore.clearConversation()">
         <span>New Conversation</span>
-        <i class="pi pi-check-square" style="font-size: 0.8rem"></i>
+        <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
       </div>
     </div>
     <div class="left-nav-items">
-      <h3 class="left-nav-header">Past Conversations</h3>
+      <h4 class="left-nav-header">Past Conversations</h4>
       <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
         <div
           class="conversation"
@@ -27,16 +27,16 @@
       <div class="account" v-if="userStore.user?.id">
         <div v-if="$route.path.includes('account')">
           <a v-if="userStore.loggingOut"
-            ><i class="pi pi-sign-out" style="font-size: 0.8rem; margin-right: 0.5rem"></i> Logging
+            ><i class="pi pi-sign-out" style="font-size: 0.9rem; margin-right: 0.5rem"></i> Logging
             out</a
           >
           <a @click="userStore.signOutUser" v-else
-            ><i class="pi pi-sign-out" style="font-size: 0.8rem; margin-right: 0.5rem"></i>
+            ><i class="pi pi-sign-out" style="font-size: 0.9rem; margin-right: 0.5rem"></i>
             Logout</a
           >
         </div>
         <RouterLink to="/account" v-else
-          ><i class="pi pi-user" style="font-size: 0.8rem; margin-right: 0.5rem"></i>
+          ><i class="pi pi-user" style="font-size: 0.9rem; margin-right: 0.5rem"></i>
           Account</RouterLink
         >
       </div>
