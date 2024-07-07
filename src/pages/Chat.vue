@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-wrapper top">
+  <div class="chat-wrapper top" :class="{ empty: messagesStore?.messages?.length <= 0 }">
     <Hero v-if="!messagesStore.loading" />
     <Questions v-if="userStore.user?.id" />
     <Messages v-if="userStore.user?.id" :messages="messagesStore?.messages" />

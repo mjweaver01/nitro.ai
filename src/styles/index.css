@@ -62,6 +62,14 @@ h1 {
   margin: 0;
 }
 
+.top-hero {
+  margin-bottom: 1.5em;
+}
+
+.top-hero * {
+  margin: 0;
+}
+
 @media (min-width: 500px) {
   h1 {
     font-size: 3em;
@@ -185,6 +193,11 @@ form {
 
 .input-wrapper select {
   flex-basis: 150px;
+}
+
+.chat-wrapper.empty {
+  display: grid;
+  align-items: center;
 }
 
 ul,
