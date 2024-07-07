@@ -24,7 +24,9 @@
               </select>
             </div>
           </div>
-          <button type="submit">Ask</button>
+          <button type="submit">
+            <i class="pi pi-send"></i>
+          </button>
         </form>
       </div>
     </div>

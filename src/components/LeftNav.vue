@@ -6,7 +6,7 @@
     <div class="new-conversation">
       <div class="conversation" @click="messagesStore.clearConversation()">
         <span>New Conversation</span>
-        <i class="pi pi-plus" style="font-size: 0.8rem"></i>
+        <i class="pi pi-check-square" style="font-size: 0.8rem"></i>
       </div>
     </div>
     <div class="left-nav-items">
@@ -27,7 +27,20 @@
     </div>
     <div class="left-nav-bottom">
       <div class="account" v-if="userStore.user?.id">
-        <RouterLink to="/account">Account</RouterLink>
+        <div v-if="$route.path.includes('account')">
+          <a v-if="userStore.loggingOut"
+            ><i class="pi pi-sign-out" style="font-size: 0.8rem; margin-right: 0.5rem"></i> Logging
+            out</a
+          >
+          <a @click="userStore.signOutUser" v-else
+            ><i class="pi pi-sign-out" style="font-size: 0.8rem; margin-right: 0.5rem"></i>
+            Logout</a
+          >
+        </div>
+        <RouterLink to="/account" v-else
+          ><i class="pi pi-user" style="font-size: 0.8rem; margin-right: 0.5rem"></i>
+          Account</RouterLink
+        >
       </div>
     </div>
   </div>

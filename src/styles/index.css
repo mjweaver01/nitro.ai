@@ -59,7 +59,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0;
+  margin: 0;
 }
 
 @media (min-width: 500px) {
@@ -131,7 +131,7 @@ form {
 .account a,
 .logout p {
   display: block;
-  text-decoration: underline !important;
+  text-decoration: none !important;
   cursor: pointer;
   margin: 1em;
   padding: 0;
@@ -181,17 +181,6 @@ form {
 .input-wrapper {
   display: flex;
   gap: 0.5em;
-}
-
-@media (min-width: 500px) {
-  form {
-    gap: 1em;
-  }
-
-  .input-wrapper {
-    display: flex;
-    gap: 1em;
-  }
 }
 
 .input-wrapper select {
@@ -335,6 +324,7 @@ a {
   margin: 0;
   border-bottom: 1px solid var(--light-blue);
   padding: 0.5rem;
+  cursor: pointer;
 }
 
 .left-nav-header {
