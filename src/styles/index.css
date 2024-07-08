@@ -177,8 +177,12 @@ form {
   text-align: left;
 }
 
-.account-top .logout {
-  margin-top: 1.75em;
+.account-top .account-header {
+  margin: 0 0 0.5rem;
+}
+
+.account-top .logout p {
+  margin: 0;
 }
 
 .account-top .info-status {

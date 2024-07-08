@@ -3,7 +3,7 @@
     <div v-if="userStore?.user?.id">
       <div class="account-top">
         <div>
-          <h2>Account</h2>
+          <h2 class="account-header">Account</h2>
           <div class="info-status">
             <h4 class="account-header">{{ userStore?.user?.email }}</h4>
             <div class="pill">{{ userStore?.user?.role }}</div>
