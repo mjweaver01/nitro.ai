@@ -2,6 +2,8 @@
 
 # Louie.ai
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/ecbff681-d90b-4a5b-9835-3e5678d32a21/deploy-status)](https://app.netlify.com/sites/louieai/deploys)
+
 > A knowledge base chatbot, pre-trained on WSBB's blog, via sitemap XML
 
 Using filtered results from [Westside Barbell's Shopify Blog Sitemap](https://raw.githubusercontent.com/mjweaver01/langchain-kb/master/src/assets/sitemap_blogs_1.xml)
