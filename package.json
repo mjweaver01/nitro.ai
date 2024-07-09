@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "packageManager": "yarn@1.22.19",
   "dependencies": {
     "@langchain/anthropic": "^0.2.2",
     "@langchain/community": "^0.2.5",
