@@ -223,6 +223,10 @@ i {
   border: 1px solid var(--border-color);
 }
 
+.account-conversation:hover {
+  box-shadow: 1px 5px 10px var(--light-blue);
+}
+
 .account-conversation .imessage {
   padding-bottom: 0.5em;
 }
