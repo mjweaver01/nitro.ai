@@ -1,6 +1,19 @@
 <template>
-  <div class="left-nav" :class="{ 'force-show': !!forceShow }">
-    <MobileNav :forceShow="forceShow" :setForceShow="setForceShow" />
+  <div class="desktop-show">
+    <i
+      class="pi pi-window-maximize"
+      style="font-size: 0.9rem; transform: rotate(45deg)"
+      :style="{ display: !desktopHide ? 'none' : 'block' }"
+      @click="setDesktopHide(!desktopHide)"
+    ></i>
+  </div>
+  <div class="left-nav" :class="{ 'force-show': !!forceShow, 'force-hide-desktop': !!desktopHide }">
+    <MobileNav
+      :forceShow="forceShow"
+      :setForceShow="setForceShow"
+      :desktopHide="desktopHide"
+      :setDesktopHide="setDesktopHide"
+    />
     <div class="new-conversation">
       <div class="conversation" @click="messagesStore.clearConversation()">
         <span>New Conversation</span>
@@ -59,6 +72,14 @@ export default {
       default: false,
     },
     setForceShow: {
+      type: Function,
+      default: () => {},
+    },
+    desktopHide: {
+      type: Boolean,
+      default: false,
+    },
+    setDesktopHide: {
       type: Function,
       default: () => {},
     },

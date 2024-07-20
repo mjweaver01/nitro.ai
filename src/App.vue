@@ -1,8 +1,20 @@
 <template>
   <div class="app-wrapper">
-    <LeftNav v-if="userStore.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
+    <LeftNav
+      v-if="userStore.user?.id"
+      :forceShow="forceShow"
+      :setForceShow="setForceShow"
+      :desktopHide="desktopHide"
+      :setDesktopHide="setDesktopHide"
+    />
     <div class="app" :class="{ 'force-hide': forceShow }">
-      <MobileNav v-if="userStore?.user?.id" :forceShow="forceShow" :setForceShow="setForceShow" />
+      <MobileNav
+        v-if="userStore?.user?.id"
+        :forceShow="forceShow"
+        :setForceShow="setForceShow"
+        :desktopHide="desktopHide"
+        :setDesktopHide="setDesktopHide"
+      />
       <RouterView />
     </div>
   </div>
@@ -24,6 +36,7 @@ export default {
   data() {
     return {
       forceShow: false,
+      desktopHide: false,
     }
   },
   components: {
@@ -47,6 +60,10 @@ export default {
   methods: {
     setForceShow(show) {
       show ? (this.forceShow = true) : (this.forceShow = false)
+    },
+
+    setDesktopHide(show) {
+      show ? (this.desktopHide = true) : (this.desktopHide = false)
     },
   },
 }

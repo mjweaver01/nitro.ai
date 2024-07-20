@@ -112,6 +112,10 @@ form {
   gap: 0.5em;
 }
 
+i {
+  cursor: pointer;
+}
+
 .login-page {
   max-width: 600px;
 }
@@ -380,6 +384,11 @@ a {
   border-top: 1px solid var(--border-color);
 }
 
+.current-message-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 @media (max-width: 499px) {
   .imessage {
     margin: 0 !important;
@@ -424,7 +433,7 @@ a {
 }
 
 @media (min-width: 768px) {
-  .mobile-nav i,
+  .mobile-nav .hamburger,
   .app .mobile-nav {
     display: none;
   }
@@ -481,6 +490,26 @@ a {
 
 .left-nav.force-show {
   display: block !important;
+}
+
+.force-desktop-hide {
+  display: none !important;
+}
+
+.desktop-show {
+  padding: 1rem;
+  position: fixed;
+}
+
+@media (min-width: 768px) {
+  .desktop-show,
+  .force-desktop-hide {
+    display: block !important;
+  }
+
+  .force-hide-desktop {
+    display: none !important;
+  }
 }
 
 .clear {

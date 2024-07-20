@@ -4,10 +4,15 @@
       <img src="/wsbb.png" width="40" height="40" alt="Louie.ai" /> Louie.ai
     </h2>
     <i
-      class="pi"
+      class="hamburger pi"
       :class="{ 'pi-bars': !forceShow, 'pi-times': forceShow }"
       style="font-size: 1.25rem"
       @click="setForceShow(!forceShow)"
+    ></i>
+    <i
+      class="force-desktop-hide pi pi-window-minimize"
+      style="font-size: 0.9rem; transform: rotate(45deg)"
+      @click="setDesktopHide(!desktopHide)"
     ></i>
   </div>
 </template>
@@ -17,7 +22,7 @@ import { mapStores } from 'pinia'
 import { useMessagesStore } from '../stores/messages'
 
 export default {
-  props: ['forceShow', 'setForceShow'],
+  props: ['forceShow', 'setForceShow', 'desktopHide', 'setDesktopHide'],
   computed: {
     ...mapStores(useMessagesStore),
   },
