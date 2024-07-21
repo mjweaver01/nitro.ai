@@ -507,7 +507,10 @@ a {
   align-items: center;
   height: 100vh;
   border-right: 1px solid var(--light-blue);
-  padding-top: 0.25em;
+}
+
+.small-sidebar .maximize {
+  padding: 0.725em;
 }
 
 .sidebar-section {
@@ -523,11 +526,10 @@ a {
 .account-sidebar {
   border-top: 1px solid var(--light-blue);
   width: 100%;
-  margin-top: -1px;
 }
 
 .account-sidebar i {
-  padding: 1.75rem 1rem;
+  padding: 1.725rem 1rem;
 }
 
 @media (min-width: 768px) {
@@ -591,7 +593,8 @@ a {
 }
 
 .question:hover,
-.question.hover {
+.question.hover,
+.sidebar-item:hover {
   box-shadow: 1px 5px 10px var(--light-blue);
   background: var(--light-blue);
 }

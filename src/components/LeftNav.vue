@@ -1,20 +1,20 @@
 <template>
   <div class="small-sidebar" v-if="sidebarStore?.desktopHide">
     <div class="sidebar-section">
-      <div class="new-conversation">
+      <div class="new-conversation sidebar-item maximize">
         <i
           class="pi pi-window-maximize"
           style="font-size: 0.9rem; transform: rotate(45deg)"
           @click="sidebarStore.setDesktopHide(!sidebarStore.desktopHide)"
         ></i>
       </div>
-      <div class="new-conversation">
+      <div class="new-conversation sidebar-item">
         <div class="conversation" @click="messagesStore.clearConversation()">
           <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
         </div>
       </div>
     </div>
-    <div class="sidebar-section account-sidebar">
+    <div class="sidebar-section account-sidebar sidebar-item">
       <div v-if="$route.path.includes('account')">
         <a v-if="userStore.loggingOut"><i class="pi pi-sign-out" style="font-size: 0.9rem"></i></a>
         <a @click="userStore.signOutUser" v-else
