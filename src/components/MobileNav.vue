@@ -30,7 +30,7 @@ export default {
     this.$watch(
       () => this.$route.path,
       () => {
-        sidebarSection.setForceShow(false)
+        sidebarStore.setForceShow(false)
       },
     )
   },
