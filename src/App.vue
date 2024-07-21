@@ -1,20 +1,8 @@
 <template>
   <div class="app-wrapper">
-    <LeftNav
-      v-if="userStore.user?.id"
-      :forceShow="forceShow"
-      :setForceShow="setForceShow"
-      :desktopHide="desktopHide"
-      :setDesktopHide="setDesktopHide"
-    />
-    <div class="app" :class="{ 'force-hide': forceShow }">
-      <MobileNav
-        v-if="userStore?.user?.id"
-        :forceShow="forceShow"
-        :setForceShow="setForceShow"
-        :desktopHide="desktopHide"
-        :setDesktopHide="setDesktopHide"
-      />
+    <LeftNav v-if="userStore.user?.id" />
+    <div class="app" :class="{ 'force-hide': sidebarStore?.forceShow }">
+      <MobileNav v-if="userStore?.user?.id" />
       <RouterView />
     </div>
   </div>
@@ -26,18 +14,13 @@ import { RouterView } from 'vue-router'
 import { useClientStore } from './stores/client'
 import { useUserStore } from './stores/user'
 import { useMessagesStore } from './stores/messages'
+import { useSidebarStore } from './stores/sidebar'
 import LeftNav from './components/LeftNav.vue'
 import MobileNav from './components/MobileNav.vue'
 
 export default {
   computed: {
-    ...mapStores(useClientStore, useUserStore, useMessagesStore),
-  },
-  data() {
-    return {
-      forceShow: false,
-      desktopHide: false,
-    }
+    ...mapStores(useClientStore, useUserStore, useMessagesStore, useSidebarStore),
   },
   components: {
     LeftNav,
@@ -56,15 +39,6 @@ export default {
         this.$router.push('/login')
       }
     }
-  },
-  methods: {
-    setForceShow(show) {
-      show ? (this.forceShow = true) : (this.forceShow = false)
-    },
-
-    setDesktopHide(show) {
-      show ? (this.desktopHide = true) : (this.desktopHide = false)
-    },
   },
 }
 </script>

@@ -500,18 +500,44 @@ a {
   display: none !important;
 }
 
-.desktop-show {
+.small-sidebar {
+  display: none;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  border-right: 1px solid var(--light-blue);
+  padding-top: 0.25em;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.sidebar-section i {
   padding: 1rem;
-  position: fixed;
+}
+
+.account-sidebar {
+  border-top: 1px solid var(--light-blue);
+  width: 100%;
+  padding: 12px 0;
+  margin-bottom: -1px;
 }
 
 @media (min-width: 768px) {
-  .desktop-show,
+  .small-sidebar {
+    display: flex;
+  }
+
   .force-desktop-hide {
     display: block !important;
   }
 
-  .force-hide-desktop {
+  .force-hide-desktop,
+  .force-show.force-hide-desktop {
     display: none !important;
   }
 }

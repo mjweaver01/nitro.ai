@@ -1,19 +1,39 @@
 <template>
-  <div class="desktop-show">
-    <i
-      class="pi pi-window-maximize"
-      style="font-size: 0.9rem; transform: rotate(45deg)"
-      :style="{ display: !desktopHide ? 'none' : 'block' }"
-      @click="setDesktopHide(!desktopHide)"
-    ></i>
+  <div class="small-sidebar" v-if="sidebarStore?.desktopHide">
+    <div class="sidebar-section">
+      <div class="new-conversation">
+        <i
+          class="pi pi-window-maximize"
+          style="font-size: 0.9rem; transform: rotate(45deg)"
+          @click="sidebarStore.setDesktopHide(!sidebarStore.desktopHide)"
+        ></i>
+      </div>
+      <div class="new-conversation">
+        <div class="conversation" @click="messagesStore.clearConversation()">
+          <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-section account-sidebar">
+      <div v-if="$route.path.includes('account')">
+        <a v-if="userStore.loggingOut"><i class="pi pi-sign-out" style="font-size: 0.9rem"></i></a>
+        <a @click="userStore.signOutUser" v-else
+          ><i class="pi pi-sign-out" style="font-size: 0.9rem"></i>
+        </a>
+      </div>
+      <RouterLink to="/account" v-else
+        ><i class="pi pi-user" style="font-size: 0.9rem"></i>
+      </RouterLink>
+    </div>
   </div>
-  <div class="left-nav" :class="{ 'force-show': !!forceShow, 'force-hide-desktop': !!desktopHide }">
-    <MobileNav
-      :forceShow="forceShow"
-      :setForceShow="setForceShow"
-      :desktopHide="desktopHide"
-      :setDesktopHide="setDesktopHide"
-    />
+  <div
+    class="left-nav"
+    :class="{
+      'force-show': !!sidebarStore?.forceShow,
+      'force-hide-desktop': !!sidebarStore?.desktopHide,
+    }"
+  >
+    <MobileNav />
     <div class="new-conversation">
       <div class="conversation" @click="messagesStore.clearConversation()">
         <span>New Conversation</span>
@@ -63,32 +83,15 @@ import { RouterLink } from 'vue-router'
 import { useConversationsStore } from '../stores/conversations'
 import { useMessagesStore } from '../stores/messages'
 import { useUserStore } from '../stores/user'
+import { useSidebarStore } from '../stores/sidebar'
 import MobileNav from './MobileNav.vue'
 
 export default {
-  props: {
-    forceShow: {
-      type: Boolean,
-      default: false,
-    },
-    setForceShow: {
-      type: Function,
-      default: () => {},
-    },
-    desktopHide: {
-      type: Boolean,
-      default: false,
-    },
-    setDesktopHide: {
-      type: Function,
-      default: () => {},
-    },
-  },
   components: {
     MobileNav,
   },
   computed: {
-    ...mapStores(useConversationsStore, useMessagesStore, useUserStore),
+    ...mapStores(useConversationsStore, useMessagesStore, useUserStore, useSidebarStore),
   },
   data() {
     return {

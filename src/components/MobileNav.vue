@@ -5,14 +5,14 @@
     </h2>
     <i
       class="hamburger pi"
-      :class="{ 'pi-bars': !forceShow, 'pi-times': forceShow }"
+      :class="{ 'pi-bars': !sidebarStore?.forceShow, 'pi-times': sidebarStore?.forceShow }"
       style="font-size: 1.25rem"
-      @click="setForceShow(!forceShow)"
+      @click="sidebarStore.setForceShow(!sidebarStore.forceShow)"
     ></i>
     <i
       class="force-desktop-hide pi pi-window-minimize"
       style="font-size: 0.9rem; transform: rotate(45deg)"
-      @click="setDesktopHide(!desktopHide)"
+      @click="sidebarStore.setDesktopHide(!sidebarStore.desktopHide)"
     ></i>
   </div>
 </template>
@@ -20,17 +20,17 @@
 <script>
 import { mapStores } from 'pinia'
 import { useMessagesStore } from '../stores/messages'
+import { useSidebarStore } from '../stores/sidebar'
 
 export default {
-  props: ['forceShow', 'setForceShow', 'desktopHide', 'setDesktopHide'],
   computed: {
-    ...mapStores(useMessagesStore),
+    ...mapStores(useMessagesStore, useSidebarStore),
   },
   beforeMount() {
     this.$watch(
       () => this.$route.path,
       () => {
-        this.setForceShow(false)
+        sidebarSection.setForceShow(false)
       },
     )
   },
