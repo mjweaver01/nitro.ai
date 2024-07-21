@@ -1,6 +1,6 @@
 <img src="./public/wsbb.png" width="50" />
 
-# Louie.ai
+# Nitro.ai
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ecbff681-d90b-4a5b-9835-3e5678d32a21/deploy-status)](https://app.netlify.com/sites/louieai/deploys)
 

@@ -1,7 +1,7 @@
 <template>
   <div class="mobile-nav">
     <h2 class="mobile-nav-hero" @click.prevent="messagesStore.clearConversation()">
-      <img src="/wsbb.png" width="40" height="40" alt="Louie.ai" /> Louie.ai
+      <img src="/wsbb.png" width="40" height="40" alt="Nitro.ai" /> Nitro.ai
     </h2>
     <i
       class="hamburger pi"
