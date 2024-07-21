@@ -517,14 +517,17 @@ a {
   align-items: center;
 }
 .sidebar-section i {
-  padding: 1rem;
+  padding: 0.75em 1rem;
 }
 
 .account-sidebar {
   border-top: 1px solid var(--light-blue);
   width: 100%;
-  padding: 12px 0;
-  margin-bottom: -1px;
+  margin-top: -1px;
+}
+
+.account-sidebar i {
+  padding: 1.75rem 1rem;
 }
 
 @media (min-width: 768px) {
