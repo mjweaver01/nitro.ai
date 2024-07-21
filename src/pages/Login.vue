@@ -36,7 +36,13 @@
         </button>
         <p v-if="userStore.loginError.length > 0" class="login-error">{{ userStore.loginError }}</p>
         <div class="checkbox">
-          <input type="checkbox" id="new-user" name="new-user" v-model="userStore.login.isNew" />
+          <input
+            class="checkbox-input"
+            type="checkbox"
+            id="new-user"
+            name="new-user"
+            v-model="userStore.login.isNew"
+          />
           <label for="new-user">Create new user</label>
         </div>
       </form>
