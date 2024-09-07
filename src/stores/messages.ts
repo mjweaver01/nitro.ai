@@ -88,7 +88,7 @@ export const useMessagesStore = defineStore('messages', {
         const chunk = decoder.decode(value)
         if (chunk.length > 0) {
           this.loading = false
-          if (chunk.startsWith('{') && chunk.endsWith('}')) {
+          if (chunk.includes('{') && chunk.includes('}')) {
             try {
               const jsonData = JSON.parse(chunk)
               if (jsonData.conversationId) {
