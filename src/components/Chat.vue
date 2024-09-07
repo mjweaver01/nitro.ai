@@ -3,12 +3,12 @@
     <div class="current-message-inner">
       <div
         class="clear"
-        v-if="messagesStore.messages.length > 0"
+        v-if="messagesStore?.messages.length > 0"
         @click="messagesStore.clearConversation"
       >
         Clear conversation
       </div>
-      <div class="ask-question" v-if="userStore.user?.id">
+      <div class="ask-question" v-if="userStore?.user?.id">
         <form @submit.prevent="messagesStore.ask()">
           <div class="input-wrapper">
             <input

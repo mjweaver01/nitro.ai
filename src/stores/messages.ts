@@ -70,7 +70,8 @@ export const useMessagesStore = defineStore('messages', {
           this.conversationId = cachedData.conversationId
           this.router.push(`/chat/${cachedData.conversationId}`)
         }
-        this.scrollToBottom()
+        // dont scroll to bottom if no stream
+        // this.scrollToBottom()
         conversations.getConversations()
         return
       }
@@ -131,7 +132,7 @@ export const useMessagesStore = defineStore('messages', {
         .then((res) => res.json())
         .then((data) => {
           if (data.conversation && data.conversation.messages) {
-            this.setConversation(data.conversation)
+            this.setConversation(data.conversation, true)
           } else {
             this.clearConversation()
           }
@@ -140,12 +141,19 @@ export const useMessagesStore = defineStore('messages', {
 
     scrollToBottom() {
       nextTick(() => {
-        if (window.innerWidth < 500) {
-          document.getElementById('question-input')?.focus()
-          const app = document.getElementById('app')
-          if (app) {
-            app.scrollTop = app.scrollHeight
-          }
+        document.getElementById('question-input')?.focus()
+        const chat = document.querySelector('.chat-page')
+        if (chat) {
+          chat.scrollTop = chat.scrollHeight
+        }
+      })
+    },
+
+    scrollToTop() {
+      nextTick(() => {
+        const chat = document.querySelector('.chat-page')
+        if (chat) {
+          chat.scrollTop = 0
         }
       })
     },
@@ -154,15 +162,18 @@ export const useMessagesStore = defineStore('messages', {
       this.messages = []
       this.question = ''
       this.conversationId = ''
-      this.scrollToBottom()
-      this.router.push(`/chat`)
+      this.router.push(`/`)
     },
 
-    setConversation(sentConversation) {
+    setConversation(sentConversation, scrollToTop = false) {
       this.messages = sentConversation.messages
       this.conversationId = sentConversation.id
       this.router.push(`/chat/${this.conversationId}`)
-      this.scrollToBottom()
+      if (scrollToTop) {
+        this.scrollToTop()
+      } else {
+        this.scrollToBottom()
+      }
     },
 
     sanitizeMessage(message) {
