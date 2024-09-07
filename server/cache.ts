@@ -48,6 +48,8 @@ export const saveToCache = async (
       } else {
         console.log(`[cache] Cached question/answer`)
       }
+
+      return data as any
     } catch {}
   }
 }

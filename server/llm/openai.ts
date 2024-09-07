@@ -8,6 +8,7 @@ export const llm = (newModel: boolean = false) =>
     model: newModel ? fourOModel : threeModel,
     openAIApiKey: process.env.VITE_OPENAI_API_KEY,
     temperature: 0,
+    streaming: true,
   })
 
 export const modelWithFunctions = llm(true).bind({

@@ -7,12 +7,12 @@
       class="hamburger pi"
       :class="{ 'pi-bars': !sidebarStore?.forceShow, 'pi-times': sidebarStore?.forceShow }"
       style="font-size: 1.25rem"
-      @click="sidebarStore.setForceShow(!sidebarStore.forceShow)"
+      @click="sidebarStore?.setForceShow(!sidebarStore?.forceShow)"
     ></i>
     <i
       class="force-desktop-hide pi pi-window-minimize"
       style="font-size: 0.9rem; transform: rotate(45deg)"
-      @click="sidebarStore.setDesktopHide(!sidebarStore.desktopHide)"
+      @click="sidebarStore?.setDesktopHide(!sidebarStore?.desktopHide)"
     ></i>
   </div>
 </template>

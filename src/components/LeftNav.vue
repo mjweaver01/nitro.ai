@@ -5,7 +5,7 @@
         <i
           class="pi pi-window-maximize"
           style="font-size: 0.9rem; transform: rotate(45deg)"
-          @click="sidebarStore.setDesktopHide(!sidebarStore.desktopHide)"
+          @click="sidebarStore?.setDesktopHide(!sidebarStore?.desktopHide)"
         ></i>
       </div>
       <div class="new-conversation sidebar-item">
@@ -47,7 +47,7 @@
           class="conversation"
           :class="{ hover: conversation.id === messagesStore.conversation?.id }"
           v-for="conversation in conversationsStore.conversations"
-          @click="messagesStore.setConversation(conversation)"
+          @click="messagesStore.setConversation(conversation, true)"
         >
           {{ conversation.messages[0].content }}
         </div>
@@ -57,7 +57,7 @@
       </div>
     </div>
     <div class="left-nav-bottom">
-      <div class="account" v-if="userStore.user?.id">
+      <div class="account" v-if="userStore?.user?.id">
         <div v-if="$route.path.includes('account')">
           <a v-if="userStore.loggingOut"
             ><i class="pi pi-sign-out" style="font-size: 0.9rem; margin-right: 0.5rem"></i> Logging
@@ -99,7 +99,7 @@ export default {
     }
   },
   beforeMount() {
-    this.conversationsStore.getConversations()
+    this.conversationsStore?.getConversations()
   },
 }
 </script>

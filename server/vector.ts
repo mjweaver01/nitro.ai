@@ -9,7 +9,7 @@ import { sitemapUrl } from './constants'
 import { supabase } from './supabase'
 import sitemapDocs from './sitemap_docs.json'
 
-const OPEN_AI_LIMIT = 10
+const OPEN_AI_LIMIT = 5
 const ANTHROPIC_LIMIT = 10
 
 const format = (text: string) => text.replace(/\s\s+/g, ' ').split('Share This Post')[0].trim()
@@ -66,7 +66,7 @@ export const vector = async (question: string, isAnthropic = false) => {
         keys: ['pageContent', 'metadata.title', 'metadata.description', 'metadata.source'],
       })
       .map((x) => ({ score: x.score, ...x.obj }))
-      .slice(0, vectorLimit * 2)
+      .slice(0, vectorLimit)
 
     // fallback filter for fuzzy search
     const qArray = question.split(' ').filter((v) => v.length > 2)
@@ -97,7 +97,7 @@ export const vector = async (question: string, isAnthropic = false) => {
         }
       })
       .sort((a: any, b: any) => b.score - a.score)
-      .slice(0, vectorLimit * 2)
+      .slice(0, vectorLimit)
 
     // merge results
     var seen: any = {}
@@ -119,6 +119,7 @@ export const vector = async (question: string, isAnthropic = false) => {
         mergedResults,
         new OpenAIEmbeddings({
           model: 'text-embedding-3-large',
+          openAIApiKey: process.env.VITE_OPENAI_API_KEY,
         }),
       )
       console.log(`[vector] fed vector store`)

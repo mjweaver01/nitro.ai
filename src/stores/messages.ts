@@ -2,6 +2,7 @@ import { nextTick } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { useConversationsStore } from './conversations'
+import { useRouter } from 'vue-router' // Add this import
 
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
@@ -10,6 +11,7 @@ export const useMessagesStore = defineStore('messages', {
     conversationId: '',
     loading: false,
     llm: 'openai',
+    router: useRouter(), // Add this line
   }),
   actions: {
     async ask(sentQuestion = '') {
@@ -33,7 +35,7 @@ export const useMessagesStore = defineStore('messages', {
         isUser: true,
       })
 
-      await fetch(`/.netlify/functions/ask${window.location.search}`, {
+      const response = await fetch(`/.netlify/functions/ask${window.location.search}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,41 +47,74 @@ export const useMessagesStore = defineStore('messages', {
           user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
         }),
       })
-        .then((res) => res.json())
-        .then((data) => {
-          try {
-            const parsedData = JSON.parse(JSON.stringify(data))
 
-            if (parsedData.answer) {
-              if (parsedData.answer.conversationId) {
-                this.conversationId = parsedData.answer.conversationId
-                this.router.push(`/chat/${this.conversationId}`)
-              }
-
-              this.messages.push({
-                ...parsedData,
-                text: parsedData.answer,
-                isCached: parsedData.isCached || false,
-                time: parsedData.time || false,
-              })
-            }
-
-            this.question = ''
-          } catch {
-          } finally {
-            this.loading = false
-            this.scrollToBottom()
-            conversations.getConversations()
-          }
+      if (!response.ok) {
+        this.loading = false
+        this.messages.push({
+          text: "I'm sorry, I'm having trouble understanding you. Please try again.",
         })
-        .catch((err) => {
-          console.error(err)
+        return
+      }
+
+      // Check if the response is JSON (cached) or stream
+      const contentType = response.headers.get('Content-Type')
+      if (contentType && contentType.includes('application/json')) {
+        // Handle cached response
+        const cachedData = await response.json()
+        this.loading = false
+        this.messages.push({
+          text: cachedData.answer,
+          isUser: false,
+        })
+        if (cachedData.conversationId) {
+          this.conversationId = cachedData.conversationId
+          this.router.push(`/chat/${cachedData.conversationId}`)
+        }
+        // dont scroll to bottom if no stream
+        // this.scrollToBottom()
+        conversations.getConversations()
+        return
+      }
+
+      // Handle streaming response (existing code)
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let aiMessage = { text: '', isUser: false }
+      this.messages.push(aiMessage)
+      let receivedConversationId = null
+
+      while (true) {
+        const { value, done } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value)
+        if (chunk.length > 0) {
           this.loading = false
+          if (chunk.includes('{') && chunk.includes('}')) {
+            try {
+              const jsonData = JSON.parse(chunk)
+              if (jsonData.conversationId) {
+                receivedConversationId = jsonData.conversationId
+              }
+            } catch (e) {
+              console.error('Error parsing JSON:', e)
+            }
+          } else {
+            this.messages[this.messages.length - 1].text += chunk
+          }
+          this.scrollToBottom()
+        }
+      }
 
-          this.messages.push({
-            text: "I'm sorry, I'm having trouble understanding you. Please try again.",
-          })
-        })
+      // when it's done
+      this.loading = false
+      this.scrollToBottom()
+
+      if (receivedConversationId) {
+        this.conversationId = receivedConversationId
+        this.router.push(`/chat/${receivedConversationId}`)
+      }
+
+      conversations.getConversations()
     },
 
     async getConversation(sentConversation) {
@@ -97,7 +132,7 @@ export const useMessagesStore = defineStore('messages', {
         .then((res) => res.json())
         .then((data) => {
           if (data.conversation && data.conversation.messages) {
-            this.setConversation(data.conversation)
+            this.setConversation(data.conversation, true)
           } else {
             this.clearConversation()
           }
@@ -106,12 +141,19 @@ export const useMessagesStore = defineStore('messages', {
 
     scrollToBottom() {
       nextTick(() => {
-        if (window.innerWidth < 500) {
-          document.getElementById('question-input')?.focus()
-          const app = document.getElementById('app')
-          if (app) {
-            app.scrollTop = app.scrollHeight
-          }
+        document.getElementById('question-input')?.focus()
+        const chat = document.querySelector('.chat-page')
+        if (chat) {
+          chat.scrollTop = chat.scrollHeight
+        }
+      })
+    },
+
+    scrollToTop() {
+      nextTick(() => {
+        const chat = document.querySelector('.chat-page')
+        if (chat) {
+          chat.scrollTop = 0
         }
       })
     },
@@ -120,15 +162,18 @@ export const useMessagesStore = defineStore('messages', {
       this.messages = []
       this.question = ''
       this.conversationId = ''
-      this.scrollToBottom()
-      this.router.push(`/chat`)
+      this.router.push(`/`)
     },
 
-    setConversation(sentConversation) {
+    setConversation(sentConversation, scrollToTop = false) {
       this.messages = sentConversation.messages
       this.conversationId = sentConversation.id
       this.router.push(`/chat/${this.conversationId}`)
-      this.scrollToBottom()
+      if (scrollToTop) {
+        this.scrollToTop()
+      } else {
+        this.scrollToBottom()
+      }
     },
 
     sanitizeMessage(message) {

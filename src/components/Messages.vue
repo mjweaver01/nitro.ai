@@ -8,7 +8,7 @@
       }"
       v-html="sanitizeMessage(message.text?.output ?? message.text ?? message.content)"
     ></p>
-    <p v-if="messagesStore.loading" class="from-them loading-message">
+    <p v-if="messagesStore?.loading" class="from-them loading-message">
       <span class="loading">
         <span class="dot one"></span>
         <span class="dot two"></span>

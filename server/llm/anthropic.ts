@@ -8,6 +8,7 @@ export const llm = (newModel: boolean = false) =>
     model: claude3Model,
     apiKey: process.env.VITE_ANTHROPIC_API_KEY,
     maxTokens: 1024,
+    streaming: true,
   })
 
 export const modelWithTools = llm(true)

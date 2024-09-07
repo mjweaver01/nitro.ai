@@ -1,6 +1,6 @@
 <template>
   <div class="app-wrapper">
-    <LeftNav v-if="userStore.user?.id" />
+    <LeftNav v-if="userStore?.user?.id" />
     <div class="app" :class="{ 'force-hide': sidebarStore?.forceShow }">
       <MobileNav v-if="userStore?.user?.id" />
       <RouterView />

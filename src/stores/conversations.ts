@@ -31,7 +31,7 @@ export const useConversationsStore = defineStore('conversations', {
 
     setConversation(sentConversation) {
       const messages = useMessagesStore()
-      messages.setConversation(sentConversation)
+      messages.setConversation(sentConversation, true)
     },
   },
 })
