@@ -12,6 +12,7 @@ export const useMessagesStore = defineStore('messages', {
     loading: false,
     llm: 'openai',
     router: useRouter(), // Add this line
+    nocache: false,
   }),
   actions: {
     async ask(sentQuestion = '') {
@@ -35,6 +36,13 @@ export const useMessagesStore = defineStore('messages', {
         isUser: true,
       })
 
+      // set nocache on each question for ability to turn it on and off
+      if (window.location.search.includes('nocache=true')) {
+        this.nocache = true
+      } else if (window.location.search.includes('nocache=false')) {
+        this.nocache = false
+      }
+
       const response = await fetch(`/.netlify/functions/ask${window.location.search}`, {
         method: 'POST',
         headers: {
@@ -45,6 +53,7 @@ export const useMessagesStore = defineStore('messages', {
           conversationId: this.conversationId,
           model: this.llm,
           user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
+          nocache: this.nocache,
         }),
       })
 
@@ -76,7 +85,7 @@ export const useMessagesStore = defineStore('messages', {
         return
       }
 
-      // Handle streaming response (existing code)
+      // Handle streaming response
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let aiMessage = { text: '', isUser: false }

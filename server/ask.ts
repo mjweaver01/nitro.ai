@@ -14,7 +14,7 @@ import { AgentExecutor, createToolCallingAgent, type AgentStep } from 'langchain
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
 import { formatToOpenAIFunctionMessages } from 'langchain/agents/format_scratchpad'
 import { OpenAIFunctionsAgentOutputParser } from 'langchain/agents/openai/output_parser'
-import { Runnable, RunnablePassthrough } from '@langchain/core/runnables'
+import { Runnable } from '@langchain/core/runnables'
 
 export const ask = async (
   input: string,
