@@ -172,10 +172,12 @@ i {
   padding: 0;
 }
 
-.account-page-content {
-  display: grid;
-  height: 100vh;
-  overflow: hidden;
+@media (min-width: 768px) {
+  .account-page-content {
+    display: grid;
+    height: 100vh;
+    overflow: hidden;
+  }
 }
 
 .account-top {
