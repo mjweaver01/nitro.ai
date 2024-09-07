@@ -35,9 +35,10 @@
       </div>
       <div class="account-conversations" v-if="conversationsStore?.conversations?.length > 0">
         <h3 class="account-conversations-header">
-          Your {{ conversationsStore?.conversations?.length }} Conversation{{
+          You've had {{ conversationsStore?.conversations?.length }} conversation{{
             conversationsStore?.conversations?.length !== 1 ? 's' : ''
           }}
+          with Nitro!
         </h3>
         <div v-for="conversation in conversationsStore?.conversations" class="account-conversation">
           <div class="account-conversation-item-header">

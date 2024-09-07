@@ -469,14 +469,27 @@ a {
 }
 
 .left-nav-items {
-  padding: 0.5rem;
+  padding: 0;
   height: auto;
   flex-grow: 1;
   overflow: auto;
 }
 
+@media (min-width: 768px) {
+  .left-nav-items {
+    padding: 0 0.5rem;
+  }
+}
+
 .left-nav .conversations {
   overflow: auto;
+  height: calc(100dvh - 206px);
+}
+
+@media (min-width: 768px) {
+  .left-nav .conversations {
+    height: calc(100dvh - 220px);
+  }
 }
 
 .left-nav .conversation {
@@ -486,6 +499,14 @@ a {
   text-overflow: ellipsis;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.left-nav .conversations .conversation:first-of-type {
+  margin-top: 0.5em;
+}
+
+.left-nav .conversations .conversation:last-of-type {
+  margin-bottom: 0.5em;
 }
 
 .new-conversation {
