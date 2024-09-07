@@ -41,8 +41,15 @@
         </h3>
         <div v-for="conversation in conversationsStore?.conversations" class="account-conversation">
           <div class="account-conversation-item-header">
-            <h4>{{ conversation.messages.length }} messages</h4>
-            <h4>{{ conversation.id }}</h4>
+            <div class="account-conversation-item-header-left">
+              <h4>"{{ conversation.messages[0].content }}"</h4>
+              <h5>{{ conversation.messages.length }} messages</h5>
+            </div>
+            <i
+              class="pi pi-trash"
+              @click.stop="deleteConversation(conversation.id)"
+              style="color: var(--red)"
+            ></i>
           </div>
           <div class="account-conversation-item">
             <Messages :messages="conversation.messages" />
@@ -65,6 +72,13 @@ export default {
   },
   computed: {
     ...mapStores(useUserStore, useConversationsStore),
+  },
+  methods: {
+    deleteConversation(conversationId) {
+      if (confirm('Are you sure you want to delete this conversation?')) {
+        this.conversationsStore.deleteConversation(conversationId)
+      }
+    },
   },
 }
 </script>

@@ -33,5 +33,31 @@ export const useConversationsStore = defineStore('conversations', {
       const messages = useMessagesStore()
       messages.setConversation(sentConversation, true)
     },
+
+    async deleteConversation(conversationId) {
+      const client = useClientStore()
+      const user = useUserStore()
+
+      if (!client.client || !user.user) return
+
+      try {
+        await client.client
+          .from('conversations')
+          .delete()
+          .eq('id', conversationId)
+          .eq('user', user.user.id)
+
+        this.conversations = this.conversations.filter((conv) => conv.id !== conversationId)
+        localStorage.setItem('conversations', JSON.stringify(this.conversations))
+
+        // Clear the current conversation if it's the one being deleted
+        const messagesStore = useMessagesStore()
+        if (messagesStore.conversationId === conversationId) {
+          messagesStore.clearConversation()
+        }
+      } catch (error) {
+        console.error('Error deleting conversation:', error)
+      }
+    },
   },
 })

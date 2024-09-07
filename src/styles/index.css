@@ -240,6 +240,10 @@ i {
   border-bottom: 1px solid var(--border-color);
 }
 
+.account-conversation-item-header-left {
+  text-align: left;
+}
+
 .account-conversation-item-header * {
   margin: 0;
 }
