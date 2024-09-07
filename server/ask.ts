@@ -118,6 +118,7 @@ export const ask = async (
             } else {
               const { error } = await supabase.from('conversations').upsert({
                 id: parseInt(sessionId),
+                model,
                 user,
                 messages: [
                   ...messages,

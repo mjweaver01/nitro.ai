@@ -1,6 +1,6 @@
 <template>
   <div class="top account-page">
-    <div v-if="userStore?.user?.id">
+    <div v-if="userStore?.user?.id" class="account-page-content">
       <div class="account-top">
         <div>
           <h2 class="account-header">Account</h2>
@@ -8,7 +8,7 @@
             <h4 class="account-header">{{ userStore?.user?.email }}</h4>
             <div class="pill">{{ userStore?.user?.role }}</div>
           </div>
-          <p>
+          <p class="account-last-login">
             Last login:
             {{ new Date(userStore?.user?.last_sign_in_at).toLocaleDateString('en-US') }} at
             {{
@@ -43,7 +43,10 @@
           <div class="account-conversation-item-header">
             <div class="account-conversation-item-header-left">
               <h4>"{{ conversation.messages[0].content }}"</h4>
-              <h5>{{ conversation.messages.length }} messages</h5>
+              <h5>
+                {{ conversation.messages.length }} messages with
+                <span style="color: var(--blue)">{{ convertModel(conversation.model) }}</span>
+              </h5>
             </div>
             <i
               class="pi pi-trash"
@@ -65,6 +68,7 @@ import { mapStores } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useConversationsStore } from '../stores/conversations'
 import Messages from '../components/Messages.vue'
+import { convertModel } from '../utils'
 
 export default {
   components: {
@@ -74,6 +78,8 @@ export default {
     ...mapStores(useUserStore, useConversationsStore),
   },
   methods: {
+    convertModel,
+
     deleteConversation(conversationId) {
       if (confirm('Are you sure you want to delete this conversation?')) {
         this.conversationsStore.deleteConversation(conversationId)

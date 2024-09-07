@@ -172,6 +172,12 @@ i {
   padding: 0;
 }
 
+.account-page-content {
+  display: grid;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .account-top {
   border-bottom: 1px solid var(--border-color);
   padding: 1em;
@@ -212,6 +218,8 @@ i {
   flex-flow: column;
   gap: 1em;
   padding: 1em;
+  overflow: auto;
+  height: 100%;
 }
 
 .account-conversations-header {
@@ -221,10 +229,16 @@ i {
 .account-conversation {
   border-radius: 5px;
   border: 1px solid var(--border-color);
+  max-width: var(--mobile);
+  margin: 0 auto;
 }
 
 .account-conversation:hover {
   box-shadow: 1px 5px 10px var(--light-blue);
+}
+
+.account-last-login {
+  margin-bottom: 0.5em;
 }
 
 .account-conversation .imessage {

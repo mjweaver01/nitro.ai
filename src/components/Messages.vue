@@ -1,5 +1,5 @@
 <template>
-  <div id="imessage" class="imessage" v-if="messages.length > 0">
+  <div id="imessage" class="imessage" v-if="messages?.length > 0">
     <p
       v-for="message in messages"
       v-bind:class="{
