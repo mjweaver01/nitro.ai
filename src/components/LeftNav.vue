@@ -34,8 +34,8 @@
     }"
   >
     <MobileNav />
-    <div class="new-conversation">
-      <div class="conversation" @click="messagesStore.clearConversation()">
+    <div class="new-conversation" @click="messagesStore.clearConversation()">
+      <div class="conversation">
         <span>New Conversation</span>
         <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
       </div>
