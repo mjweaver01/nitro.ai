@@ -1,6 +1,6 @@
 <template>
   <div class="chat-page top" :class="{ empty: messagesStore?.messages?.length <= 0 }">
-    <Hero v-if="!messagesStore.loading" />
+    <Hero v-if="!messagesStore.loading && messagesStore?.messages?.length <= 0" />
     <Questions v-if="userStore.user?.id" />
     <Messages v-if="userStore.user?.id" :messages="messagesStore?.messages" />
   </div>

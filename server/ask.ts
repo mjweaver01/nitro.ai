@@ -6,6 +6,7 @@ import { kbModelWithFunctions } from './llm/openai'
 import { llm as anthropicLlm, kbModelWithTools as anthropicKbModelWithTools } from './llm/anthropic'
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
+import { saveToCache } from './cache'
 
 // langchain stuff
 import { RunnableSequence } from '@langchain/core/runnables'
@@ -13,20 +14,21 @@ import { AgentExecutor, createToolCallingAgent, type AgentStep } from 'langchain
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
 import { formatToOpenAIFunctionMessages } from 'langchain/agents/format_scratchpad'
 import { OpenAIFunctionsAgentOutputParser } from 'langchain/agents/openai/output_parser'
-import { Runnable } from '@langchain/core/runnables'
+import { Runnable, RunnablePassthrough } from '@langchain/core/runnables'
 
 export const ask = async (
   input: string,
   user: string,
   conversationId?: string,
   model?: string,
-): Promise<Answer> => {
+): Promise<ReadableStream> => {
   console.log(`[ask] Asking ${model || 'openai'}: ${JSON.stringify(input).substring(0, 100)}`)
   const isAnthropic = model === 'anthropic'
   const currentPromptTemplate = kbSystemPromptTemplate(isAnthropic)
   const currentModelWithFunctions = isAnthropic ? anthropicKbModelWithTools : kbModelWithFunctions
+  const sessionId = (conversationId || random()).toString()
 
-  let query = supabase.from('conversations').select('*').eq('id', parseInt(conversationId))
+  let query = supabase.from('conversations').select('*').eq('id', parseInt(sessionId))
   if (user && user !== 'anonymous') {
     query = query.eq('user', user)
   }
@@ -40,8 +42,21 @@ export const ask = async (
     }
   })
 
+  const trace = langfuse.trace({
+    name: `ask`,
+    input: JSON.stringify(input),
+    sessionId,
+    metadata: {
+      model,
+    },
+  })
+
   const runnableAgent = isAnthropic
-    ? createToolCallingAgent({ llm: anthropicLlm(), tools: kbTools, prompt: currentPromptTemplate })
+    ? createToolCallingAgent({
+        llm: anthropicLlm(),
+        tools: kbTools as any,
+        prompt: currentPromptTemplate,
+      })
     : RunnableSequence.from([
         {
           input: (i: { input: string; steps: AgentStep[] }) => i.input,
@@ -52,64 +67,84 @@ export const ask = async (
         currentPromptTemplate,
         currentModelWithFunctions as Runnable,
         new OpenAIFunctionsAgentOutputParser(),
-      ])
-
+      ] as any)
   const executor = isAnthropic
-    ? new AgentExecutor({ agent: runnableAgent, tools: kbTools })
+    ? new AgentExecutor({ agent: runnableAgent, tools: kbTools as any })
     : AgentExecutor.fromAgentAndTools({
         agent: runnableAgent,
-        tools: kbTools,
+        tools: kbTools as any,
       })
-  const invokee = await executor.invoke(
+
+  const stream = new TransformStream()
+  const writer = stream.writable.getWriter()
+  const encoder = new TextEncoder()
+  let outputCache = ''
+
+  executor.invoke(
     {
       input,
       chat_history: chatHistory,
     },
     {
-      configurable: { sessionId: conversationId, isAnthropic: isAnthropic },
+      configurable: { sessionId: sessionId, isAnthropic: isAnthropic },
+      callbacks: [
+        {
+          handleLLMNewToken(token: string) {
+            writer.write(encoder.encode(token))
+            outputCache += token
+          },
+          async handleAgentEnd() {
+            writer.write(encoder.encode(JSON.stringify({ conversationId: sessionId })))
+
+            // need to check conversationId exists here, not sessionId
+            if (conversationId && messages.length > 0) {
+              const { error } = await supabase
+                .from('conversations')
+                .update([
+                  {
+                    messages: [
+                      ...messages,
+                      { role: 'user', content: input },
+                      { role: 'ai', content: outputCache },
+                    ],
+                  },
+                ])
+                .eq('id', parseInt(sessionId))
+                .eq('user', user)
+
+              if (error) {
+                console.error(error.message)
+              }
+            } else {
+              const { error } = await supabase.from('conversations').upsert({
+                id: parseInt(sessionId),
+                user,
+                messages: [
+                  ...messages,
+                  { role: 'user', content: input },
+                  { role: 'ai', content: outputCache },
+                ],
+              })
+              if (error) {
+                console.error(error.message)
+              }
+            }
+
+            await saveToCache(Date.now(), input, outputCache, model, user)
+
+            trace.update({
+              output: 'Streaming response completed' + JSON.stringify(outputCache),
+            })
+            langfuse.shutdownAsync()
+
+            writer.close()
+          },
+        },
+      ],
     },
   )
 
-  // save to supabase
-  // save to supabase
-  if (conversationId && messages.length > 0) {
-    const { error } = await supabase
-      .from('conversations')
-      .update([
-        {
-          messages: [
-            ...messages,
-            { role: 'user', content: invokee.input },
-            { role: 'ai', content: invokee.output },
-          ],
-        },
-      ])
-      .eq('id', parseInt(conversationId))
-      .eq('user', user)
-
-    if (error) {
-      console.error(error.message)
-    }
-  } else {
-    const { error } = await supabase.from('conversations').upsert({
-      id: parseInt(conversationId),
-      user,
-      messages: [
-        ...messages,
-        { role: 'user', content: invokee.input },
-        { role: 'ai', content: invokee.output },
-      ],
-    })
-    if (error) {
-      console.error(error.message)
-    }
-  }
-
-  return {
-    ...(invokee as any),
-    conversationId,
-    model,
-  }
+  return stream.readable
 }
 
 export async function askQuestion(
@@ -117,24 +152,14 @@ export async function askQuestion(
   user: string,
   conversationId?: string,
   model?: string,
-): Promise<Answer> {
-  const sessionId = conversationId || random()
-  const trace = langfuse.trace({
-    name: `ask`,
-    input: JSON.stringify(input),
-    sessionId,
-    metadata: {
-      model,
+): Promise<ReadableStream> {
+  const response = await ask(input, user, conversationId, model)
+
+  const transformStream = new TransformStream({
+    transform(chunk, controller) {
+      controller.enqueue(chunk)
     },
   })
 
-  const response = await ask(input, user, sessionId, model)
-
-  trace.update({
-    output: JSON.stringify(response?.output ?? response),
-  })
-
-  await langfuse.shutdownAsync()
-
-  return response
+  return response.pipeThrough(transformStream)
 }
