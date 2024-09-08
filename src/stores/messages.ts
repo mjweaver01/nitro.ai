@@ -11,7 +11,7 @@ export const useMessagesStore = defineStore('messages', {
     conversationId: '',
     loading: false,
     llm: 'openai',
-    router: useRouter(), // Add this line
+    router: useRouter(),
     nocache: false,
   }),
   actions: {
@@ -79,8 +79,7 @@ export const useMessagesStore = defineStore('messages', {
           this.conversationId = cachedData.conversationId
           this.router.push(`/chat/${cachedData.conversationId}`)
         }
-        // dont scroll to bottom if no stream
-        // this.scrollToBottom()
+
         conversations.getConversations()
         return
       }
