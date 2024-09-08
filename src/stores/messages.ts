@@ -2,7 +2,7 @@ import { nextTick } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { useConversationsStore } from './conversations'
-import { useRouter } from 'vue-router' // Add this import
+import { useRouter } from 'vue-router'
 
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
