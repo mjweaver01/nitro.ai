@@ -97,6 +97,7 @@ export const useMessagesStore = defineStore('messages', {
         const chunk = decoder.decode(value)
         if (chunk.length > 0) {
           this.loading = false
+          // if the chunk is a JSON object, it's a conversationId
           if (chunk.includes('{') && chunk.includes('}')) {
             try {
               const jsonData = JSON.parse(chunk)
