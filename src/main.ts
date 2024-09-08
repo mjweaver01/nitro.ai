@@ -1,5 +1,5 @@
 import { createApp, markRaw } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { createPinia, setMapStoreSuffix } from 'pinia'
 
 import App from './App.vue'
@@ -14,7 +14,7 @@ const app = createApp(App)
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes as any,
+  routes: routes as RouteRecordRaw[],
 })
 
 const pinia = createPinia().use(({ store }) => {

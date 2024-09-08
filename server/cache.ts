@@ -35,7 +35,7 @@ export const saveToCache = async (
 ) => {
   if (answer) {
     try {
-      const { data, error } = await supabase.from('caches').upsert({
+      const { error } = await supabase.from('caches').upsert({
         time,
         question,
         answer,
@@ -48,8 +48,6 @@ export const saveToCache = async (
       } else {
         console.log(`[cache] Cached question/answer`)
       }
-
-      return data as any
     } catch {}
   }
 }

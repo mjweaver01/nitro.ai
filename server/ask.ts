@@ -9,12 +9,17 @@ import random from './idGenerator'
 import { saveToCache } from './cache'
 
 // langchain stuff
-import { RunnableSequence } from '@langchain/core/runnables'
-import { AgentExecutor, createToolCallingAgent, type AgentStep } from 'langchain/agents'
+import {
+  AgentExecutor,
+  AgentExecutorInput,
+  createToolCallingAgent,
+  type AgentStep,
+} from 'langchain/agents'
+import { RunnableSequence, type RunnableLike, Runnable } from '@langchain/core/runnables'
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages'
 import { formatToOpenAIFunctionMessages } from 'langchain/agents/format_scratchpad'
 import { OpenAIFunctionsAgentOutputParser } from 'langchain/agents/openai/output_parser'
-import { Runnable } from '@langchain/core/runnables'
+import { CreateToolCallingAgentParams } from 'langchain/agents'
 
 export const ask = async (
   input: string,
@@ -54,26 +59,26 @@ export const ask = async (
   const runnableAgent = isAnthropic
     ? createToolCallingAgent({
         llm: anthropicLlm(),
-        tools: kbTools as any,
         prompt: currentPromptTemplate,
-      })
+        tools: kbTools,
+      } as unknown as CreateToolCallingAgentParams)
     : RunnableSequence.from([
         {
           input: (i: { input: string; steps: AgentStep[] }) => i.input,
           agent_scratchpad: (i: { input: string; steps: AgentStep[] }) =>
             formatToOpenAIFunctionMessages(i.steps),
-          chat_history: (i: any) => i.chat_history,
+          chat_history: (i: { chat_history: BaseMessage[] }) => i.chat_history,
         },
         currentPromptTemplate,
         currentModelWithFunctions as Runnable,
         new OpenAIFunctionsAgentOutputParser(),
-      ] as any)
+      ] as unknown as [RunnableLike, RunnableLike])
   const executor = isAnthropic
-    ? new AgentExecutor({ agent: runnableAgent, tools: kbTools as any })
+    ? new AgentExecutor({ agent: runnableAgent, tools: kbTools } as unknown as AgentExecutorInput)
     : AgentExecutor.fromAgentAndTools({
         agent: runnableAgent,
-        tools: kbTools as any,
-      })
+        tools: kbTools,
+      } as unknown as AgentExecutorInput)
 
   const stream = new TransformStream()
   const writer = stream.writable.getWriter()
