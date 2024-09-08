@@ -139,7 +139,7 @@ export const ask = async (
             await saveToCache(Date.now(), input, outputCache, model, user)
 
             trace.update({
-              output: 'Streaming response completed' + JSON.stringify(outputCache),
+              output: JSON.stringify(outputCache),
             })
             langfuse.shutdownAsync()
 
