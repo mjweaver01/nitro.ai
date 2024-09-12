@@ -1,6 +1,6 @@
 export const threeModel = 'gpt-3.5-turbo-1106'
 export const fourModel = 'gpt-4-turbo'
-export const fourOModel = 'gpt-4o-2024-05-13'
+export const fourOModel = 'gpt-4o-2024-08-06'
 export const claude3Model = 'claude-3-5-sonnet-20240620'
 
 export const sitemapPrompt = `
