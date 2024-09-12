@@ -3,10 +3,6 @@ export const fourModel = 'gpt-4-turbo'
 export const fourOModel = 'gpt-4o-2024-05-13'
 export const claude3Model = 'claude-3-5-sonnet-20240620'
 
-// export const sitemapUrl = 'https://www.westside-barbell.com/sitemap_blogs_1.xml'
-export const sitemapUrl =
-  'https://raw.githubusercontent.com/mjweaver01/louie.ai/master/server/sitemap.xml'
-
 export const sitemapPrompt = `
 A tool for fetching and parsing data from URLs retrieved from a sitemap.
 This is the knowledge base that should be used for any and all questions.

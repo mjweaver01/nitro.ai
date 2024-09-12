@@ -8,7 +8,7 @@ import { Document } from '@langchain/core/documents'
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
 import { supabase } from './supabase'
 import sitemapDocs from './sitemap_docs.json'
-import { XMLParser, XMLBuilder } from 'fast-xml-parser'
+import { XMLParser } from 'fast-xml-parser'
 
 const OPEN_AI_LIMIT = 5
 const ANTHROPIC_LIMIT = 10
