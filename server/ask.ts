@@ -1,4 +1,6 @@
 import langfuse from './langfuse'
+import { type LangfuseTraceClient, type LangfuseSpanClient } from 'langfuse'
+import { CallbackHandler } from 'langfuse-langchain'
 import { supabase } from './supabase'
 import { kbTools } from './llm/tools'
 import { kbSystemPromptTemplate } from './llm/prompts'
@@ -59,8 +61,11 @@ export const ask = async (
     sessionId,
     metadata: {
       model,
+      user,
     },
-  })
+  }) as LangfuseTraceClient | any
+
+  const langfuseHandler = new CallbackHandler({ root: trace })
 
   const runnableAgent = isAnthropic
     ? createToolCallingAgent({
@@ -90,6 +95,7 @@ export const ask = async (
   const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
   let outputCache = ''
+  let tokens = 0
 
   executor.invoke(
     {
@@ -99,10 +105,12 @@ export const ask = async (
     {
       configurable: { sessionId: sessionId, isAnthropic: isAnthropic },
       callbacks: [
+        langfuseHandler,
         {
           handleLLMNewToken(token: string) {
             writer.write(encoder.encode(token))
             outputCache += token
+            tokens += 1
           },
           async handleAgentEnd() {
             writer.write(encoder.encode(JSON.stringify({ conversationId: sessionId })))
@@ -149,6 +157,12 @@ export const ask = async (
 
             trace.update({
               output: JSON.stringify(outputCache),
+              sessionId,
+              metadata: {
+                model,
+                user,
+                tokens,
+              },
             })
             langfuse.shutdownAsync()
 

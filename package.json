@@ -22,6 +22,7 @@
     "hnswlib-node": "^3.0.0",
     "langchain": "^0.2.7",
     "langfuse": "^3.4.0",
+    "langfuse-langchain": "^3.24.0",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "showdown": "^2.1.0",

@@ -975,6 +975,28 @@ langfuse-core@^3.23.0:
   dependencies:
     mustache "^4.2.0"
 
+langfuse-core@^3.24.0:
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/langfuse-core/-/langfuse-core-3.24.0.tgz#f70136e037c61b01e72b14eed81faf98a5b935c0"
+  integrity sha512-/s4qurtsAxV1tVxb0+W7XMMWxR9F/aP5f2wm431WCBfsseXYKRh9prrsQsIzjIGhltIQyhkfBllLVxWEm+aN5A==
+  dependencies:
+    mustache "^4.2.0"
+
+langfuse-langchain@^3.24.0:
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/langfuse-langchain/-/langfuse-langchain-3.24.0.tgz#b324ece76f0bc780a8f344a89f0c54c3f3de7dea"
+  integrity sha512-wYuQ3tEWzNxlOEBXWHb8+kC0GqEQ/18TU+V5bwoMyLSBzhtca+AEsNf6AkwAuvrNX4Z5Qwar76Jzy5CyYmXPSg==
+  dependencies:
+    langfuse "^3.24.0"
+    langfuse-core "^3.24.0"
+
+langfuse@^3.24.0:
+  version "3.24.0"
+  resolved "https://registry.yarnpkg.com/langfuse/-/langfuse-3.24.0.tgz#a36febce4539f8cf4fa487b173f3e26b10eeac2f"
+  integrity sha512-7TM21vMGES8Iyc0TcCIvKj3mcyL4btW3g4gYJGEGIYpmPwBcUb6m591DPkE5zH2lWdahx6rKlbCPVaFBpV5vkQ==
+  dependencies:
+    langfuse-core "^3.24.0"
+
 langfuse@^3.4.0:
   version "3.23.0"
   resolved "https://registry.yarnpkg.com/langfuse/-/langfuse-3.23.0.tgz#1efc1534746a6d72bc2283269e4406980a3e75bd"
