@@ -1,6 +1,8 @@
+import { supabase } from '../server/supabase'
 import type { Context } from '@netlify/functions'
 import { getCache } from '../server/cache'
 import { askQuestion } from '../server/ask'
+import random from '../server/idGenerator'
 
 export default async (req: Request, context: Context) => {
   const body = await req.json()
@@ -19,10 +21,27 @@ export default async (req: Request, context: Context) => {
     const cachedData = await getCache(model, conversationId, user, input)
     const latestCacheHit = cachedData?.[0]
 
-    if (latestCacheHit && latestCacheHit.answer) {
+    if (latestCacheHit && latestCacheHit.answer && !conversationId) {
       console.log(`[ask] cache hit`)
+
+      const cid = conversationId ?? random()
+
+      try {
+        await supabase.from('conversations').upsert({
+          id: parseInt(conversationId ?? random()),
+          conversationId: cid,
+          model,
+          user,
+          messages: [
+            { role: 'user', content: input },
+            { role: 'ai', content: latestCacheHit.answer },
+          ],
+        })
+      } catch {}
+
       return Response.json({
         ...latestCacheHit,
+        conversationId: cid,
         isCached: true,
       })
     }

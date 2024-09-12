@@ -33,7 +33,7 @@ export const ask = async (
   const currentModelWithFunctions = isAnthropic ? anthropicKbModelWithTools : kbModelWithFunctions
   const sessionId = (conversationId || random()).toString()
 
-  let query = supabase.from('conversations').select('*').eq('id', parseInt(sessionId))
+  let query = supabase.from('conversations').select('*').eq('id', parseInt(conversationId))
   if (user && user !== 'anonymous') {
     query = query.eq('user', user)
   }
@@ -114,7 +114,7 @@ export const ask = async (
                     ],
                   },
                 ])
-                .eq('id', parseInt(sessionId))
+                .eq('id', parseInt(conversationId))
                 .eq('user', user)
 
               if (error) {
@@ -123,6 +123,7 @@ export const ask = async (
             } else {
               const { error } = await supabase.from('conversations').upsert({
                 id: parseInt(sessionId),
+                conversationId: sessionId,
                 model,
                 user,
                 messages: [
@@ -135,6 +136,8 @@ export const ask = async (
                 console.error(error.message)
               }
             }
+
+            console.log('[vector] updated conversation', sessionId)
 
             await saveToCache(Date.now(), input, outputCache, model, user)
 
