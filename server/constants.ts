@@ -5,7 +5,7 @@ export const claude3Model = 'claude-3-5-sonnet-20240620'
 
 // export const sitemapUrl = 'https://www.westside-barbell.com/sitemap_blogs_1.xml'
 export const sitemapUrl =
-  'https://raw.githubusercontent.com/mjweaver01/langchain-kb/master/src/assets/sitemap_blogs_limited.xml'
+  'https://raw.githubusercontent.com/mjweaver01/louie.ai/master/server/sitemap.xml'
 
 export const sitemapPrompt = `
 A tool for fetching and parsing data from URLs retrieved from a sitemap.
