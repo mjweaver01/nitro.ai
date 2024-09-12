@@ -31,7 +31,7 @@ async function getDocs(writeFile = false) {
     docs = await loader.load()
     docs = formatDocs(docs)
 
-    if (writeFile) fs.writeFileSync('src/assets/sitemap_docs.json', JSON.stringify(docs, null, 2))
+    if (writeFile) fs.writeFileSync('server/sitemap_docs.json', JSON.stringify(docs, null, 2))
     console.log(`[sitemap] loaded sitemap`)
   }
 }
@@ -52,7 +52,7 @@ export const vector = async (question: string, isAnthropic = false) => {
   const vectorLimit = isAnthropic ? ANTHROPIC_LIMIT : OPEN_AI_LIMIT
 
   if (!docs || docs.length === 0 || !Array.isArray(docs)) {
-    await populate()
+    await populate(false, true)
   }
 
   // manual filter before sending to embeddings

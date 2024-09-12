@@ -16,6 +16,7 @@
     "@langchain/core": "^0.2.5",
     "@langchain/openai": "^0.1.1",
     "@supabase/supabase-js": "^2.42.3",
+    "cheerio": "^1.0.0",
     "crypto-random-bigint": "^2.1.0",
     "fuzzysort": "^3.0.1",
     "hnswlib-node": "^3.0.0",
