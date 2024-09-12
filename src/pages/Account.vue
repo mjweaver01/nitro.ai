@@ -69,7 +69,6 @@ import { mapStores } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useConversationsStore } from '../stores/conversations'
 import Messages from '../components/Messages.vue'
-import { convertModel } from '../utils'
 
 export default {
   components: {
@@ -79,7 +78,15 @@ export default {
     ...mapStores(useUserStore, useConversationsStore),
   },
   methods: {
-    convertModel,
+    convertModel(model) {
+      if (model?.includes('gpt')) {
+        return 'ChatGPT'
+      } else if (model?.includes('anthropic')) {
+        return 'Claude Sonnet'
+      }
+
+      return 'ChatGPT'
+    },
 
     deleteConversation(conversationId) {
       if (confirm('Are you sure you want to delete this conversation?')) {
