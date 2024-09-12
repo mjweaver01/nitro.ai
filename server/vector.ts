@@ -1,13 +1,14 @@
 import fs from 'fs'
+import path from 'path'
 import fuzzysort from 'fuzzysort'
 import { OpenAIEmbeddings } from '@langchain/openai'
 import { SupabaseVectorStore } from '@langchain/community/vectorstores/supabase'
 import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 import { Document } from '@langchain/core/documents'
-import { SitemapLoader } from '@langchain/community/document_loaders/web/sitemap'
-import { sitemapUrl } from './constants'
+import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
 import { supabase } from './supabase'
 import sitemapDocs from './sitemap_docs.json'
+import { XMLParser, XMLBuilder } from 'fast-xml-parser'
 
 const OPEN_AI_LIMIT = 5
 const ANTHROPIC_LIMIT = 10
@@ -24,16 +25,53 @@ const smd = JSON.parse(JSON.stringify(sitemapDocs))
 let docs: Document[] = smd.length > 0 ? formatDocs(smd) : []
 async function getDocs(writeFile = false) {
   if (!docs || docs.length === 0 || !Array.isArray(docs)) {
-    const loader = new SitemapLoader(sitemapUrl, {
-      selector: '.article-content', //extract article content only,
-    })
+    try {
+      const sitemapXml = await fs.promises.readFile(
+        path.resolve('./', 'server', 'sitemap.xml'),
+        'utf8',
+      )
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+      })
+      let sitemap = parser.parse(sitemapXml)
+      if (sitemap.urlset?.url?.length <= 0) {
+        console.log('no urlset.url found')
+        return []
+      }
 
-    docs = await loader.load()
-    docs = formatDocs(docs)
+      const urls = sitemap.urlset.url
 
-    if (writeFile) fs.writeFileSync('server/sitemap_docs.json', JSON.stringify(docs, null, 2))
-    console.log(`[sitemap] loaded sitemap`)
+      const promises = urls.map(async (url) => {
+        const loader = new CheerioWebBaseLoader(url.loc, {
+          selector: '.article-content',
+        })
+        const doc = await loader.load()
+        return {
+          pageContent: doc[0]?.pageContent ?? '',
+          metadata: {
+            ...url,
+          },
+        }
+      })
+
+      const results = await Promise.allSettled(promises)
+      let docs = results
+        .filter(
+          (result): result is PromiseFulfilledResult<Document[]> => result.status === 'fulfilled',
+        )
+        .flatMap((result) => result.value)
+
+      docs = formatDocs(docs)
+      if (writeFile) {
+        await fs.promises.writeFile('server/sitemap_docs.json', JSON.stringify(docs, null, 2))
+      }
+      console.log(`[sitemap] loaded sitemap with ${docs.length} documents`)
+    } catch (error) {
+      console.error('Error in getDocs:', error)
+      docs = []
+    }
   }
+  return docs
 }
 
 export async function populate(useSupabase = false, writeFile = false) {
