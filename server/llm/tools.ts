@@ -10,16 +10,10 @@ const knowledgeBaseLoader = new DynamicTool({
   name: 'knowledge_base',
   description: compiledKbToolPrompt,
   func: async (question: string, runManager, meta) => {
-    const sessionId = meta?.configurable?.sessionId
+    // const sessionId = meta?.configurable?.sessionId
     const isAnthropic = meta?.configurable?.isAnthropic
 
-    const trace = langfuse.trace({
-      name: 'knowledge_base',
-      input: JSON.stringify(question),
-      sessionId,
-    })
-
-    const generation = trace.generation({
+    const generation = langfuse.generation({
       name: 'knowledge_base',
       input: JSON.stringify(question),
       model: 'knowledge_base',
@@ -45,10 +39,6 @@ const knowledgeBaseLoader = new DynamicTool({
           level: 'DEFAULT',
         })
 
-        trace.update({
-          output: JSON.stringify(results[0]),
-        })
-
         return JSON.stringify(results)
       } catch (error) {
         console.error(error)
@@ -59,10 +49,6 @@ const knowledgeBaseLoader = new DynamicTool({
       generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
-      })
-
-      trace.update({
-        output: JSON.stringify(error),
       })
 
       return '[knowledge_base] error in sitemap'
@@ -76,15 +62,9 @@ const WikipediaQuery = new DynamicTool({
   name: 'wikipedia',
   description: wikipediaPrompt,
   func: async (question: string, runManager, meta) => {
-    const sessionId = meta?.configurable?.sessionId
+    // const sessionId = meta?.configurable?.sessionId
 
-    const trace = langfuse.trace({
-      name: 'wikipedia',
-      input: JSON.stringify(question),
-      sessionId,
-    })
-
-    const generation = trace.generation({
+    const generation = langfuse.generation({
       name: 'wikipedia',
       input: JSON.stringify(question),
       model: 'wikipedia',
@@ -108,19 +88,11 @@ const WikipediaQuery = new DynamicTool({
         level: 'DEFAULT',
       })
 
-      trace.update({
-        output: JSON.stringify(result),
-      })
-
       return result
     } catch (error) {
       generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
-      })
-
-      trace.update({
-        output: JSON.stringify(error),
       })
 
       return '[wikipedia] error in wikipediaQuery'
