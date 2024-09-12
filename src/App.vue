@@ -29,13 +29,13 @@ export default {
   async created() {
     if (!this.userStore?.user?.id) {
       const s = await this.clientStore?.client?.auth.getSession()
-      if (s.data?.session?.user) {
+      if (s?.data?.session?.user) {
         this.userStore.user = s.data.session.user
-      } else {
-        await this.userStore.authUser()
+      } else if (this.userStore) {
+        await this.userStore?.authUser()
       }
 
-      if (!this.userStore.user.id) {
+      if (this.userStore && !this.userStore.user.id) {
         this.$router.push('/login')
       }
     }

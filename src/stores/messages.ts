@@ -97,22 +97,32 @@ export const useMessagesStore = defineStore('messages', {
         const chunk = decoder.decode(value)
         if (chunk.length > 0) {
           this.loading = false
-          // if the chunk is a JSON object, it's a conversationId
-          if (chunk.includes('{') && chunk.includes('}')) {
+
+          const match = chunk.match(/(\{.*?\})(.*)/)
+          if (match) {
             try {
-              const jsonData = JSON.parse(chunk)
+              const jsonData = JSON.parse(match[1])
               if (jsonData.conversationId) {
                 receivedConversationId = jsonData.conversationId
               }
+              this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(
+                match[2],
+              )
             } catch (e) {
               console.error('Error parsing JSON:', e)
+              this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
             }
           } else {
-            this.messages[this.messages.length - 1].text += chunk
+            this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
           }
           this.scrollToBottom()
         }
       }
+
+      // Finalize the last message to ensure all links are properly closed
+      this.messages[this.messages.length - 1].text = this.finalizeMarkdownLinks(
+        this.messages[this.messages.length - 1].text,
+      )
 
       // when it's done
       this.loading = false
@@ -124,6 +134,21 @@ export const useMessagesStore = defineStore('messages', {
       }
 
       conversations.getConversations()
+    },
+
+    fixIncompleteMarkdownLinks(text) {
+      return text.replace(/\[([^\]]+)\]\(([^)]+)$/g, (match, p1, p2) => `[${p1}](${p2})`)
+    },
+
+    finalizeMarkdownLinks(text) {
+      // This regex matches any markdown link that's not closed properly
+      const incompleteLink = /\[([^\]]+)\]\(([^)]+)$/
+      const match = text.match(incompleteLink)
+      if (match) {
+        // If there's an incomplete link at the end, close it
+        return text + ')'
+      }
+      return text
     },
 
     async getConversation(sentConversation) {

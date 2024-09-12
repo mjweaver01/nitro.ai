@@ -39,6 +39,12 @@ export const ask = async (
   }
   const { data } = await query
   const messages = data?.[0]?.messages ?? []
+  if (messages.length > 0)
+    console.log(
+      `[ask] existing conversation (${messages.length} message${
+        messages.length > 1 ? 's' : ''
+      }) for ${sessionId}`,
+    )
   const chatHistory: BaseMessage[] = messages.map((message: { role: string; content: string }) => {
     if (message.role === 'ai') {
       return new AIMessage(JSON.stringify(message.content))
@@ -123,7 +129,7 @@ export const ask = async (
             } else {
               const { error } = await supabase.from('conversations').upsert({
                 id: parseInt(sessionId),
-                conversationId: sessionId,
+                conversationId: parseInt(sessionId),
                 model,
                 user,
                 messages: [

@@ -24,12 +24,12 @@ export default async (req: Request, context: Context) => {
     if (latestCacheHit && latestCacheHit.answer && !conversationId) {
       console.log(`[ask] cache hit`)
 
-      const cid = conversationId ?? random()
+      const cid = random()
 
       try {
         await supabase.from('conversations').upsert({
-          id: parseInt(conversationId ?? random()),
-          conversationId: cid,
+          id: parseInt(cid),
+          conversationId: parseInt(cid),
           model,
           user,
           messages: [
