@@ -8,6 +8,7 @@ import { Document } from '@langchain/core/documents'
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
 import { supabase } from './supabase'
 import sitemapDocs from './sitemap_docs.json'
+import sitemapProducts from './sitemap_products.json'
 import { XMLParser } from 'fast-xml-parser'
 
 const OPEN_AI_LIMIT = 5
@@ -22,12 +23,15 @@ const formatDocs = (docs: Document[]) => {
 }
 
 const smd = JSON.parse(JSON.stringify(sitemapDocs))
+const smp = JSON.parse(JSON.stringify(sitemapProducts))
 let docs: Document[] = smd.length > 0 ? formatDocs(smd) : []
-async function getDocs(writeFile = false) {
-  if (!docs || docs.length === 0 || !Array.isArray(docs)) {
+let products: Document[] = smp.length > 0 ? formatDocs(smp) : []
+async function getDocs(writeFile = false, isProducts = false) {
+  const currentDocs = isProducts ? products : docs
+  if (!currentDocs || currentDocs.length === 0 || !Array.isArray(currentDocs)) {
     try {
       const sitemapXml = await fs.promises.readFile(
-        path.resolve('./', 'server', 'sitemap.xml'),
+        path.resolve('./', 'server', isProducts ? 'sitemap_products.xml' : 'sitemap.xml'),
         'utf8',
       )
       const parser = new XMLParser({
@@ -43,7 +47,7 @@ async function getDocs(writeFile = false) {
 
       const promises = urls.map(async (url) => {
         const loader = new CheerioWebBaseLoader(url.loc, {
-          selector: '.article-content',
+          selector: isProducts ? '.top-product-info' : '.article-content',
         })
         const doc = await loader.load()
         return {
@@ -63,7 +67,10 @@ async function getDocs(writeFile = false) {
 
       docs = formatDocs(docs)
       if (writeFile) {
-        await fs.promises.writeFile('server/sitemap_docs.json', JSON.stringify(docs, null, 2))
+        await fs.promises.writeFile(
+          isProducts ? 'server/sitemap_products.json' : 'server/sitemap_docs.json',
+          JSON.stringify(docs, null, 2),
+        )
       }
       console.log(`[sitemap] loaded sitemap with ${docs.length} documents`)
     } catch (error) {
@@ -74,56 +81,53 @@ async function getDocs(writeFile = false) {
   return docs
 }
 
-export async function populate(useSupabase = false, writeFile = false) {
+export async function populate(useSupabase = false, writeFile = false, isProducts = false) {
   // try to get docs from supabase first
   const existingDocs = (await supabase.from('documents').select('*')).data || []
   if (useSupabase && existingDocs.length > 0) {
     docs = formatDocs(existingDocs)
     console.log(`[populate] retrieved documents from supabase`)
   } else {
-    await getDocs(writeFile)
+    await getDocs(writeFile, isProducts)
   }
 }
 
-export const vector = async (question: string, isAnthropic = false) => {
-  console.log(`[vector] searching "${question}"`)
+export const vector = async (question: string, isAnthropic = false, isProducts = false) => {
+  console.log(`[vector:${isProducts ? 'sales_tool' : 'knowledge_base'}] searching "${question}"`)
   const vectorLimit = isAnthropic ? ANTHROPIC_LIMIT : OPEN_AI_LIMIT
+  const currentDocs = isProducts ? products : docs
 
-  if (!docs || docs.length === 0 || !Array.isArray(docs)) {
-    await populate(false, true)
+  if (!currentDocs || currentDocs.length === 0 || !Array.isArray(currentDocs)) {
+    await populate(false, true, isProducts)
   }
 
   // manual filter before sending to embeddings
-  if (Array.isArray(docs) && docs.length > 0) {
+  if (Array.isArray(currentDocs) && currentDocs.length > 0) {
     // presort results
     // this slims down the results to fit our context window
     const d = fuzzysort
-      .go(question, docs, {
+      .go(question, currentDocs, {
         threshold: 0,
         all: true,
-        keys: ['pageContent', 'metadata.title', 'metadata.description', 'metadata.source'],
+        keys: ['pageContent', 'metadata.image.title', 'metadata.image.loc', 'metadata.loc'],
       })
       .map((x) => ({ score: x.score, ...x.obj }))
       .slice(0, vectorLimit)
 
     // fallback filter for fuzzy search
     const qArray = question.split(' ').filter((v) => v.length > 2)
-    const d2 = docs
+    const d2 = currentDocs
       .filter((d: any) => d.pageContent && d.metadata)
       .filter((d: any) =>
-        qArray.some(
-          (v) =>
-            d.metadata.title?.indexOf(v) >= 1 ||
-            d.metadata.description?.indexOf(v) >= 1 ||
-            d.pageContent.indexOf(v) >= 1,
-        ),
+        qArray.some((v) => {
+          const searchText = d?.metadata?.image?.title || d.pageContent
+          return typeof searchText === 'string' && searchText.indexOf(v) >= 0
+        }),
       )
       .map((d: any) => {
+        const searchText = d?.metadata?.image?.title || d.pageContent
         const count = qArray.filter(
-          (v) =>
-            d.metadata.title?.indexOf(v) >= 1 ||
-            d.metadata.description?.indexOf(v) >= 1 ||
-            d.pageContent.indexOf(v) >= 1,
+          (v) => typeof searchText === 'string' && searchText.indexOf(v) >= 0,
         )
 
         return {
@@ -142,7 +146,7 @@ export const vector = async (question: string, isAnthropic = false) => {
     const mergedResults = [...d, ...d2]
       .sort((a: any, b: any) => b.score - a.score)
       .filter(function (item) {
-        var k = item.metadata.url || item.pageContent
+        const k = item.pageContent
         return seen.hasOwnProperty(k) ? false : (seen[k] = true)
       })
       .slice(0, vectorLimit)

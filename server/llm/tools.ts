@@ -3,7 +3,7 @@ import { Calculator } from '@langchain/community/tools/calculator'
 import { DynamicTool } from '@langchain/community/tools/dynamic'
 import langfuse from '../langfuse'
 import { wikipediaPrompt } from '../constants'
-import { compiledKbToolPrompt } from './prompts'
+import { compiledKbToolPrompt, compiledSalesPrompt } from './prompts'
 import { vector, rag } from '../vector'
 
 const knowledgeBaseLoader = new DynamicTool({
@@ -102,6 +102,56 @@ const WikipediaQuery = new DynamicTool({
   },
 })
 
+const salesToolLoader = new DynamicTool({
+  name: 'sales_tool',
+  description: compiledSalesPrompt,
+  func: async (question: string, runManager, meta) => {
+    const isAnthropic = meta?.configurable?.isAnthropic
+
+    const generation = langfuse.generation({
+      name: 'sales_tool',
+      input: JSON.stringify(question),
+      model: 'sales_tool',
+    })
+
+    generation.update({
+      completionStartTime: new Date(),
+    })
+
+    try {
+      try {
+        const results = await vector(question, isAnthropic, true)
+
+        if (results.length > 0) {
+          console.log(
+            `[sales_tool] found ${results.length} result${results.length !== 1 ? 's' : ''}`,
+          )
+        }
+
+        generation.end({
+          output: JSON.stringify(results[0]),
+          level: 'DEFAULT',
+        })
+
+        return JSON.stringify(results)
+      } catch (error) {
+        console.error(error)
+        console.log(`[sales_tool] error in the sitemap`)
+        throw error
+      }
+    } catch (error) {
+      generation.end({
+        output: JSON.stringify(error),
+        level: 'ERROR',
+      })
+
+      return '[sales_tool] error in sitemap'
+    } finally {
+      await langfuse.shutdownAsync()
+    }
+  },
+})
+
 export const tools = [WikipediaQuery, new Calculator()]
 
-export const kbTools = [knowledgeBaseLoader]
+export const kbTools = [knowledgeBaseLoader, salesToolLoader]

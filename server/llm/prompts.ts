@@ -3,6 +3,7 @@ import {
   gistSystemPrompt,
   kbToolPrompt,
   kbSystemPrompt,
+  salesToolPrompt,
   systemPrompt,
   anthropicNudge,
 } from '../constants'
@@ -33,7 +34,8 @@ const kbPrompt = await langfuse.getPrompt('KB_SYSTEM_PROMPT')
 const compiledKbSystemPrompt = kbPrompt.prompt ? kbPrompt.prompt : kbSystemPrompt
 export const gptSystemPromptTemplate = generatePromptTemplate(compiledSystemPrompt)
 export const gistSystemPromptTemplate = generatePromptTemplate(gistSystemPrompt)
-// export const kbSystemPromptTemplate = generatePromptTemplate(compiledKbSystemPrompt)
+const salesPrompt = await langfuse.getPrompt('SALES_SYSTEM_PROMPT')
+export const compiledSalesPrompt = salesPrompt.prompt ? salesPrompt.prompt : salesToolPrompt
 export const kbSystemPromptTemplate = (isAnthropic = false) =>
   generatePromptTemplate(compiledKbSystemPrompt, isAnthropic)
 const remoteKbToolPrompt = await langfuse.getPrompt('KB_TOOL_PROMPT')

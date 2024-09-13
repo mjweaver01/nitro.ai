@@ -78,6 +78,12 @@ It is a great resource for anyone who wants to learn more about the gym, or anyo
 It's also a great resource for people who want to learn more about Louie, the gym, or anything else related to Westside Barbell in general.
 `
 
+export const salesToolPrompt = `
+  This tool contains all the products and services that Westside Barbell offers.
+  The only point of this tool is to return a list of relevant products and services based on the user's query.
+  If the user is not asking about products or services, this tool is not relevant.
+`
+
 export const defaultHeaders = {
   'Content-Type': 'application/json',
 }

@@ -1,5 +1,5 @@
 import langfuse from './langfuse'
-import { type LangfuseTraceClient, type LangfuseSpanClient } from 'langfuse'
+import { type LangfuseTraceClient } from 'langfuse'
 import { CallbackHandler } from 'langfuse-langchain'
 import { supabase } from './supabase'
 import { kbTools } from './llm/tools'
