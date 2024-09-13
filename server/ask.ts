@@ -151,7 +151,7 @@ export const ask = async (
               }
             }
 
-            console.log('[vector] updated conversation', sessionId)
+            console.log('[ask] updated conversation', sessionId)
 
             await saveToCache(Date.now(), input, outputCache, model, user)
 
