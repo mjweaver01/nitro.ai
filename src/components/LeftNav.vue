@@ -41,15 +41,12 @@
     </div>
     <div class="left-nav-items">
       <h4 class="left-nav-header">Past Conversations</h4>
-      <div
-        class="conversations"
-        v-if="conversationsStore?.conversations?.length > 0"
-        @click="messagesStore.setConversation(conversation, true)"
-      >
+      <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
         <div
           class="conversation"
           :class="{ hover: conversation.id === messagesStore.conversation?.id }"
           v-for="conversation in conversationsStore.conversations"
+          @click="messagesStore.setConversation(conversation, true)"
         >
           {{ conversation.messages[0].content }}
         </div>

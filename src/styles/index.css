@@ -514,10 +514,6 @@ a {
   cursor: pointer;
 }
 
-.left-nav .conversations .conversation:first-of-type {
-  margin-top: 0.5em;
-}
-
 .left-nav .conversations .conversation:last-of-type {
   margin-bottom: 0.5em;
 }
