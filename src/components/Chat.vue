@@ -11,7 +11,8 @@
       <div class="ask-question" v-if="userStore?.user?.id">
         <form @submit.prevent="messagesStore.ask()">
           <div class="input-wrapper">
-            <input
+            <textarea
+              rows="1"
               id="question-input"
               name="question"
               placeholder="Ask anything..."

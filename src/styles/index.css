@@ -182,7 +182,10 @@ i {
 
 .account-top {
   border-bottom: 1px solid var(--border-color);
-  padding: 1em;
+  padding: 0.775em 1em;
+}
+
+.account-top-top {
   display: flex;
   justify-content: space-between;
   gap: 1em;
@@ -190,7 +193,7 @@ i {
 }
 
 .account-top .account-header {
-  margin: 0 0 0.5rem;
+  margin: 0;
 }
 
 .account-top .logout p {
@@ -200,7 +203,6 @@ i {
 .account-top .info-status {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 1em;
 }
@@ -240,7 +242,7 @@ i {
 }
 
 .account-last-login {
-  margin-bottom: 0.5em;
+  margin: 0 0 0.25em;
 }
 
 .account-conversation .imessage {
@@ -312,6 +314,10 @@ select {
   border-radius: 5px;
   width: 100%;
   font-size: 1rem;
+}
+
+textarea {
+  resize: none;
 }
 
 .select {
