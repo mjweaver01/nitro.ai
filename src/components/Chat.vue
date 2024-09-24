@@ -17,6 +17,7 @@
               name="question"
               placeholder="Ask anything..."
               v-model="messagesStore.question"
+              @keydown.enter.exact.prevent="messagesStore.ask()"
             />
             <div class="select">
               <select v-model="messagesStore.llm" @change="messagesStore.setLlm">
