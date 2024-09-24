@@ -154,7 +154,7 @@ export const vector = async (question: string, isAnthropic = false, isProducts =
     // anthropic doesn't have it's own text embedding model
     // so we'll just use fuzzysort directly
     if (isAnthropic) {
-      console.log(`[vector] isAnthropic - skip vector & use fuzzysort directly`)
+      console.log(`[vector] anthropic - skip vector & use fuzzysort directly`)
       return mergedResults
     } else {
       const hnsw = await HNSWLib.fromDocuments(
