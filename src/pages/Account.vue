@@ -5,17 +5,10 @@
         <div className="account-top-top">
           <div>
             <h2 class="account-header">Account</h2>
-            <p class="account-last-login">
-              Last login:
-              {{ new Date(userStore?.user?.last_sign_in_at).toLocaleDateString('en-US') }} at
-              {{
-                new Date(userStore?.user?.last_sign_in_at).toLocaleTimeString('en-US', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  hour12: true,
-                })
-              }}
-            </p>
+            <div class="info-status">
+              <h4 class="account-header">{{ userStore?.user?.email }}</h4>
+              <div class="pill">{{ userStore?.user?.role }}</div>
+            </div>
           </div>
           <div>
             <!-- <h4 class="account-header">{{ userStore?.user?.id }}</h4> -->
@@ -31,10 +24,17 @@
             </div>
           </div>
         </div>
-        <div class="info-status">
-          <h4 class="account-header">{{ userStore?.user?.email }}</h4>
-          <div class="pill">{{ userStore?.user?.role }}</div>
-        </div>
+        <p class="account-last-login">
+          Last login:
+          {{ new Date(userStore?.user?.last_sign_in_at).toLocaleDateString('en-US') }} at
+          {{
+            new Date(userStore?.user?.last_sign_in_at).toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            })
+          }}
+        </p>
       </div>
       <div class="account-conversations" v-if="conversationsStore?.conversations?.length > 0">
         <h3 class="account-conversations-header">

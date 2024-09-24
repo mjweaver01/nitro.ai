@@ -9,11 +9,15 @@
       style="font-size: 1.25rem"
       @click="sidebarStore?.setForceShow(!sidebarStore?.forceShow)"
     ></i>
-    <i
-      class="force-desktop-hide pi pi-window-minimize"
-      style="font-size: 0.9rem; transform: rotate(45deg)"
+    <div
+      class="force-show-hide-button"
       @click="sidebarStore?.setDesktopHide(!sidebarStore?.desktopHide)"
-    ></i>
+    >
+      <i
+        class="force-desktop-hide pi pi-window-minimize"
+        style="font-size: 0.9rem; transform: rotate(45deg)"
+      ></i>
+    </div>
   </div>
 </template>
 

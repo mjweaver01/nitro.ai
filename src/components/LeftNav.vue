@@ -1,15 +1,14 @@
 <template>
   <div class="small-sidebar" v-if="sidebarStore?.desktopHide">
     <div class="sidebar-section">
-      <div class="new-conversation sidebar-item maximize">
-        <i
-          class="pi pi-window-maximize"
-          style="font-size: 0.9rem; transform: rotate(45deg)"
-          @click="sidebarStore?.setDesktopHide(!sidebarStore?.desktopHide)"
-        ></i>
+      <div
+        class="new-conversation sidebar-item maximize"
+        @click="sidebarStore?.setDesktopHide(!sidebarStore?.desktopHide)"
+      >
+        <i class="pi pi-window-maximize" style="font-size: 0.9rem; transform: rotate(45deg)"></i>
       </div>
-      <div class="new-conversation sidebar-item">
-        <div class="conversation" @click="messagesStore.clearConversation()">
+      <div class="new-conversation sidebar-item" @click="messagesStore.clearConversation()">
+        <div class="conversation">
           <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
         </div>
       </div>
@@ -42,12 +41,15 @@
     </div>
     <div class="left-nav-items">
       <h4 class="left-nav-header">Past Conversations</h4>
-      <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
+      <div
+        class="conversations"
+        v-if="conversationsStore?.conversations?.length > 0"
+        @click="messagesStore.setConversation(conversation, true)"
+      >
         <div
           class="conversation"
           :class="{ hover: conversation.id === messagesStore.conversation?.id }"
           v-for="conversation in conversationsStore.conversations"
-          @click="messagesStore.setConversation(conversation, true)"
         >
           {{ conversation.messages[0].content }}
         </div>
