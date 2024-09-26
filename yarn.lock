@@ -1123,18 +1123,6 @@ showdown-mathjax@^1.0.7:
   dependencies:
     showdown "^2.1.0"
 
-showdown-table@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/showdown-table/-/showdown-table-1.0.1.tgz#16b33a5430b5ed96c3be44d0c3dfcaa3fd8a7654"
-  integrity sha512-WWrSCI6yFkCF4Y443ebMLEjPZ9iJ/JFxOTV8K0qKeTJ6+FBlYU2I10x+y46oYWHGweE2xR9Db6zFmT1SmwoHJQ==
-  dependencies:
-    showdown "1.0.x"
-
-showdown@1.0.x:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/showdown/-/showdown-1.0.2.tgz#bc42bbbc01009112bb14e30cc845bb40fde82544"
-  integrity sha512-e+xCK1kBc+AVxeyWs0uJNSziPv/CLkIvH11qwFresBC02D2wFwF822D+jIkHnVWXxfEDSDIi2nt620RE2EoA5g==
-
 showdown@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/showdown/-/showdown-2.1.0.tgz#1251f5ed8f773f0c0c7bfc8e6fd23581f9e545c5"
@@ -1219,6 +1207,11 @@ vue-demi@^0.14.10:
   version "0.14.10"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.10.tgz#afc78de3d6f9e11bf78c55e8510ee12814522f04"
   integrity sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==
+
+vue-mathjax-next@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/vue-mathjax-next/-/vue-mathjax-next-0.0.6.tgz#6f0d7b2bc30edd363bd94ab60ad42a5c2ccb6ade"
+  integrity sha512-H4nZ8t31TmBJgiR6pHrOGz+RWhlw34d0yhD8fi8CnXoGOydGFreNH/Crd/9Jfd2IMSu/I0AC3ymT9D09JRMIrw==
 
 vue-router@^4.4.0:
   version "4.4.5"

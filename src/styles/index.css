@@ -41,6 +41,7 @@
 
 pre {
   display: inline;
+  overflow: auto;
 }
 
 h1,
