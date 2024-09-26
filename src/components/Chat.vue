@@ -26,7 +26,10 @@
               </select>
             </div>
           </div>
-          <button type="submit">
+          <button v-if="messagesStore.streaming" @click="messagesStore.cancelStream()">
+            <i class="pi pi-stop-circle"></i>
+          </button>
+          <button type="submit" :disabled="messagesStore.loading" v-else>
             <i class="pi pi-send"></i>
           </button>
         </form>

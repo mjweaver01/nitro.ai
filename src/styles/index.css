@@ -317,6 +317,9 @@ select {
   font-size: 1rem;
 }
 
+button:disabled {
+}
+
 button[type='submit'] {
   display: flex;
   align-items: center;
@@ -374,7 +377,7 @@ button:disabled {
   background: var(--light-blue);
 }
 
-button:hover {
+button:hover:not([disabled]) {
   background: var(--dark-blue);
   border-color: var(--dark-blue);
 }

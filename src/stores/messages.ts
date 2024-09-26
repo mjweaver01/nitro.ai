@@ -13,6 +13,7 @@ export const useMessagesStore = defineStore('messages', {
     llm: 'openai',
     router: useRouter(),
     nocache: false,
+    streaming: false,
   }),
   actions: {
     async ask(sentQuestion = '') {
@@ -43,6 +44,9 @@ export const useMessagesStore = defineStore('messages', {
         this.nocache = false
       }
 
+      // Initialize the AbortController
+      this.abortController = new AbortController()
+
       const response = await fetch(`/.netlify/functions/ask${window.location.search}`, {
         method: 'POST',
         headers: {
@@ -55,6 +59,7 @@ export const useMessagesStore = defineStore('messages', {
           user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
           nocache: this.nocache,
         }),
+        signal: this.abortController.signal,
       })
 
       if (!response.ok) {
@@ -90,10 +95,14 @@ export const useMessagesStore = defineStore('messages', {
       let aiMessage = { text: '', isUser: false }
       this.messages.push(aiMessage)
       let receivedConversationId = null
+      this.streaming = true
 
       while (true) {
         const { value, done } = await reader.read()
-        if (done) break
+        if (done) {
+          this.streaming = false
+          break
+        }
         const chunk = decoder.decode(value)
         if (chunk.length > 0) {
           this.loading = false
@@ -134,6 +143,19 @@ export const useMessagesStore = defineStore('messages', {
       }
 
       conversations.getConversations()
+    },
+
+    cancelStream() {
+      if (this.abortController) {
+        this.abortController.abort()
+        this.loading = false
+        this.streaming = false
+        this.messages.push({
+          text: 'Stream has been canceled.',
+          isUser: false,
+        })
+        this.scrollToBottom()
+      }
     },
 
     fixIncompleteMarkdownLinks(text) {

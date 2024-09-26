@@ -6,8 +6,13 @@
         'from-me': message.isUser || message.role === 'user',
         'from-them': !message.isUser && message.role !== 'user',
       }"
-      v-html="sanitizeMessage(message.text?.output ?? message.text ?? message.content)"
-    ></p>
+    >
+      <VueShowdown
+        :markdown="message.text?.output ?? message.text ?? message.content"
+        :extensions="[showdownMathjax]"
+        :options="{ emoji: true, tables: true }"
+      />
+    </p>
     <p v-if="messagesStore?.loading" class="from-them loading-message">
       <span class="loading">
         <span class="dot one"></span>
@@ -23,23 +28,16 @@
 <script>
 import { mapStores } from 'pinia'
 import { useMessagesStore } from '../stores/messages'
-import showdown from 'showdown'
+import { VueShowdown } from 'vue-showdown'
+import showdownMathjax from 'showdown-mathjax'
 
 export default {
   props: ['messages'],
   computed: {
     ...mapStores(useMessagesStore),
   },
-  data() {
-    return {
-      converter: new showdown.Converter(),
-    }
-  },
-
   methods: {
-    sanitizeMessage(message) {
-      return this.converter.makeHtml(message)
-    },
+    showdownMathjax,
   },
 }
 </script>

@@ -1,6 +1,7 @@
 import { createApp, markRaw } from 'vue'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { createPinia, setMapStoreSuffix } from 'pinia'
+import { VueShowdownPlugin } from 'vue-showdown'
 
 import App from './App.vue'
 import { routes } from './routes'
@@ -24,6 +25,7 @@ setMapStoreSuffix('')
 
 app.use(pinia)
 app.use(router)
+app.use(VueShowdownPlugin)
 
 app.mount('#app')
 
