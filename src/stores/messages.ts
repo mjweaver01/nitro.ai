@@ -83,6 +83,7 @@ export const useMessagesStore = defineStore('messages', {
         if (cachedData.conversationId) {
           this.conversationId = cachedData.conversationId
           this.router.push(`/chat/${cachedData.conversationId}`)
+          this.mathjax()
         }
 
         conversations.getConversations()
@@ -101,6 +102,7 @@ export const useMessagesStore = defineStore('messages', {
         const { value, done } = await reader.read()
         if (done) {
           this.streaming = false
+          this.mathjax()
           break
         }
         const chunk = decoder.decode(value)
@@ -124,6 +126,7 @@ export const useMessagesStore = defineStore('messages', {
           } else {
             this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
           }
+          this.mathjax()
           this.scrollToBottom()
         }
       }
@@ -155,6 +158,14 @@ export const useMessagesStore = defineStore('messages', {
           isUser: false,
         })
         this.scrollToBottom()
+      }
+    },
+
+    mathjax() {
+      if (typeof window !== 'undefined' && window.MathJax) {
+        nextTick(() => {
+          window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub])
+        })
       }
     },
 
@@ -230,6 +241,7 @@ export const useMessagesStore = defineStore('messages', {
       } else {
         this.scrollToBottom()
       }
+      this.mathjax()
     },
 
     sanitizeMessage(message) {

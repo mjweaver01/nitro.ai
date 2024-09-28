@@ -1208,11 +1208,6 @@ vue-demi@^0.14.10:
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.10.tgz#afc78de3d6f9e11bf78c55e8510ee12814522f04"
   integrity sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==
 
-vue-mathjax-next@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/vue-mathjax-next/-/vue-mathjax-next-0.0.6.tgz#6f0d7b2bc30edd363bd94ab60ad42a5c2ccb6ade"
-  integrity sha512-H4nZ8t31TmBJgiR6pHrOGz+RWhlw34d0yhD8fi8CnXoGOydGFreNH/Crd/9Jfd2IMSu/I0AC3ymT9D09JRMIrw==
-
 vue-router@^4.4.0:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.4.5.tgz#bdf535e4cf32414ebdea6b4b403593efdb541388"

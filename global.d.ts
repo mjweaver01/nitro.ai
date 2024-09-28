@@ -1,4 +1,8 @@
 declare global {
+  interface Window {
+    MathJax?: any
+  }
+
   type HelpCenterLink = {
     title: string
     link: string

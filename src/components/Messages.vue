@@ -40,14 +40,7 @@ export default {
     showdownMathjax,
   },
   mounted() {
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub])
-  },
-  watch: {
-    messages() {
-      this.$nextTick(() => {
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub])
-      })
-    },
+    this.messagesStore?.mathjax()
   },
 }
 </script>
