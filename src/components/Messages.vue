@@ -1,5 +1,14 @@
 <template>
   <div id="imessage" class="imessage" v-if="messages?.length > 0">
+    <VueShowdown
+      :markdown="'$$ \\text{Total} = \\text{Squat} + \\text{Bench Press} + \\text{Deadlift} $$'"
+      :extensions="[showdownMathjax]"
+      :options="{
+        emoji: true,
+        tables: true,
+        math: true,
+      }"
+    />
     <p
       v-for="message in messages"
       v-bind:class="{
@@ -10,7 +19,7 @@
       <VueShowdown
         :markdown="message.text?.output ?? message.text ?? message.content"
         :extensions="[showdownMathjax]"
-        :options="{ emoji: true, tables: true }"
+        :options="{ emoji: true, tables: true, math: true }"
       />
     </p>
     <p v-if="messagesStore?.loading" class="from-them loading-message">
@@ -38,6 +47,16 @@ export default {
   },
   methods: {
     showdownMathjax,
+  },
+  mounted() {
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub])
+  },
+  watch: {
+    messages() {
+      this.$nextTick(() => {
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub])
+      })
+    },
   },
 }
 </script>
