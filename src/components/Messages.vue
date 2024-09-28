@@ -1,14 +1,5 @@
 <template>
   <div id="imessage" class="imessage" v-if="messages?.length > 0">
-    <VueShowdown
-      :markdown="'$$ \\text{Total} = \\text{Squat} + \\text{Bench Press} + \\text{Deadlift} $$'"
-      :extensions="[showdownMathjax]"
-      :options="{
-        emoji: true,
-        tables: true,
-        math: true,
-      }"
-    />
     <p
       v-for="message in messages"
       v-bind:class="{
