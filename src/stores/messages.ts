@@ -126,7 +126,6 @@ export const useMessagesStore = defineStore('messages', {
           } else {
             this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
           }
-          this.mathjax()
           this.scrollToBottom()
         }
       }
