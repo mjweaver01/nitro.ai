@@ -17,6 +17,7 @@
   position: relative;
   word-wrap: break-word;
   overflow: auto;
+  border-radius: 0;
 }
 
 @media (min-width: 500px) {
