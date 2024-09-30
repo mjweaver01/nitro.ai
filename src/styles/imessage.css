@@ -16,8 +16,14 @@
   padding: 0.5rem 0.875rem;
   position: relative;
   word-wrap: break-word;
-  overflow: auto;
+}
+
+.imessage p * {
   border-radius: 0;
+}
+
+.imessage p div p {
+  overflow: auto;
 }
 
 @media (min-width: 500px) {
