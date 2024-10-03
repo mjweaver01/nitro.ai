@@ -8,6 +8,7 @@ export const shopify = createAdminApiClient({
 
 export const searchShopify = async (question: string, isProducts: boolean) => {
   console.log(`[shopify] searching "${question}" (${isProducts ? 'products' : 'articles'})`)
+
   const operation = isProducts
     ? `
     {
@@ -45,6 +46,10 @@ export const searchShopify = async (question: string, isProducts: boolean) => {
           node {
             id
             title
+            blog {
+              handle
+            }
+            handle
             image {
               id
               url
@@ -68,7 +73,10 @@ const formatShopifyData = (data) => {
   if (data?.products?.edges?.length > 0) {
     return data.products?.edges.map((node) => node.node)
   } else if (data?.articles?.edges?.length > 0) {
-    return data.articles?.edges.map((node) => node.node)
+    return data.articles?.edges.map((node) => ({
+      ...node.node,
+      linkPath: `/blogs/${node.node.blog.handle}/${node.node.handle}`,
+    }))
   }
 
   return []
