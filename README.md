@@ -4,9 +4,9 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ecbff681-d90b-4a5b-9835-3e5678d32a21/deploy-status)](https://app.netlify.com/sites/nitroai/deploys)
 
-> A knowledge base chatbot, pre-trained on WSBB's blog, via sitemap XML
+> A knowledge base chatbot, pre-trained on WSBB's Shopify data
 
-Using filtered results from [Westside Barbell's Shopify Blog Sitemap](https://raw.githubusercontent.com/mjweaver01/langchain-kb/master/src/assets/sitemap_blogs_1.xml)
+Pulling blog and product data from the Shopify Admin API, with fallback data from the sitemap.
 
 Powered by [Langchain](https://js.langchain.com/) and [Langfuse](https://langfuse.com)
 
@@ -28,6 +28,7 @@ nvm use && yarn && yarn dev
 - https://langfuse.com/docs/prompts/get-started#use-prompt
 - https://github.com/langfuse/langfuse-docs/blob/main/pages/api/qa-chatbot.ts
 - https://supabase.com/docs/reference/javascript/
+- https://shopify.dev/docs/api/admin-graphql/
 
 ## &#129497;&#8205;&#9794;&#65039; Dev server
 
