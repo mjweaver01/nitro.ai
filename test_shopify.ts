@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { searchShopify } from './server/clients/shopify'
 
 const testShopify = async () => {
