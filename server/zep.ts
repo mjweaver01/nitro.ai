@@ -21,3 +21,18 @@ export const getZepResults = async (question: string, sessionId: string) => {
     return []
   }
 }
+
+export const saveToZep = async (sessionId: string, newMessages: any[]) => {
+  try {
+    await zep.memory.add(sessionId, {
+      messages: newMessages.map((m) => ({
+        ...m,
+        roleType: m.role === 'ai' ? 'assistant' : 'user',
+      })),
+    })
+
+    console.log(`[zep] updated zep memory on ${sessionId}`)
+  } catch {
+    console.log('[zep] could not save to zep')
+  }
+}

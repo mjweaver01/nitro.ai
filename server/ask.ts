@@ -9,7 +9,7 @@ import { llm as anthropicLlm, kbModelWithTools as anthropicKbModelWithTools } fr
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
-import { zep } from './zep'
+import { saveToZep } from './zep'
 
 // langchain stuff
 import {
@@ -137,12 +137,7 @@ export const ask = async (
                 console.error(error.message)
               }
 
-              await zep.memory.add(sessionId, {
-                messages: newMessages.map((m) => ({
-                  ...m,
-                  roleType: m.role === 'ai' ? 'assistant' : 'user',
-                })),
-              })
+              await saveToZep(sessionId, newMessages)
             } else {
               const newMessages = [
                 { role: 'user', content: input },
@@ -160,12 +155,7 @@ export const ask = async (
                 console.error(error.message)
               }
 
-              await zep.memory.add(sessionId, {
-                messages: newMessages.map((m) => ({
-                  ...m,
-                  roleType: m.role === 'ai' ? 'assistant' : 'user',
-                })),
-              })
+              await saveToZep(sessionId, newMessages)
             }
 
             console.log('[ask] updated conversation', sessionId)
