@@ -1,0 +1,75 @@
+import { createAdminApiClient } from '@shopify/admin-api-client'
+
+export const shopify = createAdminApiClient({
+  storeDomain: process.env.VITE_SHOPIFY_STORE,
+  accessToken: process.env.VITE_SHOPIFY_ACCESS_TOKEN,
+  apiVersion: '2024-10',
+})
+
+export const searchShopify = async (question: string, isProducts: boolean) => {
+  console.log(`[shopify] searching "${question}" (${isProducts ? 'products' : 'articles'})`)
+  const operation = isProducts
+    ? `
+    {
+      products(first: 10, query:"${question}") {
+        edges {
+          node {
+            id
+            title
+            description
+            handle
+            onlineStoreUrl
+            priceRangeV2 {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images (first:3) {
+              edges {
+                node {
+                  url
+                }
+              }
+            }
+          }
+          cursor
+        }
+      }
+    }
+  `
+    : `
+    {
+      articles(first: 10, query:"${question}") {
+        edges {
+          node {
+            id
+            title
+            image {
+              id
+              url
+            }
+            body
+          }
+          cursor
+        }
+      }
+    }
+  `
+
+  const { data } = await shopify.request(operation)
+  const formattedData = formatShopifyData(data)
+  console.log(`[shopify] found ${formattedData.length} results`)
+
+  return formattedData
+}
+
+const formatShopifyData = (data) => {
+  if (data?.products?.edges?.length > 0) {
+    return data.products?.edges.map((node) => node.node)
+  } else if (data?.articles?.edges?.length > 0) {
+    return data.articles?.edges.map((node) => node.node)
+  }
+
+  return []
+}

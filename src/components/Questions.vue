@@ -1,10 +1,10 @@
 <template>
   <div v-if="userStore?.user?.id">
-    <div class="questions" v-if="messagesStore.messages.length <= 0">
+    <div class="questions" v-if="messagesStore?.messages?.length <= 0">
       <div
         class="question"
         v-for="question in defaultQuestions"
-        @click="messagesStore.ask(question)"
+        @click="messagesStore?.ask(question)"
       >
         {{ question }}
       </div>

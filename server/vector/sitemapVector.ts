@@ -6,9 +6,9 @@ import { SupabaseVectorStore } from '@langchain/community/vectorstores/supabase'
 import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 import { Document } from '@langchain/core/documents'
 import { CheerioWebBaseLoader } from '@langchain/community/document_loaders/web/cheerio'
-import { supabase } from './supabase'
-import sitemapDocs from './sitemap_docs.json'
-import sitemapProducts from './sitemap_products.json'
+import { supabase } from '../clients/supabase'
+import sitemapDocs from '../sitemap_docs.json'
+import sitemapProducts from '../sitemap_products.json'
 import { XMLParser } from 'fast-xml-parser'
 
 const OPEN_AI_LIMIT = 5
@@ -92,7 +92,7 @@ export async function populate(useSupabase = false, writeFile = false, isProduct
   }
 }
 
-export const vector = async (question: string, isAnthropic = false, isProducts = false) => {
+export const sitemapVector = async (question: string, isAnthropic = false, isProducts = false) => {
   console.log(`[vector:${isProducts ? 'sales_tool' : 'knowledge_base'}] searching "${question}"`)
   const vectorLimit = isAnthropic ? ANTHROPIC_LIMIT : OPEN_AI_LIMIT
   const currentDocs = isProducts ? products : docs

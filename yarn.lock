@@ -332,6 +332,18 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.22.4.tgz#3dd5d53e900df2a40841882c02e56f866c04d202"
   integrity sha512-j8pPKp53/lq9lMXN57S8cFz0MynJk8OWNuUnXct/9KCpKU7DgU3bYMJhwWmcqC0UU29p8Lr0/7KEVcaM6bf47Q==
 
+"@shopify/admin-api-client@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@shopify/admin-api-client/-/admin-api-client-1.0.3.tgz#b7d961c9717e8f9487464fc61b94054fd25b858a"
+  integrity sha512-m0lIYYhij7J697qxD0KiwJ4m0IchCq+JMp/7zWndq9M6XUssW2gxisFQ6i0nqiujCx4omUbO96DVvBbugq6OYw==
+  dependencies:
+    "@shopify/graphql-client" "^1.2.0"
+
+"@shopify/graphql-client@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@shopify/graphql-client/-/graphql-client-1.2.0.tgz#9907021145ba5199681b486c14e08165133cc968"
+  integrity sha512-xHboSDWetnprv6nxhw3N9gjx1vTFZPVXTD5WH6IEQNPjf4M+S05R4nHruX0iAsfKObFDbxwBXZldao/XrRHX9Q==
+
 "@supabase/auth-js@2.65.0":
   version "2.65.0"
   resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.65.0.tgz#e345c492f8cbc31cd6289968eae0e349ff0f39e9"

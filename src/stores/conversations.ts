@@ -52,8 +52,8 @@ export const useConversationsStore = defineStore('conversations', {
 
         // Clear the current conversation if it's the one being deleted
         const messagesStore = useMessagesStore()
-        if (messagesStore.conversationId === conversationId) {
-          messagesStore.clearConversation()
+        if (messagesStore?.conversationId === conversationId) {
+          messagesStore?.clearConversation()
         }
       } catch (error) {
         console.error('Error deleting conversation:', error)

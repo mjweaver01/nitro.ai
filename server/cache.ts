@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { supabase } from './clients/supabase'
 
 export const getCache = async (
   model: string,

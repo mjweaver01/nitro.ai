@@ -7,7 +7,7 @@ import {
   systemPrompt,
   anthropicNudge,
 } from '../constants'
-import langfuse from '../langfuse'
+import langfuse from '../clients/langfuse'
 
 export const generatePromptTemplate = (sentPrompt: string, isAnthropic?: boolean) => {
   return ChatPromptTemplate.fromMessages(

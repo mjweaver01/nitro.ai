@@ -17,6 +17,7 @@
     "@langchain/core": "^0.3.5",
     "@langchain/openai": "^0.3.4",
     "@langchain/textsplitters": "^0.1.0",
+    "@shopify/admin-api-client": "^1.0.3",
     "@supabase/supabase-js": "^2.42.3",
     "cheerio": "^1.0.0",
     "crypto-random-bigint": "^2.1.0",

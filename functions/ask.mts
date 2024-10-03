@@ -1,4 +1,4 @@
-import { supabase } from '../server/supabase'
+import { supabase } from '../server/clients/supabase'
 import type { Context } from '@netlify/functions'
 import { getCache } from '../server/cache'
 import { askQuestion } from '../server/ask'

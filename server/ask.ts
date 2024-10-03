@@ -1,7 +1,7 @@
-import langfuse from './langfuse'
+import langfuse from './clients/langfuse'
 import { type LangfuseTraceClient } from 'langfuse'
 import { CallbackHandler } from 'langfuse-langchain'
-import { supabase } from './supabase'
+import { supabase } from './clients/supabase'
 import { kbTools } from './llm/tools'
 import { kbSystemPromptTemplate } from './llm/prompts'
 import { kbModelWithFunctions } from './llm/openai'
@@ -162,7 +162,7 @@ export const ask = async (
 
             await saveToCache(Date.now(), input, outputCache, model, user)
 
-            trace.update({
+            await trace.update({
               output: JSON.stringify(outputCache),
               sessionId,
               metadata: {
@@ -171,7 +171,7 @@ export const ask = async (
                 tokens,
               },
             })
-            langfuse.shutdownAsync()
+            await langfuse.shutdownAsync()
 
             writer.close()
           },

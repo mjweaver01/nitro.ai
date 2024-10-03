@@ -7,7 +7,7 @@
       >
         <i class="pi pi-window-maximize" style="font-size: 0.9rem; transform: rotate(45deg)"></i>
       </div>
-      <div class="new-conversation sidebar-item" @click="messagesStore.clearConversation()">
+      <div class="new-conversation sidebar-item" @click="messagesStore?.clearConversation()">
         <div class="conversation">
           <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
         </div>
@@ -33,7 +33,7 @@
     }"
   >
     <MobileNav />
-    <div class="new-conversation" @click="messagesStore.clearConversation()">
+    <div class="new-conversation" @click="messagesStore?.clearConversation()">
       <div class="conversation">
         <span>New Conversation</span>
         <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
@@ -44,9 +44,9 @@
       <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
         <div
           class="conversation"
-          :class="{ hover: conversation.id === messagesStore.conversation?.id }"
+          :class="{ hover: conversation.id === messagesStore?.conversation?.id }"
           v-for="conversation in conversationsStore.conversations"
-          @click="messagesStore.setConversation(conversation, true)"
+          @click="messagesStore?.setConversation(conversation, true)"
         >
           {{ conversation.messages[0].content }}
         </div>

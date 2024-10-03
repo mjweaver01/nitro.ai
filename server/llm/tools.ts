@@ -1,10 +1,10 @@
 import { WikipediaQueryRun } from '@langchain/community/tools/wikipedia_query_run'
 import { Calculator } from '@langchain/community/tools/calculator'
 import { DynamicTool } from '@langchain/community/tools/dynamic'
-import langfuse from '../langfuse'
+import langfuse from '../clients/langfuse'
 import { wikipediaPrompt } from '../constants'
 import { compiledKbToolPrompt, compiledSalesPrompt } from './prompts'
-import { vector, rag } from '../vector'
+import { vector } from '../vector/vector'
 import { getZepResults } from '../zep'
 
 const knowledgeBaseLoader = new DynamicTool({
@@ -20,7 +20,7 @@ const knowledgeBaseLoader = new DynamicTool({
       model: 'knowledge_base',
     })
 
-    generation.update({
+    await generation.update({
       completionStartTime: new Date(),
     })
 
@@ -38,24 +38,24 @@ const knowledgeBaseLoader = new DynamicTool({
           )
         }
 
-        generation.end({
-          output: JSON.stringify([results[0], zepResults[0]]),
+        await generation.end({
+          output: JSON.stringify(endResults[0]),
           level: 'DEFAULT',
         })
 
-        return JSON.stringify(results)
-      } catch (error) {
-        console.error(error)
+        return JSON.stringify(endResults)
+      } catch {
         console.log(`[knowledge_base] error in the sitemap`)
-        throw error
+        return []
       }
     } catch (error) {
-      generation.end({
+      await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
       })
 
-      return '[knowledge_base] error in sitemap'
+      console.log('[knowledge_base] error in sitemap')
+      return []
     } finally {
       await langfuse.shutdownAsync()
     }
@@ -75,7 +75,7 @@ const WikipediaQuery = new DynamicTool({
     })
 
     try {
-      generation.update({
+      await generation.update({
         completionStartTime: new Date(),
       })
 
@@ -87,14 +87,14 @@ const WikipediaQuery = new DynamicTool({
       const result = await wikipediaQuery.call(question)
       console.log(`[wikipedia] ${JSON.stringify(result).substring(0, 100)}`)
 
-      generation.end({
+      await generation.end({
         output: JSON.stringify(result),
         level: 'DEFAULT',
       })
 
       return result
     } catch (error) {
-      generation.end({
+      await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
       })
@@ -119,7 +119,7 @@ const salesToolLoader = new DynamicTool({
       model: 'sales_tool',
     })
 
-    generation.update({
+    await generation.update({
       completionStartTime: new Date(),
     })
 
@@ -135,8 +135,8 @@ const salesToolLoader = new DynamicTool({
           )
         }
 
-        generation.end({
-          output: JSON.stringify([results[0], zepResults[0]]),
+        await generation.end({
+          output: JSON.stringify(endResults[0]),
           level: 'DEFAULT',
         })
 
@@ -147,12 +147,13 @@ const salesToolLoader = new DynamicTool({
         throw error
       }
     } catch (error) {
-      generation.end({
+      await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
       })
 
-      return '[sales_tool] error in sitemap'
+      console.log('[sales_tool] error in sitemap')
+      return []
     } finally {
       await langfuse.shutdownAsync()
     }

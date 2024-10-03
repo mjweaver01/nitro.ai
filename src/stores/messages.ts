@@ -33,7 +33,7 @@ export const useMessagesStore = defineStore('messages', {
       this.question = ''
 
       this.messages.push({
-        text: question,
+        content: question,
         isUser: true,
       })
 
@@ -145,6 +145,13 @@ export const useMessagesStore = defineStore('messages', {
       }
 
       conversations.getConversations()
+    },
+
+    setPrevousQuestion() {
+      if (this.messages.length > 1) {
+        const prevUserQuestion = this.messages[this.messages.length - 2]
+        this.question = prevUserQuestion.content
+      }
     },
 
     cancelStream() {
