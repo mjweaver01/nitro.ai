@@ -9,6 +9,7 @@ import { llm as anthropicLlm, kbModelWithTools as anthropicKbModelWithTools } fr
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
+import { zep } from './zep'
 
 // langchain stuff
 import {
@@ -55,7 +56,7 @@ export const ask = async (
     }
   })
 
-  const trace = langfuse.trace({
+  const trace = (await langfuse.trace({
     name: `ask`,
     input: JSON.stringify(input),
     sessionId,
@@ -63,7 +64,7 @@ export const ask = async (
       model,
       user,
     },
-  }) as LangfuseTraceClient | any
+  })) as LangfuseTraceClient | any
 
   const langfuseHandler = new CallbackHandler({ root: trace })
 
@@ -117,15 +118,16 @@ export const ask = async (
 
             // need to check conversationId exists here, not sessionId
             if (conversationId && messages.length > 0) {
+              const newMessages = [
+                { role: 'user', content: input },
+                { role: 'ai', content: outputCache },
+              ]
+
               const { error } = await supabase
                 .from('conversations')
                 .update([
                   {
-                    messages: [
-                      ...messages,
-                      { role: 'user', content: input },
-                      { role: 'ai', content: outputCache },
-                    ],
+                    messages: [...messages, ...newMessages],
                   },
                 ])
                 .eq('id', parseInt(conversationId))
@@ -134,21 +136,36 @@ export const ask = async (
               if (error) {
                 console.error(error.message)
               }
+
+              await zep.memory.add(sessionId, {
+                messages: newMessages.map((m) => ({
+                  ...m,
+                  roleType: m.role === 'ai' ? 'assistant' : 'user',
+                })),
+              })
             } else {
+              const newMessages = [
+                { role: 'user', content: input },
+                { role: 'ai', content: outputCache },
+              ]
+
               const { error } = await supabase.from('conversations').upsert({
                 id: parseInt(sessionId),
                 conversationId: parseInt(sessionId),
                 model,
                 user,
-                messages: [
-                  ...messages,
-                  { role: 'user', content: input },
-                  { role: 'ai', content: outputCache },
-                ],
+                messages: [...messages, ...newMessages],
               })
               if (error) {
                 console.error(error.message)
               }
+
+              await zep.memory.add(sessionId, {
+                messages: newMessages.map((m) => ({
+                  ...m,
+                  roleType: m.role === 'ai' ? 'assistant' : 'user',
+                })),
+              })
             }
 
             console.log('[ask] updated conversation', sessionId)

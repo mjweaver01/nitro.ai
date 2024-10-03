@@ -1,0 +1,23 @@
+import { ZepClient } from '@getzep/zep-cloud'
+
+export const zep = new ZepClient({
+  apiKey: process.env.VITE_ZEP_KEY,
+})
+
+export const getZepResults = async (question: string, sessionId: string) => {
+  try {
+    const { results: zepResults } = await zep.memory.searchSessions({
+      sessionIds: [sessionId],
+      text: question,
+      searchType: 'similarity',
+    })
+
+    console.log(`[zep] found "${zepResults.length} result${zepResults.length !== 1 ? 's' : ''}"`)
+
+    return zepResults
+  } catch {
+    console.log(`[zep] error with zep search`)
+
+    return []
+  }
+}

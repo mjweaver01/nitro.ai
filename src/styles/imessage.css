@@ -26,6 +26,16 @@
   overflow: auto;
 }
 
+.imessage img {
+  display: block;
+  width: 100%;
+}
+
+/* hide images while streaming */
+.imessage .streaming img {
+  display: none;
+}
+
 @media (min-width: 500px) {
   .imessage p {
     max-width: 75%;

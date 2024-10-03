@@ -130,8 +130,8 @@ export const useMessagesStore = defineStore('messages', {
         }
       }
 
-      // Finalize the last message to ensure all links are properly closed
-      this.messages[this.messages.length - 1].text = this.finalizeMarkdownLinks(
+      // Finalize the last message
+      this.messages[this.messages.length - 1].text = this.finalizeMarkdown(
         this.messages[this.messages.length - 1].text,
       )
 
@@ -172,7 +172,7 @@ export const useMessagesStore = defineStore('messages', {
       return text.replace(/\[([^\]]+)\]\(([^)]+)$/g, (match, p1, p2) => `[${p1}](${p2})`)
     },
 
-    finalizeMarkdownLinks(text) {
+    finalizeMarkdown(text) {
       // This regex matches any markdown link that's not closed properly
       const incompleteLink = /\[([^\]]+)\]\(([^)]+)$/
       const match = text.match(incompleteLink)
@@ -180,7 +180,9 @@ export const useMessagesStore = defineStore('messages', {
         // If there's an incomplete link at the end, close it
         return text + ')'
       }
-      return text
+
+      // remove quotes on either end
+      return text.replaceAll('^"|"$', '')
     },
 
     async getConversation(sentConversation) {

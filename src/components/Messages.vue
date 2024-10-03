@@ -1,10 +1,11 @@
 <template>
   <div id="imessage" class="imessage" v-if="messages?.length > 0">
     <p
-      v-for="message in messages"
+      v-for="(message, i) in messages"
       v-bind:class="{
         'from-me': message.isUser || message.role === 'user',
         'from-them': !message.isUser && message.role !== 'user',
+        streaming: messagesStore?.streaming && i === messages.length - 1,
       }"
     >
       <VueShowdown
