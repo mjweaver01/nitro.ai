@@ -10,13 +10,15 @@ export const getZepResults = async (question: string, sessionId: string) => {
       sessionIds: [sessionId],
       text: question,
       searchType: 'similarity',
+      searchScope: 'facts',
     })
 
-    console.log(`[zep] found "${zepResults.length} result${zepResults.length !== 1 ? 's' : ''}"`)
+    console.log(`[zep] found ${zepResults.length} result${zepResults.length !== 1 ? 's' : ''}`)
 
     return zepResults
-  } catch {
+  } catch (e) {
     console.log(`[zep] error with zep search`)
+    console.log(JSON.stringify(e))
 
     return []
   }
