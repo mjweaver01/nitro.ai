@@ -154,7 +154,7 @@ export const sitemapVector = async (question: string, isAnthropic = false, isPro
     // anthropic doesn't have it's own text embedding model
     // so we'll just use fuzzysort directly
     if (isAnthropic) {
-      console.log(`[vector] anthropic - skip vector & use fuzzysort directly`)
+      console.log(`[sitemap-vector] anthropic - skip vector & use fuzzysort directly`)
       return mergedResults
     } else {
       const hnsw = await HNSWLib.fromDocuments(
@@ -164,16 +164,16 @@ export const sitemapVector = async (question: string, isAnthropic = false, isPro
           openAIApiKey: process.env.VITE_OPENAI_API_KEY,
         }),
       )
-      console.log(`[vector] fed vector store`)
+      console.log(`[sitemap-vector] fed vector store`)
 
       const results = await hnsw.similaritySearch(question, vectorLimit)
-      console.log(`[vector] queried the vector store`)
+      console.log(`[sitemap-vector] queried the vector store`)
 
       return results
     }
   }
 
-  console.log(`[vector] no documents found`)
+  console.log(`[sitemap-vector] no documents found`)
   return []
 }
 
