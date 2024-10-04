@@ -110,12 +110,11 @@ export const ask = async (
         langfuseHandler,
         {
           handleLLMNewToken(token: string) {
-            console.log(token)
             if (!isAnthropic || finalAnswer) {
               writer.write(encoder.encode(token))
+              outputCache += token
             }
 
-            outputCache += token
             tokens += 1
           },
           handleToolEnd() {
