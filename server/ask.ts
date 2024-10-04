@@ -97,7 +97,12 @@ export const ask = async (
   const encoder = new TextEncoder()
   let outputCache = ''
   let tokens = 0
-  let finalAnswer = false
+  let pause = false
+
+  function writeChunk(token) {
+    writer.write(encoder.encode(token))
+    outputCache += token
+  }
 
   executor.invoke(
     {
@@ -110,16 +115,18 @@ export const ask = async (
         langfuseHandler,
         {
           handleLLMNewToken(token: string) {
-            if (!isAnthropic || finalAnswer) {
-              writer.write(encoder.encode(token))
-              outputCache += token
+            // if we have a split response, cut out the tool declaration chunk
+            if (token.includes('{')) {
+              pause = true
+              writeChunk(token.split('{')[0])
+            } else if (token.includes('}')) {
+              pause = false
+              writeChunk(token.split('}')[1] + '\n\n---\n\n')
+            } else if (!pause) {
+              writeChunk(token)
             }
 
             tokens += 1
-          },
-          handleToolEnd() {
-            // wait for tool in order to start stream
-            finalAnswer = true
           },
           async handleAgentEnd(output) {
             writer.write(encoder.encode(JSON.stringify({ conversationId: sessionId })))
