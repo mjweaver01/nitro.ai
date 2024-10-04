@@ -97,6 +97,7 @@ export const ask = async (
   const encoder = new TextEncoder()
   let outputCache = ''
   let tokens = 0
+  let finalAnswer = false
 
   executor.invoke(
     {
@@ -109,11 +110,19 @@ export const ask = async (
         langfuseHandler,
         {
           handleLLMNewToken(token: string) {
-            writer.write(encoder.encode(token))
+            console.log(token)
+            if (!isAnthropic || finalAnswer) {
+              writer.write(encoder.encode(token))
+            }
+
             outputCache += token
             tokens += 1
           },
-          async handleAgentEnd() {
+          handleToolEnd() {
+            // wait for tool in order to start stream
+            finalAnswer = true
+          },
+          async handleAgentEnd(output) {
             writer.write(encoder.encode(JSON.stringify({ conversationId: sessionId })))
 
             // need to check conversationId exists here, not sessionId
