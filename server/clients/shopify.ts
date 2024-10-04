@@ -7,12 +7,16 @@ export const shopify = createAdminApiClient({
 })
 
 export const searchShopify = async (question: string, isProducts: boolean) => {
-  console.log(`[shopify] searching "${question}" (${isProducts ? 'products' : 'articles'})`)
+  const splitQ = question.match(/(.*?\s){3}/g)
+  const shortenedQuestion = (splitQ ? splitQ[0] : question).toLowerCase().trim()
+  console.log(
+    `[shopify] searching "${shortenedQuestion}" (${isProducts ? 'products' : 'articles'})`,
+  )
 
   const operation = isProducts
     ? `
     {
-      products(first: 10, query:"${question}") {
+      products(first: 10, query:"${shortenedQuestion}") {
         edges {
           node {
             id
@@ -41,7 +45,7 @@ export const searchShopify = async (question: string, isProducts: boolean) => {
   `
     : `
     {
-      articles(first: 10, query:"${question}") {
+      articles(first: 10, query:"${shortenedQuestion}") {
         edges {
           node {
             id
