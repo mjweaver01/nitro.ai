@@ -1,11 +1,10 @@
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import {
-  gistSystemPrompt,
-  kbToolPrompt,
-  kbSystemPrompt,
-  salesToolPrompt,
   systemPrompt,
+  kbToolPrompt,
+  salesToolPrompt,
   anthropicNudge,
+  personalizationToolPrompt,
 } from '../constants'
 import langfuse from '../clients/langfuse'
 
@@ -28,17 +27,18 @@ export const generatePromptTemplate = (sentPrompt: string, isAnthropic?: boolean
   )
 }
 
-const remoteSystemPrompt = await langfuse.getPrompt('System_Prompt')
-const compiledSystemPrompt = remoteSystemPrompt.prompt ? remoteSystemPrompt.prompt : systemPrompt
-const kbPrompt = await langfuse.getPrompt('KB_SYSTEM_PROMPT')
-const compiledKbSystemPrompt = kbPrompt.prompt ? kbPrompt.prompt : kbSystemPrompt
-export const gptSystemPromptTemplate = generatePromptTemplate(compiledSystemPrompt)
-export const gistSystemPromptTemplate = generatePromptTemplate(gistSystemPrompt)
-const salesPrompt = await langfuse.getPrompt('SALES_SYSTEM_PROMPT')
+const SystemPrompt = await langfuse.getPrompt('SYSTEM_PROMPT')
+const compiledSystemPrompt = SystemPrompt.prompt ? SystemPrompt.prompt : systemPrompt
+export const systemPromptTemplate = (isAnthropic = false) =>
+  generatePromptTemplate(compiledSystemPrompt, isAnthropic)
+
+const KbToolPrompt = await langfuse.getPrompt('KB_TOOL_PROMPT')
+export const compiledKbToolPrompt = KbToolPrompt.prompt ? KbToolPrompt.prompt : kbToolPrompt
+
+const salesPrompt = await langfuse.getPrompt('SALES_TOOL_PROMPT')
 export const compiledSalesPrompt = salesPrompt.prompt ? salesPrompt.prompt : salesToolPrompt
-export const kbSystemPromptTemplate = (isAnthropic = false) =>
-  generatePromptTemplate(compiledKbSystemPrompt, isAnthropic)
-const remoteKbToolPrompt = await langfuse.getPrompt('KB_TOOL_PROMPT')
-export const compiledKbToolPrompt = remoteKbToolPrompt.prompt
-  ? remoteKbToolPrompt.prompt
-  : kbToolPrompt
+
+const personalizationPrompt = await langfuse.getPrompt('PERSONALIZATION_TOOL_PROMPT')
+export const compiledPersonalizationPrompt = personalizationPrompt
+  ? personalizationPrompt.prompt
+  : personalizationToolPrompt

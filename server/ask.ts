@@ -3,13 +3,13 @@ import { type LangfuseTraceClient } from 'langfuse'
 import { CallbackHandler } from 'langfuse-langchain'
 import { supabase } from './clients/supabase'
 import { kbTools } from './llm/tools'
-import { kbSystemPromptTemplate } from './llm/prompts'
+import { systemPromptTemplate } from './llm/prompts'
 import { kbModelWithFunctions } from './llm/openai'
 import { llm as anthropicLlm, kbModelWithTools as anthropicKbModelWithTools } from './llm/anthropic'
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
-import { saveToZep } from './zep'
+import { zepMemory, saveToZep } from './clients/zep'
 
 // langchain stuff
 import {
@@ -32,7 +32,7 @@ export const ask = async (
 ): Promise<ReadableStream> => {
   console.log(`[ask] Asking ${model || 'openai'}: ${JSON.stringify(input).substring(0, 100)}`)
   const isAnthropic = model === 'anthropic'
-  const currentPromptTemplate = kbSystemPromptTemplate(isAnthropic)
+  const currentPromptTemplate = systemPromptTemplate(isAnthropic)
   const currentModelWithFunctions = isAnthropic ? anthropicKbModelWithTools : kbModelWithFunctions
   const sessionId = (conversationId || random()).toString()
 
@@ -68,11 +68,14 @@ export const ask = async (
 
   const langfuseHandler = new CallbackHandler({ root: trace })
 
+  const memory = zepMemory(sessionId)
+
   const runnableAgent = isAnthropic
     ? createToolCallingAgent({
         llm: anthropicLlm(),
         prompt: currentPromptTemplate,
         tools: kbTools,
+        memory: memory,
       } as unknown as CreateToolCallingAgentParams)
     : RunnableSequence.from([
         {
@@ -86,10 +89,15 @@ export const ask = async (
         new OpenAIFunctionsAgentOutputParser(),
       ] as unknown as [RunnableLike, RunnableLike])
   const executor = isAnthropic
-    ? new AgentExecutor({ agent: runnableAgent, tools: kbTools } as unknown as AgentExecutorInput)
+    ? new AgentExecutor({
+        agent: runnableAgent,
+        tools: kbTools,
+        memory: memory,
+      } as unknown as AgentExecutorInput)
     : AgentExecutor.fromAgentAndTools({
         agent: runnableAgent,
         tools: kbTools,
+        memory: memory,
       } as unknown as AgentExecutorInput)
 
   const stream = new TransformStream()

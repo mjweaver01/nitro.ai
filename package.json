@@ -24,7 +24,7 @@
     "dotenv": "^16.4.5",
     "fuzzysort": "^3.0.1",
     "hnswlib-node": "^3.0.0",
-    "langchain": "^0.3.2",
+    "langchain": "^0.1.23",
     "langfuse": "^3.26.0",
     "langfuse-langchain": "^3.26.0",
     "pinia": "^2.1.7",

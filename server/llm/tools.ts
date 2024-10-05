@@ -2,10 +2,10 @@ import { WikipediaQueryRun } from '@langchain/community/tools/wikipedia_query_ru
 import { Calculator } from '@langchain/community/tools/calculator'
 import { DynamicTool } from '@langchain/community/tools/dynamic'
 import langfuse from '../clients/langfuse'
+import { getZepResults } from '../clients/zep'
 import { wikipediaPrompt } from '../constants'
-import { compiledKbToolPrompt, compiledSalesPrompt } from './prompts'
+import { compiledKbToolPrompt, compiledSalesPrompt, compiledPersonalizationPrompt } from './prompts'
 import { vector } from '../vector/vector'
-import { getZepResults } from '../zep'
 
 const knowledgeBaseLoader = new DynamicTool({
   name: 'knowledge_base',
@@ -27,25 +27,21 @@ const knowledgeBaseLoader = new DynamicTool({
     try {
       try {
         const results = await vector(question, isAnthropic)
-        const zepResults = await getZepResults(question, sessionId)
-        const endResults = [...results, ...zepResults]
 
-        if (endResults.length > 0) {
+        if (results.length > 0) {
           console.log(
-            `[knowledge_base] found ${endResults.length} result${
-              endResults.length !== 1 ? 's' : ''
-            }`,
+            `[knowledge_base] found ${results.length} result${results.length !== 1 ? 's' : ''}`,
           )
         }
 
         await generation.end({
-          output: JSON.stringify(endResults[0]),
+          output: JSON.stringify(results[0]),
           level: 'DEFAULT',
         })
 
-        return JSON.stringify(endResults)
+        return JSON.stringify(results)
       } catch {
-        console.log(`[knowledge_base] error in the sitemap`)
+        console.log(`[knowledge_base] error in the kb tool`)
         return []
       }
     } catch (error) {
@@ -54,7 +50,7 @@ const knowledgeBaseLoader = new DynamicTool({
         level: 'ERROR',
       })
 
-      console.log('[knowledge_base] error in sitemap')
+      console.log('[knowledge_base] error in kb tool')
       return []
     } finally {
       await langfuse.shutdownAsync()
@@ -126,24 +122,22 @@ const salesToolLoader = new DynamicTool({
     try {
       try {
         const results = await vector(question, isAnthropic, true)
-        const zepResults = await getZepResults(question, sessionId)
-        const endResults = [...results, ...zepResults]
 
-        if (endResults.length > 0) {
+        if (results.length > 0) {
           console.log(
-            `[sales_tool] found ${endResults.length} result${endResults.length !== 1 ? 's' : ''}`,
+            `[sales_tool] found ${results.length} result${results.length !== 1 ? 's' : ''}`,
           )
         }
 
         await generation.end({
-          output: JSON.stringify(endResults[0]),
+          output: JSON.stringify(results[0]),
           level: 'DEFAULT',
         })
 
-        return JSON.stringify(endResults)
+        return JSON.stringify(results)
       } catch (error) {
         console.error(error)
-        console.log(`[sales_tool] error in the sitemap`)
+        console.log(`[sales_tool] error in the sales tool`)
         throw error
       }
     } catch (error) {
@@ -152,7 +146,62 @@ const salesToolLoader = new DynamicTool({
         level: 'ERROR',
       })
 
-      console.log('[sales_tool] error in sitemap')
+      console.log('[sales_tool] error in sales tool')
+      return []
+    } finally {
+      await langfuse.shutdownAsync()
+    }
+  },
+})
+
+const personalizationToolLoader = new DynamicTool({
+  name: 'personalization_tool',
+  description: compiledPersonalizationPrompt,
+  func: async (question: string, runManager, meta) => {
+    const sessionId = meta?.configurable?.sessionId
+    const q = question ?? 'facts about me'
+    console.log(`[personalization_tool] asking zep "${q}"`)
+
+    const generation = await langfuse.generation({
+      name: 'personalization_tool',
+      input: JSON.stringify(q),
+      model: 'personalization_tool',
+    })
+
+    await generation.update({
+      completionStartTime: new Date(),
+    })
+
+    try {
+      try {
+        const results = await getZepResults(q)
+
+        if (results.length > 0) {
+          console.log(
+            `[personalization_tool] found ${results.length} result${
+              results.length !== 1 ? 's' : ''
+            }`,
+          )
+        }
+
+        await generation.end({
+          output: JSON.stringify(results[0]),
+          level: 'DEFAULT',
+        })
+
+        return JSON.stringify(results)
+      } catch (error) {
+        console.error(error)
+        console.log(`[personalization_tool] error in the personalization tool`)
+        throw error
+      }
+    } catch (error) {
+      await generation.end({
+        output: JSON.stringify(error),
+        level: 'ERROR',
+      })
+
+      console.log('[sales_tool] error in personalization tool')
       return []
     } finally {
       await langfuse.shutdownAsync()
@@ -162,4 +211,4 @@ const salesToolLoader = new DynamicTool({
 
 export const tools = [WikipediaQuery, new Calculator()]
 
-export const kbTools = [knowledgeBaseLoader, salesToolLoader]
+export const kbTools = [knowledgeBaseLoader, salesToolLoader, personalizationToolLoader]

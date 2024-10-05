@@ -1,13 +1,19 @@
 import { ZepClient } from '@getzep/zep-cloud'
+import { ZepMemory } from '@getzep/zep-cloud/langchain/zep_memory.js'
 
 export const zep = new ZepClient({
   apiKey: process.env.VITE_ZEP_KEY,
 })
 
-export const getZepResults = async (question: string, sessionId: string) => {
+export const zepMemory = (sessionId: string) =>
+  new ZepMemory({
+    apiKey: process.env.VITE_ZEP_KEY,
+    sessionId,
+  })
+
+export const getZepResults = async (question: string) => {
   try {
     const { results: zepResults } = await zep.memory.searchSessions({
-      sessionIds: [sessionId],
       text: question,
       searchType: 'similarity',
       searchScope: 'facts',
