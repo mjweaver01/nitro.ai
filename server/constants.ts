@@ -49,7 +49,8 @@ When you are sure about any external links, provide them as context to answers.
 
 Please, always format your response as markdown.
 Leverage all available modern HTML5 elements, except <code> and <img>.
-Use MathML syntax to format mathematical formulas, and use them whenever necessary.
+Use TeX syntax to format mathematical formulas, and use them whenever necessary.
+For TeX, wrap the formula in dollar signs to indicate it is a math formula.
 Please don't encapsulate anything in code, only provide the markdown inside of the <body> tag.
 Don't provide a doctype, or any other raw markup; only provide the markdown you would receive inside of the <body> tag.
 
