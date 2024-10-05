@@ -242,6 +242,7 @@ export const useMessagesStore = defineStore('messages', {
 
     setConversation(sentConversation, scrollToTop = false) {
       this.messages = sentConversation.messages
+      this.llm = sentConversation.model || 'openai'
       this.conversationId = sentConversation.id
       this.router.push(`/chat/${this.conversationId}`)
       if (scrollToTop) {
