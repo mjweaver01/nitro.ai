@@ -31,7 +31,7 @@ export default {
         'What is circa max?',
         'Recommend a few of the best smelling salts for a seasoned powerlifter',
         'Recommend some books that will help me learn more about powerlifting',
-        "Create a full men's outfit using WSBB products",
+        'Give me some products with nitro on them',
         'Tell me how to peak for competition, using the Conjugate Method',
         'Tell me the benefits of box squatting correctly',
         'How do I bench press correctly, according to Louie?',
