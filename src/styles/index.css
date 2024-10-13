@@ -450,9 +450,15 @@ a {
   background: var(--white);
   top: 0;
   width: 100%;
-  padding-right: 0.5em;
+  padding-right: 1em;
   border-bottom: 1px solid var(--border-color);
   z-index: 2;
+}
+
+.mobile-nav-right-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .left-nav {
@@ -474,10 +480,22 @@ a {
   cursor: pointer;
 }
 
+.mobile-nav .force-show-hide-button {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .mobile-nav .hamburger,
   .app .mobile-nav {
     display: none;
+  }
+
+  .mobile-nav {
+    padding-right: 0.5em;
+  }
+
+  .mobile-nav .force-show-hide-button {
+    display: block;
   }
 }
 
