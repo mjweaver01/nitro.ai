@@ -49,6 +49,7 @@ When you are sure about any external links, provide them as context to answers.
 
 Please, always format your response as markdown.
 Leverage all available modern HTML5 elements, except <code> and <img>.
+Avoid ordered lists, unless they are directly sequential.
 You can show mathematical formuals, when necessary. Send it as markdown latex formula; don't surround it with code, just the formula.
 Please don't encapsulate anything in code, only provide the markdown inside of the <body> tag.
 Don't provide a doctype, or any other raw markup; only provide the markdown you would receive inside of the <body> tag.
