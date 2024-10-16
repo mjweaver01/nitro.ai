@@ -14,6 +14,7 @@ export const useMessagesStore = defineStore('messages', {
     router: useRouter(),
     nocache: false,
     streaming: false,
+    userScrolledUp: false,
   }),
   actions: {
     async ask(sentQuestion = '') {
@@ -29,6 +30,7 @@ export const useMessagesStore = defineStore('messages', {
       if (!question || question.length <= 0) return
 
       this.loading = true
+      this.userScrolledUp = false
       this.scrollToBottom()
       this.question = ''
 
@@ -218,7 +220,8 @@ export const useMessagesStore = defineStore('messages', {
       nextTick(() => {
         document.getElementById('question-input')?.focus()
         const chat = document.querySelector('.chat-page')
-        if (chat) {
+
+        if (chat && !this.userScrolledUp) {
           chat.scrollTop = chat.scrollHeight
         }
       })

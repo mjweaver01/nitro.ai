@@ -1,5 +1,9 @@
 <template>
-  <div class="chat-page top" :class="{ empty: messagesStore?.messages?.length <= 0 }">
+  <div
+    class="chat-page top"
+    :class="{ empty: messagesStore?.messages?.length <= 0 }"
+    @scroll="setUserScrolledUp"
+  >
     <Hero v-if="!messagesStore?.loading && messagesStore?.messages?.length <= 0" />
     <Questions v-if="userStore?.user?.id" />
     <Messages v-if="userStore?.user?.id" :messages="messagesStore?.messages" />
@@ -33,6 +37,19 @@ export default {
     const params = new URLSearchParams(window.location.search)
     const selectedModel = params.get('model') || params.get('llm')
     if (selectedModel?.length > 0) this.messagesStore.llm = selectedModel
+  },
+  methods: {
+    setUserScrolledUp(e) {
+      let height = e.target.clientHeight
+      let scrollHeight = e.target.scrollHeight - height
+      let scrollTop = e.target.scrollTop
+      let percent = Math.floor((scrollTop / scrollHeight) * 100)
+      if (percent <= 99) {
+        this.messagesStore.userScrolledUp = true
+      } else {
+        this.messagesStore.userScrolledUp = false
+      }
+    },
   },
 }
 </script>
