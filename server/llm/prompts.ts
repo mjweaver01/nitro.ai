@@ -1,4 +1,3 @@
-import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts'
 import {
   systemPrompt,
   kbToolPrompt,
@@ -8,29 +7,32 @@ import {
 } from '../constants'
 import langfuse from '../clients/langfuse'
 
-export const generatePromptTemplate = (sentPrompt: string, isAnthropic?: boolean) => {
-  return ChatPromptTemplate.fromMessages(
-    isAnthropic
-      ? [
-          ['system', sentPrompt],
-          ['placeholder', '{chat_history}'],
-          ['human', anthropicNudge],
-          ['placeholder', '{agent_scratchpad}'],
-          ['human', '{input}'],
-        ]
-      : [
-          ['system', sentPrompt],
-          new MessagesPlaceholder('chat_history'),
-          ['human', '{input}'],
-          new MessagesPlaceholder('agent_scratchpad'),
-        ],
-  )
+export const formatMessages = (
+  systemMessage: string,
+  chatHistory: Array<{ role: string; content: string }>,
+  input: string,
+  agentScratchpad?: string,
+  isAnthropic?: boolean,
+) => {
+  const messages = [{ role: 'system', content: systemMessage }, ...chatHistory]
+
+  if (isAnthropic) {
+    messages.push({ role: 'user', content: anthropicNudge })
+  }
+
+  if (agentScratchpad) {
+    messages.push({ role: 'assistant', content: agentScratchpad })
+  }
+
+  messages.push({ role: 'user', content: input })
+
+  return messages
 }
 
+// Fetch prompts from langfuse with fallbacks
 const SystemPrompt = await langfuse.getPrompt('SYSTEM_PROMPT')
-const compiledSystemPrompt = SystemPrompt.prompt ? SystemPrompt.prompt : systemPrompt
-export const systemPromptTemplate = (isAnthropic = false) =>
-  generatePromptTemplate(compiledSystemPrompt, isAnthropic)
+export const compiledSystemPrompt = SystemPrompt.prompt ? SystemPrompt.prompt : systemPrompt
+export const systemPromptTemplate = (isAnthropic = false) => compiledSystemPrompt
 
 const KbToolPrompt = await langfuse.getPrompt('KB_TOOL_PROMPT')
 export const compiledKbToolPrompt = KbToolPrompt.prompt ? KbToolPrompt.prompt : kbToolPrompt

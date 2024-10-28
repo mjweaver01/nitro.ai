@@ -1,30 +1,35 @@
-import { WikipediaQueryRun } from '@langchain/community/tools/wikipedia_query_run'
-import { Calculator } from '@langchain/community/tools/calculator'
-import { DynamicTool } from '@langchain/community/tools/dynamic'
 import langfuse from '../clients/langfuse'
 import { getZepResults } from '../clients/zep'
-import { wikipediaPrompt } from '../constants'
 import { compiledKbToolPrompt, compiledSalesPrompt, compiledPersonalizationPrompt } from './prompts'
 import { vector } from '../vector/vector'
 
-const knowledgeBaseLoader = new DynamicTool({
-  name: 'knowledge_base',
-  description: compiledKbToolPrompt,
-  func: async (question: string, runManager, meta) => {
-    const sessionId = meta?.configurable?.sessionId
-    const isAnthropic = meta?.configurable?.isAnthropic
+export const tools = [
+  {
+    name: 'knowledge_base',
+    description: compiledKbToolPrompt,
+    parameters: {
+      type: 'object',
+      properties: {
+        question: {
+          type: 'string',
+          description: 'The question to search for in the knowledge base',
+        },
+      },
+      required: ['question'],
+    },
+    function: async (question: string, meta?: any) => {
+      const isAnthropic = meta?.configurable?.isAnthropic
 
-    const generation = await langfuse.generation({
-      name: 'knowledge_base',
-      input: JSON.stringify(question),
-      model: 'knowledge_base',
-    })
+      const generation = await langfuse.generation({
+        name: 'knowledge_base',
+        input: JSON.stringify(question),
+        model: 'knowledge_base',
+      })
 
-    await generation.update({
-      completionStartTime: new Date(),
-    })
+      await generation.update({
+        completionStartTime: new Date(),
+      })
 
-    try {
       try {
         const results = await vector(question, isAnthropic)
 
@@ -40,86 +45,44 @@ const knowledgeBaseLoader = new DynamicTool({
         })
 
         return JSON.stringify(results)
-      } catch {
-        console.log(`[knowledge_base] error in the kb tool`)
+      } catch (error) {
+        await generation.end({
+          output: JSON.stringify(error),
+          level: 'ERROR',
+        })
+        console.log('[knowledge_base] error in kb tool')
         return []
+      } finally {
+        await langfuse.shutdownAsync()
       }
-    } catch (error) {
-      await generation.end({
-        output: JSON.stringify(error),
-        level: 'ERROR',
+    },
+  },
+  {
+    name: 'sales_tool',
+    description: compiledSalesPrompt,
+    parameters: {
+      type: 'object',
+      properties: {
+        question: {
+          type: 'string',
+          description: 'The product search query',
+        },
+      },
+      required: ['question'],
+    },
+    function: async (question: string, meta?: any) => {
+      const isAnthropic = meta?.configurable?.isAnthropic
+
+      const generation = await langfuse.generation({
+        name: 'sales_tool',
+        input: JSON.stringify(question),
+        model: 'sales_tool',
       })
 
-      console.log('[knowledge_base] error in kb tool')
-      return []
-    } finally {
-      await langfuse.shutdownAsync()
-    }
-  },
-})
-
-const WikipediaQuery = new DynamicTool({
-  name: 'wikipedia',
-  description: wikipediaPrompt,
-  func: async (question: string, runManager, meta) => {
-    // const sessionId = meta?.configurable?.sessionId
-
-    const generation = langfuse.generation({
-      name: 'wikipedia',
-      input: JSON.stringify(question),
-      model: 'wikipedia',
-    })
-
-    try {
       await generation.update({
         completionStartTime: new Date(),
       })
 
-      const wikipediaQuery = new WikipediaQueryRun({
-        topKResults: 1,
-        maxDocContentLength: 500,
-      })
-
-      const result = await wikipediaQuery.call(question)
-      console.log(`[wikipedia] ${JSON.stringify(result).substring(0, 100)}`)
-
-      await generation.end({
-        output: JSON.stringify(result),
-        level: 'DEFAULT',
-      })
-
-      return result
-    } catch (error) {
-      await generation.end({
-        output: JSON.stringify(error),
-        level: 'ERROR',
-      })
-
-      return '[wikipedia] error in wikipediaQuery'
-    } finally {
-      await langfuse.shutdownAsync()
-    }
-  },
-})
-
-const salesToolLoader = new DynamicTool({
-  name: 'sales_tool',
-  description: compiledSalesPrompt,
-  func: async (question: string, runManager, meta) => {
-    const isAnthropic = meta?.configurable?.isAnthropic
-    const sessionId = meta?.configurable?.sessionId
-
-    const generation = await langfuse.generation({
-      name: 'sales_tool',
-      input: JSON.stringify(question),
-      model: 'sales_tool',
-    })
-
-    await generation.update({
-      completionStartTime: new Date(),
-    })
-
-    try {
       try {
         const results = await vector(question, isAnthropic, true)
 
@@ -136,43 +99,44 @@ const salesToolLoader = new DynamicTool({
 
         return JSON.stringify(results)
       } catch (error) {
-        console.error(error)
-        console.log(`[sales_tool] error in the sales tool`)
-        throw error
+        await generation.end({
+          output: JSON.stringify(error),
+          level: 'ERROR',
+        })
+        console.log('[sales_tool] error in sales tool')
+        return []
+      } finally {
+        await langfuse.shutdownAsync()
       }
-    } catch (error) {
-      await generation.end({
-        output: JSON.stringify(error),
-        level: 'ERROR',
+    },
+  },
+  {
+    name: 'personalization_tool',
+    description: compiledPersonalizationPrompt,
+    parameters: {
+      type: 'object',
+      properties: {
+        question: {
+          type: 'string',
+          description: 'The query to search personalization data',
+        },
+      },
+      required: ['question'],
+    },
+    function: async (question: string) => {
+      const q = question ?? 'facts about me'
+      console.log(`[personalization_tool] asking zep "${q}"`)
+
+      const generation = await langfuse.generation({
+        name: 'personalization_tool',
+        input: JSON.stringify(q),
+        model: 'personalization_tool',
       })
 
-      console.log('[sales_tool] error in sales tool')
-      return []
-    } finally {
-      await langfuse.shutdownAsync()
-    }
-  },
-})
+      await generation.update({
+        completionStartTime: new Date(),
+      })
 
-const personalizationToolLoader = new DynamicTool({
-  name: 'personalization_tool',
-  description: compiledPersonalizationPrompt,
-  func: async (question: string, runManager, meta) => {
-    const sessionId = meta?.configurable?.sessionId
-    const q = question ?? 'facts about me'
-    console.log(`[personalization_tool] asking zep "${q}"`)
-
-    const generation = await langfuse.generation({
-      name: 'personalization_tool',
-      input: JSON.stringify(q),
-      model: 'personalization_tool',
-    })
-
-    await generation.update({
-      completionStartTime: new Date(),
-    })
-
-    try {
       try {
         const results = await getZepResults(q)
 
@@ -191,24 +155,15 @@ const personalizationToolLoader = new DynamicTool({
 
         return JSON.stringify(results)
       } catch (error) {
-        console.error(error)
-        console.log(`[personalization_tool] error in the personalization tool`)
-        throw error
+        await generation.end({
+          output: JSON.stringify(error),
+          level: 'ERROR',
+        })
+        console.log('[personalization_tool] error in personalization tool')
+        return []
+      } finally {
+        await langfuse.shutdownAsync()
       }
-    } catch (error) {
-      await generation.end({
-        output: JSON.stringify(error),
-        level: 'ERROR',
-      })
-
-      console.log('[sales_tool] error in personalization tool')
-      return []
-    } finally {
-      await langfuse.shutdownAsync()
-    }
+    },
   },
-})
-
-export const tools = [WikipediaQuery, new Calculator()]
-
-export const kbTools = [knowledgeBaseLoader, salesToolLoader, personalizationToolLoader]
+]
