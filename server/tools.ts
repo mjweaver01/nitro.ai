@@ -1,7 +1,7 @@
-import langfuse from '../clients/langfuse'
-import { getZepResults } from '../clients/zep'
+import langfuse from './clients/langfuse'
+import { getZepResults } from './clients/zep'
 import { compiledKbToolPrompt, compiledSalesPrompt, compiledPersonalizationPrompt } from './prompts'
-import { vector } from '../vector/vector'
+import { vector } from './vector/vector'
 
 export const tools = [
   {

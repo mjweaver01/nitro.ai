@@ -22,8 +22,8 @@
             />
             <div class="select">
               <select v-model="messagesStore.llm" @change="messagesStore?.setLlm">
-                <option value="openai">GPT-4o</option>
-                <option value="anthropic">Claude Sonnet</option>
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="o1-preview">GPT-o1</option>
               </select>
             </div>
           </div>

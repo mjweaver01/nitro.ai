@@ -1,15 +1,8 @@
 import { ZepClient } from '@getzep/zep-cloud'
-import { ZepMemory } from '@getzep/zep-cloud/langchain/zep_memory.js'
 
 export const zep = new ZepClient({
   apiKey: process.env.VITE_ZEP_KEY,
 })
-
-export const zepMemory = (sessionId: string) =>
-  new ZepMemory({
-    apiKey: process.env.VITE_ZEP_KEY,
-    sessionId,
-  })
 
 export const getZepResults = async (question: string) => {
   try {

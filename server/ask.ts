@@ -1,12 +1,12 @@
 import { supabase } from './clients/supabase'
-import { tools } from './llm/tools'
-import { systemPromptTemplate } from './llm/prompts'
+import { systemPromptTemplate } from './prompts'
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
-import { zepMemory, saveToZep } from './clients/zep'
+import { saveToZep } from './clients/zep'
 import { createChatCompletion } from './clients/openai'
-import { fourOModel, threeModel } from './constants'
+import { oOneModel, fourOModel, threeModel } from './constants'
+import { tools } from './tools'
 
 export const ask = async (
   input: string,
@@ -46,75 +46,82 @@ export const ask = async (
     content: input,
   })
 
-  const stream = new TransformStream()
-  const writer = stream.writable.getWriter()
   const encoder = new TextEncoder()
-  let outputCache = ''
 
-  try {
-    const completion = await createChatCompletion(
-      messages,
-      tools,
-      model === 'anthropic' ? fourOModel : threeModel,
-      true,
-    )
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        const completion = await createChatCompletion(
+          messages,
+          model === 'gpt-4o' ? fourOModel : model === 'o1-preview' ? oOneModel : threeModel,
+          true,
+        )
 
-    for await (const chunk of completion) {
-      const content = chunk.choices[0]?.delta?.content || ''
-      const toolCalls = chunk.choices[0]?.delta?.tool_calls || []
+        let outputCache = ''
 
-      if (content) {
-        writer.write(encoder.encode(content))
-        outputCache += content
-      }
+        for await (const chunk of completion as AsyncIterable<any>) {
+          const content = chunk.choices[0]?.delta?.content
+          const toolCalls = chunk.choices[0]?.delta?.tool_calls
 
-      // Handle tool calls
-      if (toolCalls.length > 0) {
-        for (const toolCall of toolCalls) {
-          if (toolCall.function) {
-            const tool = tools.find((t) => t.name === toolCall.function.name)
-            if (tool) {
-              try {
-                const args = JSON.parse(toolCall.function.arguments)
-                const result = await tool.function(args.question, {
-                  configurable: { isAnthropic: model === 'anthropic' },
-                })
-                const toolResponse = result.toString()
-                writer.write(encoder.encode(toolResponse))
-                outputCache += toolResponse
-              } catch (error) {
-                console.error(`Error executing tool ${toolCall.function.name}:`, error)
+          if (content) {
+            controller.enqueue(encoder.encode(content))
+            outputCache += content
+          }
+
+          if (toolCalls) {
+            for (const toolCall of toolCalls) {
+              if (toolCall.function) {
+                const toolName = toolCall.function.name
+                const toolArgs = JSON.parse(toolCall.function.arguments)
+
+                // Execute the tool
+                const tool = tools.find((t) => t.name === toolName)
+                if (tool) {
+                  const question = Array.isArray(toolArgs.question)
+                    ? toolArgs.question.join(' ')
+                    : toolArgs.question
+
+                  const result = await tool.function(question)
+                  const resultString = Array.isArray(result) ? result.join(' ') : result
+                  controller.enqueue(encoder.encode(resultString))
+                  outputCache += resultString
+                }
               }
             }
           }
         }
+
+        // Save conversation in background
+        Promise.all([
+          supabase.from('conversations').upsert({
+            id: parseInt(sessionId),
+            conversationId: parseInt(sessionId),
+            model,
+            user,
+            messages: [
+              ...messages,
+              { role: 'user', content: input },
+              { role: 'assistant', content: outputCache },
+            ],
+          }),
+          saveToCache(Date.now(), input, outputCache, model, user),
+          saveToZep(sessionId, [
+            { role: 'user', content: input },
+            { role: 'assistant', content: outputCache },
+          ]),
+        ]).catch(console.error) // Handle errors but don't wait
+      } catch (error) {
+        console.error('Streaming error:', error)
+        controller.enqueue(encoder.encode('An error occurred while processing your request.'))
+      } finally {
+        controller.close()
       }
-    }
-
-    // Save conversation
-    const newMessages = [
-      { role: 'user', content: input },
-      { role: 'assistant', content: outputCache },
-    ]
-
-    await supabase.from('conversations').upsert({
-      id: parseInt(sessionId),
-      conversationId: parseInt(sessionId),
-      model,
-      user,
-      messages: [...messages, ...newMessages],
-    })
-
-    await saveToCache(Date.now(), input, outputCache, model, user)
-    await saveToZep(sessionId, newMessages)
-  } catch (error) {
-    console.error(error)
-    writer.write(encoder.encode('An error occurred'))
-  } finally {
-    writer.close()
-  }
-
-  return stream.readable
+    },
+    cancel() {
+      // Handle cancellation if needed
+      console.log('Stream cancelled by client')
+    },
+  })
 }
 
 export async function askQuestion(

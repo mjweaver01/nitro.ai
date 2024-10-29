@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import { fourOModel } from '../constants'
+import { tools } from '../tools'
 
 export const openai = new OpenAI({
   apiKey: process.env.VITE_OPENAI_API_KEY,
@@ -7,7 +8,6 @@ export const openai = new OpenAI({
 
 export const createChatCompletion = async (
   messages: any[],
-  functions?: any[],
   model: string = fourOModel,
   stream: boolean = true,
 ) => {
@@ -16,14 +16,8 @@ export const createChatCompletion = async (
     messages,
     temperature: 0,
     stream,
-    tools: functions?.map((tool) => ({
-      type: 'function',
-      function: {
-        name: tool.name,
-        description: tool.description,
-        parameters: tool.parameters,
-      },
-    })),
+    function_call: 'auto',
+    functions: tools,
   })
 }
 

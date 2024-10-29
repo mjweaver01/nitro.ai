@@ -10,7 +10,7 @@ export const useMessagesStore = defineStore('messages', {
     question: '',
     conversationId: '',
     loading: false,
-    llm: 'openai',
+    llm: 'gpt-4o',
     router: useRouter(),
     nocache: false,
     streaming: false,

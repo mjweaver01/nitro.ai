@@ -4,8 +4,8 @@ import {
   salesToolPrompt,
   anthropicNudge,
   personalizationToolPrompt,
-} from '../constants'
-import langfuse from '../clients/langfuse'
+} from './constants'
+import langfuse from './clients/langfuse'
 
 export const formatMessages = (
   systemMessage: string,
