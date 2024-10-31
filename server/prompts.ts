@@ -4,6 +4,7 @@ import {
   salesToolPrompt,
   anthropicNudge,
   personalizationToolPrompt,
+  distillQueryToolPrompt,
 } from './constants'
 import langfuse from './clients/langfuse'
 
@@ -44,3 +45,8 @@ const personalizationPrompt = await langfuse.getPrompt('PERSONALIZATION_TOOL_PRO
 export const compiledPersonalizationPrompt = personalizationPrompt
   ? personalizationPrompt.prompt
   : personalizationToolPrompt
+
+const distillQueryPrompt = await langfuse.getPrompt('DISTILL_QUERY_PROMPT')
+export const compiledDistillQueryPrompt = distillQueryPrompt.prompt
+  ? distillQueryPrompt.prompt
+  : distillQueryToolPrompt
