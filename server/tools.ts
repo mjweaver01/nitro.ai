@@ -6,6 +6,7 @@ import { vector } from './vector/vector'
 export const tools = [
   {
     name: 'knowledge_base',
+    type: 'function',
     description: compiledKbToolPrompt,
     parameters: {
       type: 'object',
@@ -44,7 +45,7 @@ export const tools = [
           level: 'DEFAULT',
         })
 
-        return JSON.stringify(results)
+        return results
       } catch (error) {
         await generation.end({
           output: JSON.stringify(error),
@@ -59,6 +60,7 @@ export const tools = [
   },
   {
     name: 'sales_tool',
+    type: 'function',
     description: compiledSalesPrompt,
     parameters: {
       type: 'object',
@@ -97,7 +99,7 @@ export const tools = [
           level: 'DEFAULT',
         })
 
-        return JSON.stringify(results)
+        return results
       } catch (error) {
         await generation.end({
           output: JSON.stringify(error),
@@ -112,6 +114,7 @@ export const tools = [
   },
   {
     name: 'personalization_tool',
+    type: 'function',
     description: compiledPersonalizationPrompt,
     parameters: {
       type: 'object',
@@ -153,7 +156,7 @@ export const tools = [
           level: 'DEFAULT',
         })
 
-        return JSON.stringify(results)
+        return results
       } catch (error) {
         await generation.end({
           output: JSON.stringify(error),

@@ -48,7 +48,7 @@ export default async (req: Request, context: Context) => {
   }
 
   try {
-    const stream = await askQuestion(input, user, conversationId, model)
+    const stream = await askQuestion(input, user, conversationId, model, nocache)
 
     let fullAnswer = ''
     const transformStream = new TransformStream({

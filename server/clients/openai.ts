@@ -1,5 +1,5 @@
 import OpenAI from 'openai'
-import { fourOModel } from '../constants'
+import { ChatCompletionMessageParam, ChatCompletionTool } from 'openai/resources/chat/completions'
 import { tools } from '../tools'
 
 export const openai = new OpenAI({
@@ -7,18 +7,29 @@ export const openai = new OpenAI({
 })
 
 export const createChatCompletion = async (
-  messages: any[],
-  model: string = fourOModel,
+  messages: ChatCompletionMessageParam[],
+  model: string,
   stream: boolean = true,
 ) => {
-  return await openai.chat.completions.create({
+  const formattedTools: ChatCompletionTool[] = tools.map((tool) => ({
+    type: 'function',
+    function: {
+      name: tool.name,
+      description: tool.description,
+      parameters: tool.parameters,
+    },
+  }))
+
+  const completion = await openai.chat.completions.create({
     model,
     messages,
     temperature: 0,
     stream,
-    function_call: 'auto',
-    functions: tools,
+    tools: formattedTools,
+    tool_choice: 'auto',
   })
+
+  return completion
 }
 
 export const embeddings = async (input: string) => {

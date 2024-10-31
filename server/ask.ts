@@ -1,3 +1,5 @@
+import { Stream } from 'openai/streaming'
+import type { ChatCompletionChunk, ChatCompletionMessage } from 'openai/resources/chat/completions'
 import { supabase } from './clients/supabase'
 import { systemPromptTemplate } from './prompts'
 import { defaultQuestion } from './constants'
@@ -6,16 +8,17 @@ import { saveToCache } from './cache'
 import { saveToZep } from './clients/zep'
 import { createChatCompletion } from './clients/openai'
 import { oOneModel, fourOModel, threeModel } from './constants'
-import { tools } from './tools'
+import { handleToolCalls } from './handleToolCalls'
 
 export const ask = async (
   input: string,
   user: string,
   conversationId?: string,
   model?: string,
+  nocache?: boolean,
 ): Promise<ReadableStream> => {
   const sessionId = (conversationId || random()).toString()
-  const messages = []
+  const messages: ChatCompletionMessage[] = []
 
   // Get existing conversation if available
   if (conversationId) {
@@ -36,14 +39,16 @@ export const ask = async (
 
   // Add system prompt
   messages.unshift({
-    role: 'system',
+    role: 'assistant',
     content: systemPromptTemplate(model === 'anthropic'),
+    refusal: '',
   })
 
   // Add user input
   messages.push({
-    role: 'user',
+    role: 'user' as any,
     content: input,
+    refusal: '',
   })
 
   const encoder = new TextEncoder()
@@ -59,7 +64,7 @@ export const ask = async (
 
         let outputCache = ''
 
-        for await (const chunk of completion as AsyncIterable<any>) {
+        for await (const chunk of completion as any) {
           const content = chunk.choices[0]?.delta?.content
           const toolCalls = chunk.choices[0]?.delta?.tool_calls
 
@@ -69,57 +74,47 @@ export const ask = async (
           }
 
           if (toolCalls) {
-            for (const toolCall of toolCalls) {
-              if (toolCall.function) {
-                const toolName = toolCall.function.name
-                const toolArgs = JSON.parse(toolCall.function.arguments)
-
-                // Execute the tool
-                const tool = tools.find((t) => t.name === toolName)
-                if (tool) {
-                  const question = Array.isArray(toolArgs.question)
-                    ? toolArgs.question.join(' ')
-                    : toolArgs.question
-
-                  const result = await tool.function(question)
-                  const resultString = Array.isArray(result) ? result.join(' ') : result
-                  controller.enqueue(encoder.encode(resultString))
-                  outputCache += resultString
+            const toolResponse = await handleToolCalls(toolCalls, messages, model)
+            if (toolResponse) {
+              for await (const toolChunk of toolResponse) {
+                const toolContent = toolChunk.choices[0]?.delta?.content
+                if (toolContent) {
+                  controller.enqueue(encoder.encode(toolContent))
+                  outputCache += toolContent
                 }
               }
             }
           }
         }
 
-        // Save conversation in background
-        Promise.all([
-          supabase.from('conversations').upsert({
-            id: parseInt(sessionId),
-            conversationId: parseInt(sessionId),
-            model,
-            user,
-            messages: [
-              ...messages,
+        // Cache the conversation if needed
+        if (!nocache && outputCache.length > 0) {
+          // Save conversation in background
+          Promise.all([
+            supabase.from('conversations').upsert({
+              id: parseInt(sessionId),
+              conversationId: parseInt(sessionId),
+              model,
+              user,
+              messages: [
+                ...messages.filter((message) => message.role !== 'assistant'),
+                { role: 'user', content: input },
+                { role: 'assistant', content: outputCache },
+              ],
+            }),
+            // saveToCache(Date.now(), input, outputCache, model, user),
+            saveToZep(sessionId, [
               { role: 'user', content: input },
               { role: 'assistant', content: outputCache },
-            ],
-          }),
-          saveToCache(Date.now(), input, outputCache, model, user),
-          saveToZep(sessionId, [
-            { role: 'user', content: input },
-            { role: 'assistant', content: outputCache },
-          ]),
-        ]).catch(console.error) // Handle errors but don't wait
-      } catch (error) {
-        console.error('Streaming error:', error)
-        controller.enqueue(encoder.encode('An error occurred while processing your request.'))
-      } finally {
+            ]),
+          ]).catch(console.error)
+        }
+
         controller.close()
+      } catch (error) {
+        console.error('Error in stream:', error)
+        controller.error(error)
       }
-    },
-    cancel() {
-      // Handle cancellation if needed
-      console.log('Stream cancelled by client')
     },
   })
 }
@@ -129,8 +124,9 @@ export async function askQuestion(
   user: string,
   conversationId?: string,
   model?: string,
+  nocache?: boolean,
 ): Promise<ReadableStream> {
-  const response = await ask(input, user, conversationId, model)
+  const response = await ask(input, user, conversationId, model, nocache)
 
   const transformStream = new TransformStream({
     transform(chunk, controller) {
