@@ -111,7 +111,6 @@ export const ask = async (
                 ...messages.filter(
                   (message) => message.role !== 'assistant' && message.role !== 'tool',
                 ),
-                { role: 'user', content: input },
                 { role: 'assistant', content: outputCache },
               ],
             }),
