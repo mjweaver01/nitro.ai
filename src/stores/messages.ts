@@ -4,6 +4,7 @@ import { useUserStore } from './user'
 import { useConversationsStore } from './conversations'
 import { useRouter } from 'vue-router'
 import { models } from '../../server/constants'
+
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
     messages: [],
