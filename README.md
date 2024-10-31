@@ -8,7 +8,7 @@
 
 Pulling blog and product data from the Shopify Admin API.
 
-Powered by [OpenAI](https://github.com/openai/openai-node) and [Langfuse](https://langfuse.com)
+Powered by [OpenAI Node SDK](https://github.com/openai/openai-node), [Langfuse](https://langfuse.com), and [Supabase](https://supabase.com)
 
 ## 🏁 Quickstart
 
@@ -20,9 +20,8 @@ nvm use && yarn && yarn dev
 ## Useful links
 
 - https://github.com/openai/openai-node
-- https://github.com/langfuse/langfuse-js
+- https://platform.openai.com/docs/guides/function-calling
 - https://langfuse.com/docs/prompts/get-started#use-prompt
-- https://github.com/langfuse/langfuse-docs/blob/main/pages/api/qa-chatbot.ts
 - https://supabase.com/docs/reference/javascript/
 - https://shopify.dev/docs/api/admin-graphql/
 
@@ -38,9 +37,9 @@ yarn dev
 yarn start
 ```
 
-## 🤖 LLM Server Methods
+## 🤖 Server Relay Methods
 
-The LLM methods are lambda functions, located in the `functions` folder; they are currently hosted by Netlify. However, the server logic is located in `server`. It is relatively amorphous code, and can be adapted to AWS, GCP, Vercel, etc. easily.
+All "server" methods are lambda functions, located in the `functions` folder; they are currently hosted by Netlify. However, the server logic is located in `server`. It is relatively amorphous code, and can be adapted to AWS, GCP, Vercel, etc. easily.
 
 NOTE: ensure you have `netlifi-cli` installed, and are signed in.
 

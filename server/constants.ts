@@ -7,12 +7,14 @@ export const FIVE_MINUTES = 5 * 60 * 1000
 export const threeModel = 'gpt-3.5-turbo-1106'
 export const fourModel = 'gpt-4-turbo'
 export const fourOModel = 'gpt-4o-2024-05-13'
+export const fourOMiniModel = 'gpt-4o-mini'
 export const claude3Model = 'claude-3-5-sonnet-20240620'
 export const oOneModel = 'o1-preview'
 
 export const models = {
   'gpt-3.5': threeModel,
   'gpt-4o': fourOModel,
+  'gpt-4o-mini': fourOMiniModel,
   'o1-preview': oOneModel,
 }
 

@@ -10,7 +10,7 @@ export const useMessagesStore = defineStore('messages', {
     question: '',
     conversationId: '',
     loading: false,
-    llm: 'gpt-4o',
+    model: 'gpt-4o',
     router: useRouter(),
     nocache: localStorage.getItem('nocache') === 'true',
     nosupa: localStorage.getItem('nosupa') === 'true',
@@ -58,7 +58,7 @@ export const useMessagesStore = defineStore('messages', {
         body: JSON.stringify({
           question,
           conversationId: this.conversationId,
-          model: this.llm,
+          model: this.model,
           user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
           nocache: this.nocache,
           nosupa: this.nosupa,
@@ -247,7 +247,7 @@ export const useMessagesStore = defineStore('messages', {
 
     setConversation(sentConversation, scrollToTop = false) {
       this.messages = sentConversation.messages
-      this.llm = sentConversation.model || 'openai'
+      this.model = sentConversation.model || 'gpt-4o'
       this.conversationId = sentConversation.id
       this.router.push(`/chat/${this.conversationId}`)
       if (scrollToTop) {
@@ -260,10 +260,6 @@ export const useMessagesStore = defineStore('messages', {
 
     sanitizeMessage(message) {
       return this.converter.makeHtml(message)
-    },
-
-    setLlm() {
-      this.clearConversation()
     },
   },
 })
