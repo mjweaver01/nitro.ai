@@ -14,7 +14,6 @@ export const models = {
   'gpt-3.5': threeModel,
   'gpt-4o': fourOModel,
   'o1-preview': oOneModel,
-  'claude-3': claude3Model,
 }
 
 export const wikipediaPrompt = `A tool for interacting with and fetching data from the Wikipedia API.
@@ -69,4 +68,10 @@ This tool will provide information about the user, personalized to them.
 The only point of this tool is to provide long term memory about the user themselves,
 like what they've asked in past conversations, and facts about them.
 Use their question to find relevant facts about them.
+`
+export const DISTILL_QUERY_PROMPT = `
+You are a query simplifier. Convert complex questions into simple 1-2 word search terms.
+For product searches, extract the product type (e.g., "tshirt", "hat", "smelling salts", "hoodie").
+For knowledge base searches, extract the key concept (e.g., "squat", "bench press", "conjugate", "max effort").
+Respond only with the simplified term, nothing else.
 `

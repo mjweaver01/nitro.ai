@@ -1,6 +1,29 @@
 import { tools } from './tools'
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { createChatCompletion } from './clients/openai'
+import { openai } from './clients/openai'
+import { DISTILL_QUERY_PROMPT } from './constants'
+
+async function distillQuery(question: string, toolName: string): Promise<string> {
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    temperature: 0,
+    messages: [
+      {
+        role: 'system',
+        content: DISTILL_QUERY_PROMPT,
+      },
+      {
+        role: 'user',
+        content: question,
+      },
+    ],
+  })
+
+  console.log('[distillQuery]', completion.choices[0]?.message?.content)
+
+  return completion.choices[0]?.message?.content?.toLowerCase() ?? question
+}
 
 export async function handleToolCalls(
   toolCalls: any,
@@ -36,7 +59,8 @@ export async function handleToolCalls(
 
       // Parse and execute the tool
       const args = JSON.parse(currentToolCall.arguments)
-      const result = await tool.function(args.question)
+      const distilledQuery = await distillQuery(args.question, currentToolCall.name)
+      const result = await tool.function(distilledQuery)
 
       // First add the assistant's message with the tool call
       messages.push({

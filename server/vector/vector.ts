@@ -12,19 +12,25 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return dotProduct / (magnitudeA * magnitudeB)
 }
 
-export const vector = async (question: string, isAnthropic = false, isProducts = false) => {
-  console.log(`[vector:${isProducts ? 'sales_tool' : 'knowledge_base'}] searching "${question}"`)
-  const vectorLimit = isAnthropic ? ANTHROPIC_LIMIT : OPEN_AI_LIMIT
-
+export async function vector(text: string, isAnthropic = false, isSales = false) {
   try {
-    let currentDocs = await searchShopify(question, isProducts)
+    // Ensure text is not undefined or empty
+    if (!text || typeof text !== 'string') {
+      console.error('[vector] Invalid input text:', text)
+      return []
+    }
+
+    console.log(`[vector:${isSales ? 'sales_tool' : 'knowledge_base'}] searching "${text}"`)
+    const vectorLimit = isAnthropic ? ANTHROPIC_LIMIT : OPEN_AI_LIMIT
+
+    let currentDocs = await searchShopify(text, isSales)
     if (!Array.isArray(currentDocs) || currentDocs.length === 0) {
       console.warn('[vector] No valid documents returned from search')
       return []
     }
 
     // Get embeddings for the question
-    const questionEmbedding = await embeddings(question)
+    const questionEmbedding = await embeddings(text)
     if (!Array.isArray(questionEmbedding)) {
       console.error('[vector] Invalid question embedding format')
       return []
@@ -34,7 +40,7 @@ export const vector = async (question: string, isAnthropic = false, isProducts =
     const docEmbeddings = await Promise.all(
       currentDocs.map(async (doc) => {
         try {
-          const embedding = await embeddings(doc.pageContent)
+          const embedding = await embeddings(JSON.stringify(doc))
           return {
             ...doc,
             embedding,
@@ -58,7 +64,7 @@ export const vector = async (question: string, isAnthropic = false, isProducts =
 
     return results
   } catch (error) {
-    console.error('[vector] error:', error)
+    console.error('[vector] Error:', error)
     return []
   }
 }

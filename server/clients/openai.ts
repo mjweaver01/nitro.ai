@@ -34,10 +34,15 @@ export const createChatCompletion = async (
   return completion
 }
 
-export const embeddings = async (input: string) => {
-  const response = await openai.embeddings.create({
-    input,
-    model: 'text-embedding-3-large',
-  })
-  return response.data[0].embedding
+export async function embeddings(text: string) {
+  try {
+    const response = await openai.embeddings.create({
+      model: 'text-embedding-ada-002',
+      input: text,
+    })
+    return response.data[0].embedding
+  } catch (error) {
+    console.error('[embeddings] Error:', error)
+    throw error
+  }
 }

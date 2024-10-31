@@ -59,8 +59,6 @@ export const ask = async (
     refusal: '',
   })
 
-  console.log('messages', messages)
-
   const encoder = new TextEncoder()
 
   return new ReadableStream({
