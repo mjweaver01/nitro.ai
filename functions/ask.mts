@@ -49,7 +49,6 @@ export default async (req: Request, context: Context) => {
   }
 
   try {
-    console.log('askQuestion', input, user, conversationId, model, nocache, nosupa)
     const stream = await askQuestion(input, user, conversationId, model, nocache, nosupa)
 
     let fullAnswer = ''
