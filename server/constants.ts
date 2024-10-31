@@ -71,7 +71,11 @@ Use their question to find relevant facts about them.
 `
 export const DISTILL_QUERY_PROMPT = `
 You are a query simplifier. Convert complex questions into simple 1-2 word search terms.
+There are two types of searches: product searches and knowledge base searches, which is blog posts.
 For product searches, extract the product type (e.g., "tshirt", "hat", "smelling salts", "hoodie").
+If there is a product modifier, or specific title of a product or blog post, include it in the search term.
+If there is a product color, include it in the search term.
 For knowledge base searches, extract the key concept (e.g., "squat", "bench press", "conjugate", "max effort").
+Again, if there is a specific title of a blog post, include it in the search term.
 Respond only with the simplified term, nothing else.
 `
