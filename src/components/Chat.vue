@@ -55,7 +55,6 @@ export default {
         { id: 'gpt-3.5', value: 'GPT-3.5' },
         { id: 'gpt-4o', value: 'GPT-4o' },
         { id: 'gpt-4o-mini', value: 'GPT-4o Mini' },
-        { id: 'o1-preview', value: 'GPT-o1' },
       ],
     }
   },
