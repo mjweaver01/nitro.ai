@@ -80,7 +80,12 @@ export const ask = async (
           // Handle the tool calls with persistent state
           // second stream will be handled here
           if (toolCalls) {
-            const toolResult = await handleToolCalls(toolCalls, messages, model, currentToolCall)
+            const toolResult = await handleToolCalls(
+              toolCalls,
+              messages,
+              models[model],
+              currentToolCall,
+            )
             if (toolResult) {
               for await (const chunk of toolResult as any) {
                 const content = chunk.choices[0]?.delta?.content
@@ -100,7 +105,7 @@ export const ask = async (
             supabase.from('conversations').upsert({
               id: parseInt(sessionId),
               conversationId: parseInt(sessionId),
-              model,
+              model: models[model],
               user,
               messages: [
                 ...messages.filter((message) => message.role !== 'assistant'),
