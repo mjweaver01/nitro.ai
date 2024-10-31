@@ -108,12 +108,14 @@ export const ask = async (
               model: models[model],
               user,
               messages: [
-                ...messages.filter((message) => message.role !== 'assistant'),
+                ...messages.filter(
+                  (message) => message.role !== 'assistant' && message.role !== 'tool',
+                ),
                 { role: 'user', content: input },
                 { role: 'assistant', content: outputCache },
               ],
             }),
-            // saveToCache(Date.now(), input, outputCache, model, user),
+            saveToCache(Date.now(), input, outputCache, model, user),
             saveToZep(sessionId, [
               { role: 'user', content: input },
               { role: 'assistant', content: outputCache },
