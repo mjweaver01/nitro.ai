@@ -7,7 +7,7 @@ import random from './idGenerator'
 import { saveToCache } from './cache'
 import { saveToZep } from './clients/zep'
 import { createChatCompletion } from './clients/openai'
-import { oOneModel, fourOModel, threeModel } from './constants'
+import { models } from './constants'
 import { handleToolCalls } from './handleToolCalls'
 
 export const ask = async (
@@ -16,12 +16,13 @@ export const ask = async (
   conversationId?: string,
   model?: string,
   nocache?: boolean,
+  nosupa?: boolean,
 ): Promise<ReadableStream> => {
   const sessionId = (conversationId || random()).toString()
   const messages: ChatCompletionMessage[] = []
 
   // Get existing conversation if available
-  if (conversationId) {
+  if (conversationId && !nosupa) {
     const { data } = await supabase
       .from('conversations')
       .select('*')
@@ -51,16 +52,14 @@ export const ask = async (
     refusal: '',
   })
 
+  console.log('messages', messages)
+
   const encoder = new TextEncoder()
 
   return new ReadableStream({
     async start(controller) {
       try {
-        const completion = await createChatCompletion(
-          messages,
-          model === 'gpt-4o' ? fourOModel : model === 'o1-preview' ? oOneModel : threeModel,
-          true,
-        )
+        const completion = await createChatCompletion(messages, models[model], true)
 
         let outputCache = ''
 
@@ -73,22 +72,22 @@ export const ask = async (
             outputCache += content
           }
 
-          if (toolCalls) {
-            const toolResponse = await handleToolCalls(toolCalls, messages, model)
-            if (toolResponse) {
-              for await (const toolChunk of toolResponse) {
-                const toolContent = toolChunk.choices[0]?.delta?.content
-                if (toolContent) {
-                  controller.enqueue(encoder.encode(toolContent))
-                  outputCache += toolContent
-                }
-              }
-            }
-          }
+          // if (toolCalls) {
+          //   const toolResponse = await handleToolCalls(toolCalls, messages, model)
+          //   if (toolResponse) {
+          //     for await (const toolChunk of toolResponse) {
+          //       const toolContent = toolChunk.choices[0]?.delta?.content
+          //       if (toolContent) {
+          //         controller.enqueue(encoder.encode(toolContent))
+          //         outputCache += toolContent
+          //       }
+          //     }
+          //   }
+          // }
         }
 
         // Cache the conversation if needed
-        if (!nocache && outputCache.length > 0) {
+        if (!nocache && !nosupa && outputCache.length > 0) {
           // Save conversation in background
           Promise.all([
             supabase.from('conversations').upsert({
@@ -125,8 +124,9 @@ export async function askQuestion(
   conversationId?: string,
   model?: string,
   nocache?: boolean,
+  nosupa?: boolean,
 ): Promise<ReadableStream> {
-  const response = await ask(input, user, conversationId, model, nocache)
+  const response = await ask(input, user, conversationId, model, nocache, nosupa)
 
   const transformStream = new TransformStream({
     transform(chunk, controller) {

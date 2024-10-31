@@ -10,6 +10,13 @@ export const fourOModel = 'gpt-4o-2024-05-13'
 export const claude3Model = 'claude-3-5-sonnet-20240620'
 export const oOneModel = 'o1-preview'
 
+export const models = {
+  'gpt-3.5': threeModel,
+  'gpt-4o': fourOModel,
+  'o1-preview': oOneModel,
+  'claude-3': claude3Model,
+}
+
 export const wikipediaPrompt = `A tool for interacting with and fetching data from the Wikipedia API.
 `
 export const defaultQuestion = 'Tell me a bit about yourself'

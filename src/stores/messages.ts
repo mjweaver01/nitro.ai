@@ -12,7 +12,8 @@ export const useMessagesStore = defineStore('messages', {
     loading: false,
     llm: 'gpt-4o',
     router: useRouter(),
-    nocache: false,
+    nocache: localStorage.getItem('nocache') === 'true',
+    nosupa: localStorage.getItem('nosupa') === 'true',
     streaming: false,
     userScrolledUp: false,
   }),
@@ -60,6 +61,7 @@ export const useMessagesStore = defineStore('messages', {
           model: this.llm,
           user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
           nocache: this.nocache,
+          nosupa: this.nosupa,
         }),
         signal: this.abortController.signal,
       })
