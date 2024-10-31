@@ -25,6 +25,8 @@ export const createChatCompletion = async (
     messages,
     temperature: 0,
     stream,
+    // @TODO store chat completions in OpenAI
+    // store: true,
     tools: formattedTools,
     tool_choice: 'auto',
   })
