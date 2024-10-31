@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { useConversationsStore } from './conversations'
 import { useRouter } from 'vue-router'
-
+import { models } from '../../server/constants'
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
     messages: [],
@@ -247,7 +247,7 @@ export const useMessagesStore = defineStore('messages', {
 
     setConversation(sentConversation, scrollToTop = false) {
       this.messages = sentConversation.messages
-      this.model = sentConversation.model || 'gpt-4o'
+      this.model = this.resolveModel(sentConversation.model)
       this.conversationId = sentConversation.id
       this.router.push(`/chat/${this.conversationId}`)
       if (scrollToTop) {
@@ -256,6 +256,10 @@ export const useMessagesStore = defineStore('messages', {
         this.scrollToBottom()
       }
       this.mathjax()
+    },
+
+    resolveModel(model) {
+      return models[model] ? model : 'gpt-4o'
     },
 
     sanitizeMessage(message) {
