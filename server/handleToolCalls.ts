@@ -2,16 +2,17 @@ import { tools } from './tools'
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { createChatCompletion } from './clients/openai'
 import { openai } from './clients/openai'
-import { DISTILL_QUERY_PROMPT } from './constants'
+import { compiledDistillQueryPrompt } from './prompts'
+import { threeModel } from './constants'
 
 async function distillQuery(question: string, toolName: string): Promise<string> {
   const completion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+    model: threeModel,
     temperature: 0,
     messages: [
       {
         role: 'system',
-        content: DISTILL_QUERY_PROMPT,
+        content: compiledDistillQueryPrompt,
       },
       {
         role: 'user',
