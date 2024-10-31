@@ -1,6 +1,7 @@
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam, ChatCompletionTool } from 'openai/resources/chat/completions'
 import { tools } from '../tools'
+import { models } from '../constants'
 
 export const openai = new OpenAI({
   apiKey: process.env.VITE_OPENAI_API_KEY,
@@ -36,7 +37,7 @@ export const createChatCompletion = async (
 export async function embeddings(text: string) {
   try {
     const response = await openai.embeddings.create({
-      model: 'text-embedding-ada-002',
+      model: models.embedding,
       input: text,
     })
     return response.data[0].embedding

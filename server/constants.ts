@@ -4,6 +4,7 @@ export const defaultHeaders = {
 
 export const FIVE_MINUTES = 5 * 60 * 1000
 
+export const embeddingModel = 'text-embedding-ada-002'
 export const threeModel = 'gpt-3.5-turbo'
 export const fourModel = 'gpt-4-turbo'
 export const fourOModel = 'gpt-4o-2024-05-13'
@@ -16,6 +17,7 @@ export const models = {
   'gpt-4o': fourOModel,
   'gpt-4o-mini': fourOMiniModel,
   'o1-preview': oOneModel,
+  embedding: embeddingModel,
 }
 
 export const wikipediaPrompt = `A tool for interacting with and fetching data from the Wikipedia API.
