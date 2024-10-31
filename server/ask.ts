@@ -21,6 +21,13 @@ export const ask = async (
   const sessionId = (conversationId || random()).toString()
   const messages: ChatCompletionMessage[] = []
 
+  // Create a persistent tool call object outside the stream
+  let currentToolCall = {
+    id: '',
+    name: '',
+    arguments: '',
+  }
+
   // Get existing conversation if available
   if (conversationId && !nosupa) {
     const { data } = await supabase
@@ -72,18 +79,20 @@ export const ask = async (
             outputCache += content
           }
 
-          // if (toolCalls) {
-          //   const toolResponse = await handleToolCalls(toolCalls, messages, model)
-          //   if (toolResponse) {
-          //     for await (const toolChunk of toolResponse) {
-          //       const toolContent = toolChunk.choices[0]?.delta?.content
-          //       if (toolContent) {
-          //         controller.enqueue(encoder.encode(toolContent))
-          //         outputCache += toolContent
-          //       }
-          //     }
-          //   }
-          // }
+          // Handle the tool calls with persistent state
+          // second stream will be handled here
+          if (toolCalls) {
+            const toolResult = await handleToolCalls(toolCalls, messages, model, currentToolCall)
+            if (toolResult) {
+              for await (const chunk of toolResult as any) {
+                const content = chunk.choices[0]?.delta?.content
+                if (content) {
+                  controller.enqueue(encoder.encode(content))
+                  outputCache += content
+                }
+              }
+            }
+          }
         }
 
         // Cache the conversation if needed
