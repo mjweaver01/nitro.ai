@@ -21,6 +21,7 @@ nvm use && yarn && yarn dev
 
 - https://github.com/openai/openai-node
 - https://platform.openai.com/docs/guides/function-calling
+- https://platform.openai.com/docs/guides/distillation
 - https://langfuse.com/docs/prompts/get-started#use-prompt
 - https://supabase.com/docs/reference/javascript/
 - https://shopify.dev/docs/api/admin-graphql/
