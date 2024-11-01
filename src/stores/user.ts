@@ -125,7 +125,7 @@ export const useUserStore = defineStore('user', {
     },
 
     async verifyRecaptcha() {
-      const token = await this.reCaptcha.executeRecaptcha('login')
+      const token = (await this.reCaptcha?.executeRecaptcha('login')) ?? null
       this.token = token
 
       if (!this.token) {
