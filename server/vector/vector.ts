@@ -29,6 +29,7 @@ export async function vector(text: string, isAnthropic = false, isSales = false)
       return []
     }
 
+    // we don't really need this right now, and it fails a lot
     // try {
     //   // Get embeddings for the question
     //   const questionEmbedding = await embeddings(text)
