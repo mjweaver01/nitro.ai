@@ -9,7 +9,6 @@ import { llm as anthropicLlm, kbModelWithTools as anthropicKbModelWithTools } fr
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
-import { zepMemory, saveToZep } from './clients/zep'
 
 // langchain stuff
 import {
@@ -68,14 +67,11 @@ export const ask = async (
 
   const langfuseHandler = new CallbackHandler({ root: trace })
 
-  const memory = zepMemory(sessionId)
-
   const runnableAgent = isAnthropic
     ? createToolCallingAgent({
         llm: anthropicLlm(),
         prompt: currentPromptTemplate,
         tools: kbTools,
-        memory: memory,
       } as unknown as CreateToolCallingAgentParams)
     : RunnableSequence.from([
         {
@@ -92,12 +88,10 @@ export const ask = async (
     ? new AgentExecutor({
         agent: runnableAgent,
         tools: kbTools,
-        memory: memory,
       } as unknown as AgentExecutorInput)
     : AgentExecutor.fromAgentAndTools({
         agent: runnableAgent,
         tools: kbTools,
-        memory: memory,
       } as unknown as AgentExecutorInput)
 
   const stream = new TransformStream()
@@ -154,13 +148,10 @@ export const ask = async (
                   },
                 ])
                 .eq('id', parseInt(conversationId))
-                .eq('user', user)
 
               if (error) {
                 console.error(error.message)
               }
-
-              await saveToZep(sessionId, newMessages)
             } else {
               const newMessages = [
                 { role: 'user', content: input },
@@ -177,8 +168,6 @@ export const ask = async (
               if (error) {
                 console.error(error.message)
               }
-
-              await saveToZep(sessionId, newMessages)
             }
 
             console.log('[ask] updated conversation', sessionId)
