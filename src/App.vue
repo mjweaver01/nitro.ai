@@ -10,7 +10,6 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { RouterView } from 'vue-router'
 import { useClientStore } from './stores/client'
 import { useUserStore } from './stores/user'
 import { useMessagesStore } from './stores/messages'
