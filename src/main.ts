@@ -2,8 +2,7 @@ import { createApp, markRaw } from 'vue'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { createPinia, setMapStoreSuffix } from 'pinia'
 import { VueShowdownPlugin } from 'vue-showdown'
-// @ts-ignore
-import { VueRecaptchaPlugin } from 'vue-recaptcha/head'
+import { VueReCaptcha } from 'vue-recaptcha-v3'
 
 import App from './App.vue'
 import { routes } from './routes'
@@ -28,8 +27,9 @@ setMapStoreSuffix('')
 app.use(pinia)
 app.use(router)
 app.use(VueShowdownPlugin)
-app.use(VueRecaptchaPlugin, {
-  v3SiteKey: '6LfHIXIqAAAAAKMmti5gxJUdc4FbCouVzRSjlt95',
+app.use(VueReCaptcha, {
+  siteKey: '6LfHIXIqAAAAAKMmti5gxJUdc4FbCouVzRSjlt95',
+  loaderOptions: {},
 })
 
 app.mount('#app')

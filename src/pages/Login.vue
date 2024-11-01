@@ -27,8 +27,8 @@
           :disabled="userStore.loggingIn"
           v-if="userStore.login.isNew"
         />
-        <button type="submit" disabled v-if="userStore.loggingIn">Logging in</button>
-        <button type="submit" v-else-if="userStore.login.isNew">
+        <button type="submit" disabled v-if="userStore?.loggingIn">Logging in</button>
+        <button type="submit" v-else-if="userStore?.login.isNew">
           <i class="pi pi-user-plus" style="font-size: 0.9rem; margin-right: 0.5rem"></i> Sign up
         </button>
         <button type="submit" v-else>

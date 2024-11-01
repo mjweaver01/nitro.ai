@@ -1,10 +1,15 @@
 import { defineStore } from 'pinia'
 import { useClientStore } from './client'
+import { useReCaptcha } from 'vue-recaptcha-v3'
 
 export const useUserStore = defineStore('user', {
   state: () => {
+    const reCaptcha = useReCaptcha()
+
     return {
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},
+      reCaptcha,
+      token: null,
       login: {
         email: '',
         password: '',
@@ -70,6 +75,11 @@ export const useUserStore = defineStore('user', {
       this.loggingIn = true
       this.loginError = ''
 
+      const recaptchaResponse = await this.verifyRecaptcha()
+      if (!recaptchaResponse) {
+        return
+      }
+
       if (this.login.isNew) {
         await this.createUser()
       } else {
@@ -112,6 +122,18 @@ export const useUserStore = defineStore('user', {
       }).then((res) => res.json())
 
       return s?.code === 200
+    },
+
+    async verifyRecaptcha() {
+      const token = (await this.reCaptcha?.executeRecaptcha('login')) ?? null
+      this.token = token
+
+      if (!this.token) {
+        this.loginError = 'Please verify you are human'
+        return false
+      }
+
+      return true
     },
   },
 })
