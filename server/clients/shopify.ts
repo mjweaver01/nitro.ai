@@ -30,7 +30,7 @@ export const searchShopify = async (question: string, isProducts: boolean) => {
                 currencyCode
               }
             }
-            images (first:3) {
+            images (first:1) {
               edges {
                 node {
                   url
