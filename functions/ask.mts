@@ -35,7 +35,7 @@ export default async (req: Request, context: Context) => {
           user,
           messages: [
             { role: 'user', content: input },
-            { role: 'ai', content: latestCacheHit.answer },
+            { role: 'assistant', content: latestCacheHit.answer },
           ],
         })
       } catch {}

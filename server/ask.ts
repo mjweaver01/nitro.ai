@@ -43,12 +43,14 @@ export const ask = async (
     }
   }
 
-  // Add system prompt
-  messages.unshift({
-    role: 'assistant',
-    content: systemPromptTemplate(model === 'anthropic'),
-    refusal: '',
-  })
+  if (messages.length === 0) {
+    // Add system prompt
+    messages.unshift({
+      role: 'assistant',
+      content: systemPromptTemplate(model === 'anthropic'),
+      refusal: '',
+    })
+  }
 
   // Add user input
   messages.push({
@@ -101,7 +103,6 @@ export const ask = async (
           // Save conversation in background
           await Promise.allSettled([
             (async () => {
-              console.log('9. Before saving existing conversation')
               const { data: existingConversation } = await supabase
                 .from('conversations')
                 .select('messages')
@@ -113,12 +114,12 @@ export const ask = async (
                   .from('conversations')
                   .update({
                     messages: [
-                      ...existingConversation.messages,
                       ...messages.filter(
                         (msg: ChatCompletionMessage, index: number) =>
                           // @ts-ignore
-                          msg.role !== 'tool',
+                          msg.content && msg.content.length > 0 && msg.role !== 'tool',
                       ),
+                      { role: 'assistant', content: outputCache },
                     ],
                   })
                   .eq('id', parseInt(conversationId))
@@ -131,8 +132,11 @@ export const ask = async (
                   messages: [
                     ...messages.filter(
                       (msg: ChatCompletionMessage, index: number) =>
+                        !(index === 0 && msg.role === 'assistant') &&
+                        msg.content &&
+                        msg.content.length > 0 &&
                         // @ts-ignore
-                        !(index === 0 && msg.role === 'assistant') && msg.role !== 'tool',
+                        msg.role !== 'tool',
                     ),
                     { role: 'assistant', content: outputCache },
                   ],
