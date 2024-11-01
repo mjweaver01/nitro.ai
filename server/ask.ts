@@ -102,9 +102,8 @@ export const ask = async (
 
         // Cache the conversation if needed
         if (!nosupa && outputCache.length > 0) {
-          // Save conversation in background
-          await Promise.allSettled([
-            (async () => {
+          const saveConversation = async () => {
+            if (conversationId) {
               const { data: existingConversation } = await supabase
                 .from('conversations')
                 .select('messages')
@@ -112,49 +111,54 @@ export const ask = async (
                 .single()
 
               if (existingConversation) {
+                const filteredMessages = messages.filter(
+                  (msg) =>
+                    msg.content?.length > 0 &&
+                    msg.role !== ('system' as ChatCompletionRole) &&
+                    msg.role !== ('tool' as ChatCompletionRole),
+                )
+
                 await supabase
                   .from('conversations')
                   .update({
-                    messages: [
-                      ...messages.filter(
-                        (msg: ChatCompletionMessage, index: number) =>
-                          msg.content &&
-                          msg.content.length > 0 &&
-                          msg.role !== ('system' as ChatCompletionRole) &&
-                          msg.role !== ('tool' as ChatCompletionRole),
-                      ),
-                      { role: 'assistant', content: outputCache },
-                    ],
+                    messages: [...filteredMessages, { role: 'assistant', content: outputCache }],
                   })
                   .eq('id', parseInt(conversationId))
-
                 console.log('[ask] updated conversation', conversationId)
-              } else {
-                await supabase.from('conversations').insert({
-                  id: parseInt(sessionId),
-                  conversationId: parseInt(sessionId),
-                  model: models[model],
-                  user,
-                  messages: [
-                    ...messages.filter(
-                      (msg: ChatCompletionMessage, index: number) =>
-                        msg.content &&
-                        msg.content.length > 0 &&
-                        msg.role !== ('system' as ChatCompletionRole) &&
-                        msg.role !== ('tool' as ChatCompletionRole),
-                    ),
-                    { role: 'assistant', content: outputCache },
-                  ],
-                })
-
-                console.log('[ask] created conversation', sessionId)
+                return
               }
-            })(),
-            (async () =>
-              !nocache && (await saveToCache(Date.now(), input, outputCache, model, user)))(),
-          ])
+            }
+
+            // If no existing conversation found or no conversationId, create new
+            await supabase.from('conversations').insert({
+              id: parseInt(sessionId),
+              conversationId: parseInt(sessionId),
+              model: models[model],
+              user,
+              messages: [
+                ...messages.filter(
+                  (msg) =>
+                    msg.content?.length > 0 &&
+                    msg.role !== ('system' as ChatCompletionRole) &&
+                    msg.role !== ('tool' as ChatCompletionRole),
+                ),
+                { role: 'assistant', content: outputCache },
+              ],
+            })
+            console.log('[ask] created conversation', sessionId)
+          }
+
+          const saveCacheIfNeeded = async () => {
+            if (!nocache) {
+              await saveToCache(Date.now(), input, outputCache, model, user)
+            }
+          }
+
+          await Promise.allSettled([saveConversation(), saveCacheIfNeeded()])
         }
 
+        // Send the conversation ID as a JSON string at the end of the stream
+        controller.enqueue(encoder.encode(`\n{"conversationId":"${sessionId}"}`))
         controller.close()
       } catch (error) {
         console.error('Error in stream:', error)
