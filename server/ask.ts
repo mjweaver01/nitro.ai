@@ -1,4 +1,4 @@
-import type { ChatCompletionMessage } from 'openai/resources/chat/completions'
+import type { ChatCompletionMessage, ChatCompletionRole } from 'openai/resources/chat/completions'
 import { supabase } from './clients/supabase'
 import { systemPromptTemplate } from './prompts'
 import { defaultQuestion } from './constants'
@@ -17,7 +17,7 @@ export const ask = async (
   nosupa?: boolean,
 ): Promise<ReadableStream> => {
   const sessionId = (conversationId || random()).toString()
-  const messages: ChatCompletionMessage[] = []
+  const messages = []
 
   // Create a persistent tool call object outside the stream
   let currentToolCall = {
@@ -46,7 +46,7 @@ export const ask = async (
   if (messages.length === 0) {
     // Add system prompt
     messages.unshift({
-      role: 'assistant',
+      role: 'system',
       content: systemPromptTemplate(model === 'anthropic'),
       refusal: '',
     })
@@ -54,7 +54,7 @@ export const ask = async (
 
   // Add user input
   messages.push({
-    role: 'user' as any,
+    role: 'user',
     content: input,
     refusal: '',
   })
@@ -116,8 +116,10 @@ export const ask = async (
                     messages: [
                       ...messages.filter(
                         (msg: ChatCompletionMessage, index: number) =>
-                          // @ts-ignore
-                          msg.content && msg.content.length > 0 && msg.role !== 'tool',
+                          msg.content &&
+                          msg.content.length > 0 &&
+                          msg.role !== ('system' as ChatCompletionRole) &&
+                          msg.role !== ('tool' as ChatCompletionRole),
                       ),
                       { role: 'assistant', content: outputCache },
                     ],
@@ -132,11 +134,10 @@ export const ask = async (
                   messages: [
                     ...messages.filter(
                       (msg: ChatCompletionMessage, index: number) =>
-                        !(index === 0 && msg.role === 'assistant') &&
                         msg.content &&
                         msg.content.length > 0 &&
-                        // @ts-ignore
-                        msg.role !== 'tool',
+                        msg.role !== ('system' as ChatCompletionRole) &&
+                        msg.role !== ('tool' as ChatCompletionRole),
                     ),
                     { role: 'assistant', content: outputCache },
                   ],
