@@ -41,6 +41,8 @@ export const ask = async (
         })),
       )
     }
+
+    console.log(`[ask] loaded conversation with ${messages.length} messages`, conversationId)
   }
 
   if (messages.length === 0) {
@@ -125,6 +127,8 @@ export const ask = async (
                     ],
                   })
                   .eq('id', parseInt(conversationId))
+
+                console.log('[ask] updated conversation', conversationId)
               } else {
                 await supabase.from('conversations').insert({
                   id: parseInt(sessionId),
@@ -142,6 +146,8 @@ export const ask = async (
                     { role: 'assistant', content: outputCache },
                   ],
                 })
+
+                console.log('[ask] created conversation', sessionId)
               }
             })(),
             (async () =>
