@@ -32,6 +32,7 @@
     "showdown-mathjax": "^1.0.7",
     "typescript": "^5.5.3",
     "vue": "^3.5.3",
+    "vue-recaptcha": "^3.0.0-alpha.2",
     "vue-router": "^4.4.0",
     "vue-showdown": "^4.2.0"
   },
