@@ -29,40 +29,47 @@ export async function vector(text: string, isAnthropic = false, isSales = false)
       return []
     }
 
-    // Get embeddings for the question
-    const questionEmbedding = await embeddings(text)
-    if (!Array.isArray(questionEmbedding)) {
-      console.error('[vector] Invalid question embedding format')
-      return []
-    }
+    // try {
+    //   // Get embeddings for the question
+    //   const questionEmbedding = await embeddings(text)
+    //   if (!Array.isArray(questionEmbedding)) {
+    //     console.error('[vector] Invalid question embedding format')
+    //     return []
+    //   }
 
-    // Get embeddings for documents
-    const docEmbeddings = await Promise.all(
-      currentDocs.map(async (doc) => {
-        try {
-          const embedding = await embeddings(JSON.stringify(doc))
-          return {
-            ...doc,
-            embedding,
-          }
-        } catch (err) {
-          console.error('[vector] Error getting document embedding:', err)
-          return null
-        }
-      }),
-    )
+    //   // Get embeddings for documents
+    //   const docEmbeddings = await Promise.all(
+    //     currentDocs.map(async (doc) => {
+    //       try {
+    //         const embedding = await embeddings(JSON.stringify(doc))
+    //         return {
+    //           ...doc,
+    //           embedding,
+    //         }
+    //       } catch (err) {
+    //         console.error('[vector] Error getting document embedding:', err)
+    //         return currentDocs
+    //       }
+    //     }),
+    //   )
 
-    // Filter out failed embeddings and calculate similarity
-    const results = docEmbeddings
-      .filter((doc): doc is NonNullable<typeof doc> => doc !== null)
-      .map((doc) => ({
-        ...doc,
-        similarity: cosineSimilarity(questionEmbedding, doc.embedding),
-      }))
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, vectorLimit)
+    //   // Filter out failed embeddings and calculate similarity
+    //   const results = docEmbeddings
+    //     .filter((doc): doc is NonNullable<typeof doc> => doc !== null)
+    //     .map((doc) => ({
+    //       ...doc,
+    //       similarity: cosineSimilarity(questionEmbedding, doc.embedding),
+    //     }))
+    //     .sort((a, b) => b.similarity - a.similarity)
+    //     .slice(0, vectorLimit)
 
-    return results
+    //   return results
+    // } catch (error) {
+    //   console.error('[vector] Error, returning raw docs:', error)
+    //   return currentDocs
+    // }
+
+    return currentDocs
   } catch (error) {
     console.error('[vector] Error:', error)
     return []

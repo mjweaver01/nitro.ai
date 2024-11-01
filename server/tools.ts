@@ -1,5 +1,4 @@
 import langfuse from './clients/langfuse'
-import { getZepResults } from './clients/zep'
 import { compiledKbToolPrompt, compiledSalesPrompt, compiledPersonalizationPrompt } from './prompts'
 import { vector } from './vector/vector'
 
@@ -106,63 +105,6 @@ export const tools = [
           level: 'ERROR',
         })
         console.log('[sales_tool] error in sales tool')
-        return []
-      } finally {
-        await langfuse.shutdownAsync()
-      }
-    },
-  },
-  {
-    name: 'personalization_tool',
-    type: 'function',
-    description: compiledPersonalizationPrompt,
-    parameters: {
-      type: 'object',
-      properties: {
-        question: {
-          type: 'string',
-          description: 'The query to search personalization data',
-        },
-      },
-      required: ['question'],
-    },
-    function: async (question: string) => {
-      const q = question ?? 'facts about me'
-      console.log(`[personalization_tool] asking zep "${q}"`)
-
-      const generation = await langfuse.generation({
-        name: 'personalization_tool',
-        input: JSON.stringify(q),
-        model: 'personalization_tool',
-      })
-
-      await generation.update({
-        completionStartTime: new Date(),
-      })
-
-      try {
-        const results = await getZepResults(q)
-
-        if (results.length > 0) {
-          console.log(
-            `[personalization_tool] found ${results.length} result${
-              results.length !== 1 ? 's' : ''
-            }`,
-          )
-        }
-
-        await generation.end({
-          output: JSON.stringify(results[0]),
-          level: 'DEFAULT',
-        })
-
-        return results
-      } catch (error) {
-        await generation.end({
-          output: JSON.stringify(error),
-          level: 'ERROR',
-        })
-        console.log('[personalization_tool] error in personalization tool')
         return []
       } finally {
         await langfuse.shutdownAsync()

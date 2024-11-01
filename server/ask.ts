@@ -1,11 +1,9 @@
-import { Stream } from 'openai/streaming'
-import type { ChatCompletionChunk, ChatCompletionMessage } from 'openai/resources/chat/completions'
+import type { ChatCompletionMessage } from 'openai/resources/chat/completions'
 import { supabase } from './clients/supabase'
 import { systemPromptTemplate } from './prompts'
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
-import { saveToZep } from './clients/zep'
 import { createChatCompletion } from './clients/openai'
 import { models } from './constants'
 import { handleToolCalls } from './handleToolCalls'
@@ -38,7 +36,7 @@ export const ask = async (
     if (data?.[0]?.messages) {
       messages.push(
         ...data[0].messages.map((msg) => ({
-          role: msg.role === 'ai' ? 'assistant' : 'user',
+          role: msg.role,
           content: msg.content,
         })),
       )
@@ -99,27 +97,51 @@ export const ask = async (
         }
 
         // Cache the conversation if needed
-        if (!nocache && !nosupa && outputCache.length > 0) {
+        if (!nosupa && outputCache.length > 0) {
           // Save conversation in background
-          Promise.all([
-            supabase.from('conversations').upsert({
-              id: parseInt(sessionId),
-              conversationId: parseInt(sessionId),
-              model: models[model],
-              user,
-              messages: [
-                ...messages.filter(
-                  (message) => message.role !== 'assistant' && message.role !== 'tool',
-                ),
-                { role: 'assistant', content: outputCache },
-              ],
-            }),
-            saveToCache(Date.now(), input, outputCache, model, user),
-            saveToZep(sessionId, [
-              { role: 'user', content: input },
-              { role: 'assistant', content: outputCache },
-            ]),
-          ]).catch(console.error)
+          await Promise.allSettled([
+            (async () => {
+              console.log('9. Before saving existing conversation')
+              const { data: existingConversation } = await supabase
+                .from('conversations')
+                .select('messages')
+                .eq('id', parseInt(conversationId))
+                .single()
+
+              if (existingConversation) {
+                await supabase
+                  .from('conversations')
+                  .update({
+                    messages: [
+                      ...existingConversation.messages,
+                      ...messages.filter(
+                        (msg: ChatCompletionMessage, index: number) =>
+                          // @ts-ignore
+                          msg.role !== 'tool',
+                      ),
+                    ],
+                  })
+                  .eq('id', parseInt(conversationId))
+              } else {
+                await supabase.from('conversations').insert({
+                  id: parseInt(sessionId),
+                  conversationId: parseInt(sessionId),
+                  model: models[model],
+                  user,
+                  messages: [
+                    ...messages.filter(
+                      (msg: ChatCompletionMessage, index: number) =>
+                        // @ts-ignore
+                        !(index === 0 && msg.role === 'assistant') && msg.role !== 'tool',
+                    ),
+                    { role: 'assistant', content: outputCache },
+                  ],
+                })
+              }
+            })(),
+            (async () =>
+              !nocache && (await saveToCache(Date.now(), input, outputCache, model, user)))(),
+          ])
         }
 
         controller.close()
