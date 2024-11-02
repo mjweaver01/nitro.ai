@@ -26,9 +26,16 @@
         </div>
         <p class="account-last-login">
           Last login:
-          {{ new Date(userStore?.user?.last_sign_in_at).toLocaleDateString('en-US') }} at
           {{
-            new Date(userStore?.user?.last_sign_in_at).toLocaleTimeString('en-US', {
+            new Date(
+              userStore?.user?.last_sign_in_at ?? userStore?.user?.updated_at,
+            ).toLocaleDateString('en-US')
+          }}
+          at
+          {{
+            new Date(
+              userStore?.user?.last_sign_in_at ?? userStore?.user?.updated_at,
+            ).toLocaleTimeString('en-US', {
               hour: 'numeric',
               minute: 'numeric',
               hour12: true,
