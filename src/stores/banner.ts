@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 export const useBannerStore = defineStore('banner', {
   state: () => {
     return {
-      enable: true,
+      enable: false,
       message: `
         <strong
           ><span style="color: #00ff26">Westside Barbell: Training Experience [Class:#002] - </span
