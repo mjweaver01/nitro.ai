@@ -50,7 +50,12 @@
           }}
           with Nitro!
         </h3>
-        <div v-for="conversation in conversationsStore?.conversations" class="account-conversation">
+        <div
+          v-for="conversation in paginatedConversations"
+          :key="conversation.id"
+          class="account-conversation"
+          v-lazy="{ threshold: 0.5 }"
+        >
           <div class="account-conversation-item-header">
             <div class="account-conversation-item-header-left">
               <h4>"{{ conversation.messages[0].content }}"</h4>
@@ -69,6 +74,11 @@
             <Messages :messages="conversation.messages" />
           </div>
         </div>
+        <div v-if="hasMoreConversations" class="load-more">
+          <button @click="loadMore" :disabled="loading">
+            {{ loading ? 'Loading...' : 'Load More' }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -86,6 +96,21 @@ export default {
   },
   computed: {
     ...mapStores(useUserStore, useConversationsStore),
+
+    paginatedConversations() {
+      return this.conversationsStore?.conversations?.slice(0, this.page * this.perPage)
+    },
+
+    hasMoreConversations() {
+      return this.paginatedConversations?.length < this.conversationsStore?.conversations?.length
+    },
+  },
+  data() {
+    return {
+      page: 1,
+      perPage: 10,
+      loading: false,
+    }
   },
   methods: {
     convertModel(model) {
@@ -101,6 +126,15 @@ export default {
     deleteConversation(conversationId) {
       if (confirm('Are you sure you want to delete this conversation?')) {
         this.conversationsStore.deleteConversation(conversationId)
+      }
+    },
+
+    async loadMore() {
+      this.loading = true
+      try {
+        this.page += 1
+      } finally {
+        this.loading = false
       }
     },
   },
