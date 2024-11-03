@@ -77,6 +77,7 @@ export const distillQueryToolPrompt = `
 You are a query simplifier. Convert complex questions into simple 1-2 word search terms.
 There are two types of searches: product searches and blog searches.
 For product searches, extract the product from the question (e.g., "shirt", "hat", "smelling salts", "hoodie", "training experience").
+When something is plural, like "hats", "shirts", "classes", etc make it singular like "hat", "shirt", or "class".
 If there is a product modifier, or specific title of a product or blog post, include it in the search term.
 If there is a product color, include it in the search term.
 For blog searches, extract the key concepts (e.g., "squat", "bench press", "conjugate", "max effort").
