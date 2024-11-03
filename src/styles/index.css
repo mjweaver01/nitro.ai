@@ -396,7 +396,7 @@ a {
 .app {
   display: flex;
   flex-flow: column;
-  height: 100dvh;
+  height: 100%;
   width: 100%;
   overflow: scroll;
 }
@@ -439,6 +439,18 @@ a {
 
 .app-wrapper {
   display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+}
+
+.app-content {
+  display: flex;
+  flex: 1;
+  min-height: 0; /* Crucial for nested flex containers */
   position: relative;
 }
 
@@ -468,7 +480,6 @@ a {
   width: 50vw;
   max-width: 350px;
   border-right: 1px solid var(--border-color);
-  height: 100dvh;
   overflow: hidden;
 }
 
@@ -509,23 +520,11 @@ a {
   height: auto;
   flex-grow: 1;
   overflow: auto;
-}
-
-@media (min-width: 768px) {
-  .left-nav-items {
-    padding: 0 0.5rem;
-  }
+  padding: 0 0.5rem;
 }
 
 .left-nav .conversations {
   overflow: auto;
-  height: calc(100dvh - 206px);
-}
-
-@media (min-width: 768px) {
-  .left-nav .conversations {
-    height: calc(100dvh - 220px);
-  }
 }
 
 .left-nav .conversation {
@@ -571,8 +570,12 @@ a {
   }
 }
 
-.left-nav.force-show {
+.force-show {
   display: block !important;
+}
+
+.force-show-flex {
+  display: flex !important;
 }
 
 .force-desktop-hide {

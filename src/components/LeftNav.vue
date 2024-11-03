@@ -28,7 +28,7 @@
   <div
     class="left-nav"
     :class="{
-      'force-show': !!sidebarStore?.forceShow,
+      'force-show-flex': !!sidebarStore?.forceShow,
       'force-hide-desktop': !!sidebarStore?.desktopHide,
     }"
   >
