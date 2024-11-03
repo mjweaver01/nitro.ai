@@ -5,11 +5,15 @@ import { openai } from './clients/openai'
 import { compiledDistillQueryPrompt } from './prompts'
 import { threeModel } from './constants'
 
-async function distillQuery(question: string, toolName: string): Promise<string> {
+async function distillQuery(
+  question: string,
+  messages: ChatCompletionMessageParam[],
+): Promise<string> {
   const completion = await openai.chat.completions.create({
     model: threeModel,
     temperature: 0,
     messages: [
+      ...messages,
       {
         role: 'system',
         content: compiledDistillQueryPrompt,
@@ -60,7 +64,7 @@ export async function handleToolCalls(
 
       // Parse and execute the tool
       const args = JSON.parse(currentToolCall.arguments)
-      const distilledQuery = await distillQuery(args.question, currentToolCall.name)
+      const distilledQuery = await distillQuery(args.question, messages)
       const result = await tool.function(distilledQuery)
 
       // First add the assistant's message with the tool call
