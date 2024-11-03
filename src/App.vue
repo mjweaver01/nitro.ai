@@ -1,9 +1,12 @@
 <template>
   <div class="app-wrapper">
-    <LeftNav v-if="userStore?.user?.id" />
-    <div class="app" :class="{ 'force-hide': sidebarStore?.forceShow }">
-      <MobileNav v-if="userStore?.user?.id" />
-      <RouterView />
+    <Banner />
+    <div class="app-content">
+      <LeftNav v-if="userStore?.user?.id" />
+      <div class="app" :class="{ 'force-hide': sidebarStore?.forceShow }">
+        <MobileNav v-if="userStore?.user?.id" />
+        <RouterView />
+      </div>
     </div>
   </div>
 </template>
@@ -16,6 +19,7 @@ import { useMessagesStore } from './stores/messages'
 import { useSidebarStore } from './stores/sidebar'
 import LeftNav from './components/LeftNav.vue'
 import MobileNav from './components/MobileNav.vue'
+import Banner from './components/Banner.vue'
 
 export default {
   computed: {
@@ -24,6 +28,7 @@ export default {
   components: {
     LeftNav,
     MobileNav,
+    Banner,
   },
   async created() {
     if (!this.userStore?.user?.id) {
@@ -41,7 +46,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-/* @todo migrate styles */
-</style>
