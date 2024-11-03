@@ -54,7 +54,6 @@
           v-for="conversation in paginatedConversations"
           :key="conversation.id"
           class="account-conversation"
-          v-lazy="{ threshold: 0.5 }"
         >
           <div class="account-conversation-item-header">
             <div class="account-conversation-item-header-left">
@@ -74,8 +73,12 @@
             <Messages :messages="conversation.messages" />
           </div>
         </div>
-        <div v-if="hasMoreConversations" class="load-more">
-          <button @click="loadMore" :disabled="loading">
+        <div class="load-more">
+          <p v-if="!hasMoreConversations">
+            All {{ conversationsStore?.conversations?.length }} conversations loaded.
+            <a href="#" @click.prevent="scrollToTop">Back to top?</a>
+          </p>
+          <button v-else @click="startLoadMore" :disabled="loading">
             {{ loading ? 'Loading...' : 'Load More' }}
           </button>
         </div>
@@ -130,13 +133,51 @@ export default {
     },
 
     async loadMore() {
+      console.log('Loading more conversations...')
       this.loading = true
-      try {
-        this.page += 1
-      } finally {
-        this.loading = false
-      }
+      this.page += 1
     },
+
+    setupIntersectionObserver() {
+      const options = {
+        root: null,
+        rootMargin: '100px',
+        threshold: 0.1,
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && this.hasMoreConversations) {
+            this.loadMore()
+          }
+        })
+      }, options)
+
+      // Observe the load more button
+      const loadMoreEl = document.querySelector('.load-more')
+      if (loadMoreEl) {
+        observer.observe(loadMoreEl)
+      }
+
+      // Save observer for cleanup
+      this.observer = observer
+    },
+
+    startLoadMore() {
+      this.loadMore()
+      this.setupIntersectionObserver()
+    },
+
+    scrollToTop() {
+      document.querySelector('.account-page').scrollTo({ top: 0, behavior: 'instant' })
+    },
+  },
+
+  beforeUnmount() {
+    // Cleanup observer
+    if (this.observer) {
+      this.observer.disconnect()
+    }
   },
 }
 </script>
