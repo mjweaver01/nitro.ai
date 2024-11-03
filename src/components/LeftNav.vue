@@ -39,20 +39,27 @@
         <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
       </div>
     </div>
+    <div class="nav-item search-container">
+      <input
+        type="search"
+        v-model="search"
+        placeholder="Search conversations..."
+        class="search-input"
+      />
+    </div>
     <div class="left-nav-items">
-      <h4 class="left-nav-header">Past Conversations</h4>
-      <div class="conversations" v-if="conversationsStore?.conversations?.length > 0">
+      <div class="conversations" v-if="filteredConversations.length > 0">
         <div
           class="conversation"
           :class="{ hover: conversation.id === messagesStore?.conversation?.id }"
-          v-for="conversation in conversationsStore.conversations"
+          v-for="conversation in filteredConversations"
           @click="messagesStore?.setConversation(conversation, true)"
         >
           {{ conversation.messages[0].content }}
         </div>
       </div>
       <div v-else>
-        <div class="conversation">No previous conversations</div>
+        <div class="conversation">No conversations found.</div>
       </div>
     </div>
     <div class="left-nav-bottom">
@@ -91,6 +98,15 @@ export default {
   },
   computed: {
     ...mapStores(useConversationsStore, useMessagesStore, useUserStore, useSidebarStore),
+    filteredConversations() {
+      if (!this.search) return this.conversationsStore?.conversations || []
+
+      return (
+        this.conversationsStore?.conversations?.filter((conversation) =>
+          conversation.messages[0].content.toLowerCase().includes(this.search.toLowerCase()),
+        ) || []
+      )
+    },
   },
   data() {
     return {
@@ -102,5 +118,3 @@ export default {
   },
 }
 </script>
-
-<style scoped></style>

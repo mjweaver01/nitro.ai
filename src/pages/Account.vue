@@ -44,14 +44,22 @@
         </p>
       </div>
       <div class="account-conversations" v-if="conversationsStore?.conversations?.length > 0">
-        <h3 class="account-conversations-header">
-          You've had {{ conversationsStore?.conversations?.length }} conversation{{
-            conversationsStore?.conversations?.length !== 1 ? 's' : ''
-          }}
-          with Nitro!
-        </h3>
+        <div class="account-conversations-header-container">
+          <h3 class="account-conversations-header">
+            You've had {{ conversationsStore?.conversations?.length }} conversation{{
+              conversationsStore?.conversations?.length !== 1 ? 's' : ''
+            }}
+            with Nitro!
+          </h3>
+          <input
+            type="search"
+            v-model="search"
+            placeholder="Search conversations..."
+            class="search-input"
+          />
+        </div>
         <div
-          v-for="conversation in paginatedConversations"
+          v-for="conversation in filteredPaginatedConversations"
           :key="conversation.id"
           class="account-conversation"
         >
@@ -73,7 +81,7 @@
             <Messages :messages="conversation.messages" />
           </div>
         </div>
-        <div class="load-more">
+        <div class="load-more" v-if="search?.length === 0">
           <p v-if="!hasMoreConversations">
             All {{ conversationsStore?.conversations?.length }} conversations loaded.
             <a href="#" @click.prevent="scrollToTop">Back to top?</a>
@@ -81,6 +89,9 @@
           <button v-else @click="startLoadMore" :disabled="loading">
             {{ loading ? 'Loading...' : 'Load More' }}
           </button>
+        </div>
+        <div v-else-if="search?.length > 0 && filteredConversations?.length === 0">
+          <p>No conversations found.</p>
         </div>
       </div>
     </div>
@@ -100,12 +111,22 @@ export default {
   computed: {
     ...mapStores(useUserStore, useConversationsStore),
 
-    paginatedConversations() {
-      return this.conversationsStore?.conversations?.slice(0, this.page * this.perPage)
+    filteredConversations() {
+      if (!this.search) return this.conversationsStore?.conversations
+
+      return this.conversationsStore?.conversations?.filter((conversation) =>
+        conversation.messages.some((m) =>
+          m.content.toLowerCase().includes(this.search.toLowerCase()),
+        ),
+      )
+    },
+
+    filteredPaginatedConversations() {
+      return this.filteredConversations?.slice(0, this.page * this.perPage)
     },
 
     hasMoreConversations() {
-      return this.paginatedConversations?.length < this.conversationsStore?.conversations?.length
+      return this.filteredPaginatedConversations?.length < this.filteredConversations?.length
     },
   },
   data() {
@@ -113,6 +134,7 @@ export default {
       page: 1,
       perPage: 10,
       loading: false,
+      search: '',
     }
   },
   methods: {
@@ -181,3 +203,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.account-conversations-header-container {
+  margin-bottom: 1rem;
+}
+</style>

@@ -511,9 +511,13 @@ a {
   }
 }
 
-.left-nav-header {
-  padding: 0 0.5rem;
-  margin: 0.5em 0;
+.search-container {
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+}
+
+.search-container input {
+  padding: 0.5rem;
 }
 
 .left-nav-items {
@@ -535,6 +539,10 @@ a {
   text-overflow: ellipsis;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.left-nav .conversation:first-of-type {
+  margin-top: 0.5em;
 }
 
 .left-nav .conversations .conversation:last-of-type {
