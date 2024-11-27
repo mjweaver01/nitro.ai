@@ -16,7 +16,7 @@ export const searchShopify = async (question: string, isProducts: boolean) => {
   const operation = isProducts
     ? `
     {
-      products(first: 5, query:"status:active and title:*${shortenedQuestion}*") {
+      products(first: 5, query:"status:active and *${shortenedQuestion}*") {
         edges {
           node {
             id

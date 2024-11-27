@@ -541,7 +541,7 @@ a {
   cursor: pointer;
 }
 
-.left-nav .conversation:first-of-type {
+.left-nav .conversations .conversation:first-of-type {
   margin-top: 0.5em;
 }
 
