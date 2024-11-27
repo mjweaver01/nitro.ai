@@ -51,11 +51,18 @@ export default async (req: Request, context: Context) => {
   try {
     const stream = await askQuestion(input, user, conversationId, model, nocache, nosupa)
 
-    let fullAnswer = ''
+    if (!stream) {
+      return Response.json({ error: 'Failed to create stream' }, { status: 500 })
+    }
+
     const transformStream = new TransformStream({
       transform(chunk, controller) {
-        fullAnswer += chunk
-        controller.enqueue(chunk)
+        try {
+          controller.enqueue(chunk)
+        } catch (error) {
+          console.error('Transform stream error:', error)
+          controller.error(error)
+        }
       },
     })
 
@@ -67,7 +74,7 @@ export default async (req: Request, context: Context) => {
       },
     })
   } catch (e) {
-    console.error(e)
+    console.error('Stream error:', e)
     return Response.json(
       { error: 'An error occurred while processing your request' },
       { status: 500 },

@@ -83,10 +83,13 @@ export async function handleToolCalls(
         ],
       })
 
+      // limit the result to a token limit
+      const limitedResult = result.slice(0, 10000)
+
       // Add the tool response to messages
       messages.push({
         role: 'tool',
-        content: JSON.stringify(result),
+        content: JSON.stringify(limitedResult),
         tool_call_id: currentToolCall.id,
       })
 
