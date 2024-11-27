@@ -17,7 +17,7 @@
     "crypto-random-bigint": "^2.1.0",
     "dotenv": "^16.4.5",
     "fuzzysort": "^3.0.1",
-    "langfuse": "^3.26.0",
+    "langfuse": "^3.31.0",
     "openai": "^4.68.4",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",

@@ -19,13 +19,6 @@ export const ask = async (
   const sessionId = (conversationId || random()).toString()
   const messages = []
 
-  // Create a persistent tool call object outside the stream
-  let currentToolCall = {
-    id: '',
-    name: '',
-    arguments: '',
-  }
-
   // Get existing conversation if available
   if (conversationId && !nosupa) {
     const { data } = await supabase
@@ -69,6 +62,7 @@ export const ask = async (
         const completion = await createChatCompletion(messages, models[model], true)
 
         let outputCache = ''
+        let currentToolCall = null
 
         for await (const chunk of completion as any) {
           const content = chunk.choices[0]?.delta?.content
@@ -79,15 +73,26 @@ export const ask = async (
             outputCache += content
           }
 
-          // Handle the tool calls with persistent state
-          // second stream will be handled here
           if (toolCalls) {
-            const toolResult = await handleToolCalls(
-              toolCalls,
-              messages,
-              models[model],
-              currentToolCall,
-            )
+            // Initialize or update the current tool call
+            if (!currentToolCall && toolCalls[0]?.id) {
+              currentToolCall = {
+                id: toolCalls[0].id,
+                type: toolCalls[0].type,
+                function: {
+                  name: toolCalls[0].function.name,
+                  arguments: '',
+                },
+              }
+            }
+
+            // Accumulate function arguments
+            if (currentToolCall && toolCalls[0]?.function?.arguments) {
+              currentToolCall.function.arguments += toolCalls[0].function.arguments
+            }
+          } else if (toolCalls === undefined && currentToolCall) {
+            // Only process when toolCalls is explicitly undefined and we have a complete tool call
+            const toolResult = await handleToolCalls([currentToolCall], messages, models[model])
             if (toolResult) {
               for await (const chunk of toolResult as any) {
                 const content = chunk.choices[0]?.delta?.content
@@ -97,6 +102,7 @@ export const ask = async (
                 }
               }
             }
+            currentToolCall = null
           }
         }
 

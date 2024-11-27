@@ -34,9 +34,14 @@ export async function handleToolCalls(
   toolCalls: any,
   messages: ChatCompletionMessageParam[],
   model: string,
-  currentToolCall: { id: string; name: string; arguments: string },
 ) {
   if (!toolCalls || !Array.isArray(toolCalls)) return null
+
+  let currentToolCall = {
+    id: '',
+    name: '',
+    arguments: '',
+  }
 
   for (const call of toolCalls) {
     if (call.function?.name && call.function.name.length > 0) {
