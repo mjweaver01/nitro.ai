@@ -68,7 +68,7 @@
               <h4>"{{ conversation.messages[0].content }}"</h4>
               <h5>
                 {{ conversation.messages.length }} messages with
-                <span style="color: var(--blue)">Nitro</span>
+                <span style="color: var(--blue)">{{ convertModel(conversation.model) }}</span>
               </h5>
             </div>
             <i
@@ -183,7 +183,13 @@ export default {
     scrollToTop() {
       document.querySelector('.account-page').scrollTo({ top: 0, behavior: 'instant' })
     },
+
+    convertModel(model) {
+      const modelName = model.includes('mini') ? 'Mini' : model.includes('gpt-4o') ? 'Full' : model
+      return `Nitro (${modelName})`
+    },
   },
+
 
   beforeUnmount() {
     // Cleanup observer
