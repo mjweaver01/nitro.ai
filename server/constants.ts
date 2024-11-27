@@ -5,8 +5,7 @@ export const defaultHeaders = {
 export const FIVE_MINUTES = 5 * 60 * 1000
 
 export const threeModel = 'gpt-3.5-turbo-1106'
-export const fourModel = 'gpt-4-turbo'
-export const fourOModel = 'gpt-4o-2024-05-13'
+export const fourOModel = 'gpt-4o'
 export const claude3Model = 'claude-3-5-sonnet-20240620'
 
 export const wikipediaPrompt = `A tool for interacting with and fetching data from the Wikipedia API.
