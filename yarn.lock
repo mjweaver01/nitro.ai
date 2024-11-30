@@ -701,19 +701,19 @@ iconv-lite@0.6.3, iconv-lite@^0.6.3:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
-langfuse-core@^3.31.0:
-  version "3.31.0"
-  resolved "https://registry.yarnpkg.com/langfuse-core/-/langfuse-core-3.31.0.tgz#2bffd0182c110fa80597d3bdc2b14d599d827946"
-  integrity sha512-aJ8dNp1Oh8e+XLJb5M+1lzluqi4oLBFxuSh56e8852WOifPs4Q3HPVblvf2YtyhpYqj0x+0cwhVP+iO2AAsh6Q==
+langfuse-core@^3.31.1:
+  version "3.31.1"
+  resolved "https://registry.yarnpkg.com/langfuse-core/-/langfuse-core-3.31.1.tgz#c8a113a0237554ee3f61f74f9871b25f786433b7"
+  integrity sha512-mLFya8KJhCeqBlUy5iNzHoorOTb05Y/Oa9lfcI7PBH+RBmtLB7+QyYyTaP7EmVRkK21uRhn0U/BU0oN8UKxdYQ==
   dependencies:
     mustache "^4.2.0"
 
-langfuse@^3.31.0:
-  version "3.31.0"
-  resolved "https://registry.yarnpkg.com/langfuse/-/langfuse-3.31.0.tgz#9c2f27053cbd65b0b64c74a3fb27d6b217377e36"
-  integrity sha512-Qk2P4dNfiDGjbIjxBsurkRoyBUm5P4KdaeKdM65+IZosZ45TwOgv3AetmXbg+6bKIHbjkJZvOz+KFUmQ3I0AOg==
+langfuse@^3.31.1:
+  version "3.31.1"
+  resolved "https://registry.yarnpkg.com/langfuse/-/langfuse-3.31.1.tgz#4ec50cbde3ab4ac9b228f4f3469e0116dd2fa201"
+  integrity sha512-V74AWfB3aLz2Z0TiuIgXK7uG5eMYE20qfp5zYyKAS4DvQSAiSqC9Sgg3xm6OG8Jc1pK/X7s5WeLvswWn7PwfOA==
   dependencies:
-    langfuse-core "^3.31.0"
+    langfuse-core "^3.31.1"
 
 magic-string@^0.30.11:
   version "0.30.14"
