@@ -52,8 +52,8 @@ export default {
   data() {
     return {
       models: [
-        { id: 'gpt-4o', value: 'GPT-4o' },
         { id: 'gpt-4o-mini', value: 'GPT-4o Mini' },
+        { id: 'gpt-4o', value: 'GPT-4o' },
       ],
     }
   },
