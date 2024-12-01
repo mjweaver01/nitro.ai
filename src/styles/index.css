@@ -570,6 +570,10 @@ a {
   background: var(--light-blue);
 }
 
+.delete-icon:hover {
+  opacity: 0.7;
+}
+
 @media (max-width: 767px) {
   .left-nav {
     display: none;

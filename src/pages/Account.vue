@@ -72,7 +72,7 @@
               </h5>
             </div>
             <i
-              class="pi pi-trash"
+              class="pi pi-trash delete-icon"
               @click.stop="deleteConversation(conversation.id)"
               style="color: var(--red)"
             ></i>
@@ -138,12 +138,6 @@ export default {
     }
   },
   methods: {
-    deleteConversation(conversationId) {
-      if (confirm('Are you sure you want to delete this conversation?')) {
-        this.conversationsStore.deleteConversation(conversationId)
-      }
-    },
-
     async loadMore() {
       console.log('Loading more conversations...')
       this.loading = true
