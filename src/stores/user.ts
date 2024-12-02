@@ -4,7 +4,7 @@ import { useReCaptcha } from 'vue-recaptcha-v3'
 
 export const useUserStore = defineStore('user', {
   state: () => {
-    const reCaptcha = useReCaptcha()
+    const reCaptcha = import.meta.env.PROD ? useReCaptcha() : null
 
     return {
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},
@@ -75,9 +75,11 @@ export const useUserStore = defineStore('user', {
       this.loggingIn = true
       this.loginError = ''
 
+      if (import.meta.env.PROD) {
       const recaptchaResponse = await this.verifyRecaptcha()
       if (!recaptchaResponse) {
         return
+        }
       }
 
       if (this.login.isNew) {
