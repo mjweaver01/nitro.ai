@@ -4,30 +4,61 @@ import { createChatCompletion } from './clients/openai'
 import { openai } from './clients/openai'
 import { compiledDistillQueryPrompt } from './prompts'
 import { threeModel } from './constants'
+import langfuse from './clients/langfuse'
+
+const distillModel = threeModel
 
 async function distillQuery(
   question: string,
   messages: ChatCompletionMessageParam[],
 ): Promise<string> {
-  const completion = await openai.chat.completions.create({
-    model: threeModel,
-    temperature: 0,
-    messages: [
-      ...messages,
-      {
-        role: 'system',
-        content: compiledDistillQueryPrompt,
-      },
-      {
-        role: 'user',
-        content: question,
-      },
-    ],
+  const generation = await langfuse.generation({
+    name: 'distill_query',
+    input: JSON.stringify(question),
+    model: distillModel,
   })
 
-  console.log('[distillQuery]', completion.choices[0]?.message?.content)
+  await generation.update({
+    completionStartTime: new Date(),
+  })
 
-  return completion.choices[0]?.message?.content?.toLowerCase() ?? question
+  try {
+    const completion = await openai.chat.completions.create({
+      model: distillModel,
+      temperature: 0,
+      messages: [
+        ...messages,
+        {
+          role: 'system',
+          content: compiledDistillQueryPrompt,
+        },
+        {
+          role: 'user',
+          content: question,
+        },
+      ],
+    })
+
+    const content = completion.choices[0]?.message?.content?.toLowerCase() ?? question
+
+    await generation.end({
+      output: JSON.stringify(content),
+      level: 'DEFAULT',
+    })
+
+    console.log('[distillQuery]', content)
+
+    return content
+  } catch (error) {
+    await generation.end({
+      output: JSON.stringify(error),
+      level: 'ERROR',
+    })
+    console.error('[distillQuery] Error:', error)
+    return question
+  } finally {
+    await langfuse.shutdownAsync()
+  }
 }
 
 export async function handleToolCalls(
