@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { useConversationsStore } from './conversations'
 import { useRouter } from 'vue-router'
-import { models } from '../../server/constants'
+import { defaultModel, models } from '../../server/constants'
 
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
@@ -11,7 +11,7 @@ export const useMessagesStore = defineStore('messages', {
     question: '',
     conversationId: '',
     loading: false,
-    model: 'gpt-4o-mini',
+    model: defaultModel,
     router: useRouter(),
     nocache: localStorage.getItem('nocache') === 'true',
     nosupa: localStorage.getItem('nosupa') === 'true',

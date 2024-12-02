@@ -20,6 +20,13 @@ export const models = {
   embedding: embeddingModel,
 }
 
+export const modelOptions = [
+  { value: 'GPT-4o Mini', id: fourOMiniModel },
+  { value: 'GPT-4o', id: fourModel },
+]
+
+export const defaultModel = fourOMiniModel
+
 export const wikipediaPrompt = `A tool for interacting with and fetching data from the Wikipedia API.
 `
 export const defaultQuestion = 'Tell me a bit about yourself'

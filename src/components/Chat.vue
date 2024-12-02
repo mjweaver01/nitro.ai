@@ -44,17 +44,14 @@
 import { mapStores } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useMessagesStore } from '../stores/messages'
-
+import { modelOptions } from '../../server/constants'
 export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
   },
   data() {
     return {
-      models: [
-        { id: 'gpt-4o-mini', value: 'GPT-4o Mini' },
-        { id: 'gpt-4o', value: 'GPT-4o' },
-      ],
+      models: modelOptions,
     }
   },
 }
