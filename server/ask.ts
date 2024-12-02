@@ -68,41 +68,49 @@ export const ask = async (
           const content = chunk.choices[0]?.delta?.content
           const toolCalls = chunk.choices[0]?.delta?.tool_calls
 
-          if (content) {
-            controller.enqueue(encoder.encode(content))
-            outputCache += content
-          }
-
           if (toolCalls) {
-            // Initialize or update the current tool call
-            if (!currentToolCall && toolCalls[0]?.id) {
-              currentToolCall = {
-                id: toolCalls[0].id,
-                type: toolCalls[0].type,
-                function: {
-                  name: toolCalls[0].function.name,
-                  arguments: '',
-                },
+            // Handle all tool calls in this delta
+            for (const call of toolCalls) {
+              // Initialize new tool call if needed
+              if (call.id && !currentToolCall) {
+                currentToolCall = {
+                  id: call.id,
+                  type: call.type,
+                  function: {
+                    name: call.function.name,
+                    arguments: '',
+                  },
+                }
+              }
+
+              // Accumulate function arguments
+              if (currentToolCall && call.function?.arguments) {
+                currentToolCall.function.arguments += call.function.arguments
               }
             }
-
-            // Accumulate function arguments
-            if (currentToolCall && toolCalls[0]?.function?.arguments) {
-              currentToolCall.function.arguments += toolCalls[0].function.arguments
-            }
           } else if (toolCalls === undefined && currentToolCall) {
-            // Only process when toolCalls is explicitly undefined and we have a complete tool call
-            const toolResult = await handleToolCalls([currentToolCall], messages, models[model])
-            if (toolResult) {
-              for await (const chunk of toolResult as any) {
-                const content = chunk.choices[0]?.delta?.content
-                if (content) {
-                  controller.enqueue(encoder.encode(content))
-                  outputCache += content
+            // Process complete tool call
+            if (currentToolCall.function.arguments.trim().endsWith('}')) {
+              try {
+                const toolResult = await handleToolCalls([currentToolCall], messages, models[model])
+                if (toolResult) {
+                  for await (const chunk of toolResult as any) {
+                    const content = chunk.choices[0]?.delta?.content
+                    if (content) {
+                      controller.enqueue(encoder.encode(content))
+                      outputCache += content
+                    }
+                  }
                 }
+              } catch (error) {
+                console.error('Error processing tool calls:', error)
               }
             }
             currentToolCall = null
+          } else if (content) {
+            // Stream regular content
+            controller.enqueue(encoder.encode(content))
+            outputCache += content
           }
         }
 

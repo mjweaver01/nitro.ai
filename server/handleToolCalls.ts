@@ -51,28 +51,38 @@ export async function handleToolCalls(
       currentToolCall.id = call.id
     }
     if (call.function?.arguments && call.function.arguments.length > 0) {
-      currentToolCall.arguments += call.function.arguments
+      if (currentToolCall.arguments.trim().endsWith('}')) {
+        currentToolCall.arguments = call.function.arguments
+      } else {
+        currentToolCall.arguments += call.function.arguments
+      }
     }
   }
 
-  // Only proceed if we have a complete tool call with valid JSON
-  if (
-    currentToolCall.name &&
-    currentToolCall.arguments &&
-    currentToolCall.arguments.includes('}')
-  ) {
+  if (currentToolCall.name && currentToolCall.arguments) {
     try {
       const tool = tools.find((t) => t.name === currentToolCall.name)
       if (!tool) {
         throw new Error(`Tool ${currentToolCall.name} not found`)
       }
 
-      // Parse and execute the tool
-      const args = JSON.parse(currentToolCall.arguments)
+      console.log('[currentToolCall]', currentToolCall)
+
+      let args
+      try {
+        args = JSON.parse(currentToolCall.arguments)
+      } catch (e) {
+        const jsonMatch = currentToolCall.arguments.match(/\{[^}]+\}/)?.[0]
+        if (jsonMatch) {
+          args = JSON.parse(jsonMatch)
+        } else {
+          throw new Error('Invalid JSON arguments')
+        }
+      }
+
       const distilledQuery = await distillQuery(args.question, messages)
       const result = await tool.function(distilledQuery)
 
-      // First add the assistant's message with the tool call
       messages.push({
         role: 'assistant',
         content: null,
@@ -88,22 +98,18 @@ export async function handleToolCalls(
         ],
       })
 
-      // limit the result to a token limit
       const limitedResult = result.slice(0, 10000)
 
-      // Add the tool response to messages
       messages.push({
         role: 'tool',
         content: JSON.stringify(limitedResult),
         tool_call_id: currentToolCall.id,
       })
 
-      // Reset the tool call state after successful execution
       currentToolCall.id = ''
       currentToolCall.name = ''
       currentToolCall.arguments = ''
 
-      // Get a new completion with the tool results
       return await createChatCompletion(messages, model, true)
     } catch (error) {
       console.error('Error executing tool:', error)
