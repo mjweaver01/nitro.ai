@@ -62,7 +62,7 @@ export const ask = async (
         const completion = await createChatCompletion(messages, models[model], true)
 
         let outputCache = ''
-        let currentToolCall = null
+        let currentToolCalls = new Map()
 
         for await (const chunk of completion as any) {
           const content = chunk.choices[0]?.delta?.content
@@ -71,28 +71,72 @@ export const ask = async (
           if (toolCalls) {
             // Handle all tool calls in this delta
             for (const call of toolCalls) {
-              // Initialize new tool call if needed
-              if (call.id && !currentToolCall) {
-                currentToolCall = {
-                  id: call.id,
-                  type: call.type,
-                  function: {
-                    name: call.function.name,
-                    arguments: '',
-                  },
+              // Get the correct tool call using either id or index
+              const callId = call.id || (call.index !== undefined ? 
+                Array.from(currentToolCalls.keys())[call.index] : null)
+              
+              if (call.id) {
+                // Initialize new tool call
+                if (!currentToolCalls.has(call.id)) {
+                  console.log(`[ask] New tool call: ${call.function?.name || 'unknown'} (${call.id})`)
+                  currentToolCalls.set(call.id, {
+                    id: call.id,
+                    type: call.type || 'function',
+                    function: {
+                      name: call.function?.name || '',
+                      arguments: '',
+                    },
+                  })
                 }
               }
 
-              // Accumulate function arguments
-              if (currentToolCall && call.function?.arguments) {
-                currentToolCall.function.arguments += call.function.arguments
+              // Accumulate function arguments if we have a valid call
+              if (callId && currentToolCalls.has(callId)) {
+                const currentCall = currentToolCalls.get(callId)
+                if (currentCall) {
+                  if (call.function?.name) {
+                    currentCall.function.name = call.function.name
+                  }
+                  if (call.function?.arguments) {
+                    // Reset arguments if we're getting a new JSON start
+                    if (call.function.arguments.includes('{"')) {
+                      currentCall.function.arguments = ''
+                    }
+                    currentCall.function.arguments += call.function.arguments
+                  }
+                }
               }
             }
-          } else if (toolCalls === undefined && currentToolCall) {
-            // Process complete tool call
-            if (currentToolCall.function.arguments.trim().endsWith('}')) {
+          } else if (currentToolCalls.size > 0 && !content) {
+            // Only check for completion when we have pending tool calls and no content
+            const completedCalls = Array.from(currentToolCalls.values()).filter(call => {
               try {
-                const toolResult = await handleToolCalls([currentToolCall], messages, models[model])
+                const args = call.function?.arguments || ''
+                const isComplete = args.trim().startsWith('{') && 
+                                  args.trim().endsWith('}') && 
+                                  call.function?.name
+
+                if (isComplete) {
+                  try {
+                    JSON.parse(args)
+                    return true
+                  } catch (e) {
+                    console.log(`[ask] Invalid JSON for ${call.id}`)
+                    return false
+                  }
+                }
+                return false
+              } catch (e) {
+                console.error('[ask] Error validating tool call:', e)
+                return false
+              }
+            })
+
+            if (completedCalls.length > 0) {
+              try {
+                console.log(`[ask] Processing ${completedCalls.length} tool calls`)
+                const toolResult = await handleToolCalls(completedCalls, messages, models[model])
+                
                 if (toolResult) {
                   for await (const chunk of toolResult as any) {
                     const content = chunk.choices[0]?.delta?.content
@@ -101,14 +145,17 @@ export const ask = async (
                       outputCache += content
                     }
                   }
+                } else {
+                  console.log('[ask] No content returned from tool calls')
                 }
               } catch (error) {
-                console.error('Error processing tool calls:', error)
+                console.error('[ask] Error processing tool calls:', error)
               }
+              
+              // Clear processed tool calls
+              completedCalls.forEach(call => currentToolCalls.delete(call.id))
             }
-            currentToolCall = null
           } else if (content) {
-            // Stream regular content
             controller.enqueue(encoder.encode(content))
             outputCache += content
           }
