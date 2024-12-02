@@ -37,42 +37,26 @@ export async function handleToolCalls(
 ) {
   if (!toolCalls || !Array.isArray(toolCalls)) return null
 
-  let currentToolCall = {
-    id: '',
-    name: '',
-    arguments: '',
-  }
+  const toolCallPromises = toolCalls.map(async (call) => {
+    const toolCall = {
+      id: call.id || '',
+      name: call.function?.name || '',
+      arguments: call.function?.arguments || '',
+    }
 
-  for (const call of toolCalls) {
-    if (call.function?.name && call.function.name.length > 0) {
-      currentToolCall.name = call.function.name
-    }
-    if (call.id && call.id.length > 0) {
-      currentToolCall.id = call.id
-    }
-    if (call.function?.arguments && call.function.arguments.length > 0) {
-      if (currentToolCall.arguments.trim().endsWith('}')) {
-        currentToolCall.arguments = call.function.arguments
-      } else {
-        currentToolCall.arguments += call.function.arguments
-      }
-    }
-  }
+    if (!toolCall.name || !toolCall.arguments) return null
 
-  if (currentToolCall.name && currentToolCall.arguments) {
     try {
-      const tool = tools.find((t) => t.name === currentToolCall.name)
+      const tool = tools.find((t) => t.name === toolCall.name)
       if (!tool) {
-        throw new Error(`Tool ${currentToolCall.name} not found`)
+        throw new Error(`Tool ${toolCall.name} not found`)
       }
-
-      console.log('[currentToolCall]', currentToolCall)
 
       let args
       try {
-        args = JSON.parse(currentToolCall.arguments)
+        args = JSON.parse(toolCall.arguments)
       } catch (e) {
-        const jsonMatch = currentToolCall.arguments.match(/\{[^}]+\}/)?.[0]
+        const jsonMatch = toolCall.arguments.match(/\{[^}]+\}/)?.[0]
         if (jsonMatch) {
           args = JSON.parse(jsonMatch)
         } else {
@@ -88,11 +72,11 @@ export async function handleToolCalls(
         content: null,
         tool_calls: [
           {
-            id: currentToolCall.id,
+            id: toolCall.id,
             type: 'function',
             function: {
-              name: currentToolCall.name,
-              arguments: currentToolCall.arguments,
+              name: toolCall.name,
+              arguments: toolCall.arguments,
             },
           },
         ],
@@ -103,19 +87,19 @@ export async function handleToolCalls(
       messages.push({
         role: 'tool',
         content: JSON.stringify(limitedResult),
-        tool_call_id: currentToolCall.id,
+        tool_call_id: toolCall.id,
       })
 
-      currentToolCall.id = ''
-      currentToolCall.name = ''
-      currentToolCall.arguments = ''
-
-      return await createChatCompletion(messages, model, true)
+      return limitedResult
     } catch (error) {
       console.error('Error executing tool:', error)
       return null
     }
-  }
+  })
 
-  return null
+  // Wait for all tool calls to complete
+  await Promise.all(toolCallPromises)
+
+  // Create final chat completion with all tool results
+  return await createChatCompletion(messages, model, true)
 }
