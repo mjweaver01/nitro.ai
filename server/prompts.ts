@@ -2,6 +2,7 @@ import {
   systemPrompt,
   kbToolPrompt,
   salesToolPrompt,
+  booksToolPrompt,
   personalizationToolPrompt,
   distillQueryToolPrompt,
 } from './constants'
@@ -38,6 +39,9 @@ const personalizationPrompt = await langfuse.getPrompt('PERSONALIZATION_TOOL_PRO
 export const compiledPersonalizationPrompt = personalizationPrompt
   ? personalizationPrompt.prompt
   : personalizationToolPrompt
+
+const booksPrompt = await langfuse.getPrompt('BOOKS_TOOL_PROMPT')
+export const compiledBooksToolPrompt = booksPrompt.prompt ? booksPrompt.prompt : booksToolPrompt
 
 const distillQueryPrompt = await langfuse.getPrompt('DISTILL_QUERY_PROMPT')
 export const compiledDistillQueryPrompt = distillQueryPrompt.prompt

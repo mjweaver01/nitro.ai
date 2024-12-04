@@ -73,6 +73,12 @@ The only point of this tool is to provide long term memory about the user themse
 like what they've asked in past conversations, and facts about them.
 Use their question to find relevant facts about them.
 `
+
+export const booksToolPrompt = `
+This tool searches through Westside Barbell's book content to find relevant information and quotes. 
+Use it when you need specific information from Louie's books or want to reference book content.
+`
+
 export const distillQueryToolPrompt = `
 You are a query simplifier. Convert complex questions into simple 1-2 word search terms.
 There are two types of searches: product searches and blog searches.

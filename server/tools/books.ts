@@ -2,6 +2,7 @@ import fuzzysort from 'fuzzysort'
 import fs from 'fs/promises'
 import path from 'path'
 import langfuse from '../clients/langfuse'
+import { compiledBooksToolPrompt } from '../prompts'
 
 interface BookChunk {
   title: string
@@ -70,8 +71,7 @@ const searchBooks = async (query: string): Promise<any[]> => {
 export const booksTool = {
   name: 'books',
   type: 'function',
-  description: `This tool searches through Westside Barbell's book content to find relevant information and quotes. 
-                Use it when you need specific information from Louie's books or want to reference book content.`,
+  description: compiledBooksToolPrompt,
   parameters: {
     type: 'object',
     properties: {
