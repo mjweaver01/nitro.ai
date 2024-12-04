@@ -1,6 +1,6 @@
 import type { ChatCompletionMessage, ChatCompletionRole } from 'openai/resources/chat/completions'
 import { supabase } from './clients/supabase'
-import { systemPromptTemplate } from './prompts'
+import { compiledSystemPrompt } from './prompts'
 import { defaultQuestion } from './constants'
 import random from './idGenerator'
 import { saveToCache } from './cache'
@@ -42,7 +42,7 @@ export const ask = async (
     // Add system prompt
     messages.unshift({
       role: 'system',
-      content: systemPromptTemplate(model === 'anthropic'),
+      content: compiledSystemPrompt,
       refusal: '',
     })
   }

@@ -2,7 +2,6 @@ import {
   systemPrompt,
   kbToolPrompt,
   salesToolPrompt,
-  anthropicNudge,
   personalizationToolPrompt,
   distillQueryToolPrompt,
 } from './constants'
@@ -13,13 +12,8 @@ export const formatMessages = (
   chatHistory: Array<{ role: string; content: string }>,
   input: string,
   agentScratchpad?: string,
-  isAnthropic?: boolean,
 ) => {
   const messages = [{ role: 'system', content: systemMessage }, ...chatHistory]
-
-  if (isAnthropic) {
-    messages.push({ role: 'user', content: anthropicNudge })
-  }
 
   if (agentScratchpad) {
     messages.push({ role: 'assistant', content: agentScratchpad })
@@ -33,7 +27,6 @@ export const formatMessages = (
 // Fetch prompts from langfuse with fallbacks
 const SystemPrompt = await langfuse.getPrompt('SYSTEM_PROMPT')
 export const compiledSystemPrompt = SystemPrompt.prompt ? SystemPrompt.prompt : systemPrompt
-export const systemPromptTemplate = (isAnthropic = false) => compiledSystemPrompt
 
 const KbToolPrompt = await langfuse.getPrompt('KB_TOOL_PROMPT')
 export const compiledKbToolPrompt = KbToolPrompt.prompt ? KbToolPrompt.prompt : kbToolPrompt

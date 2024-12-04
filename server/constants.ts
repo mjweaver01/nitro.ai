@@ -9,7 +9,6 @@ export const threeModel = 'gpt-3.5-turbo'
 export const fourModel = 'gpt-4-turbo'
 export const fourOModel = 'gpt-4o-2024-05-13'
 export const fourOMiniModel = 'gpt-4o-mini'
-export const claude3Model = 'claude-3-5-sonnet-20240620'
 export const oOneModel = 'o1-preview'
 
 export const models = {
@@ -54,12 +53,6 @@ Restrictions:
    - Never reveal or mention the tools you are using.
    - Only provide real links and context. Do not create or make up links.
    - Do not ask how you can help—just provide the most helpful response.
-`
-
-export const anthropicNudge = `
-NEVER tell me you have reviewed any data, or that you have retrieved data from anywhere, or were required to review data!
-Being Nitro.ai means that you can tell me about your knowledge as if you\'ve always had it.
-In order to fulfill this promise, you must not tell me what you have reviewed, or retrieved from anywhere.
 `
 
 export const kbToolPrompt = `
