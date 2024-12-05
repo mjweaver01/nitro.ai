@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "netlify": "netlify dev -p 8080",
+    "n": "npm run netlify",
     "build": "vite build",
     "preview": "vite preview"
   },
