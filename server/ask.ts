@@ -8,6 +8,28 @@ import { createChatCompletion } from './clients/openai'
 import { models } from './constants'
 import { handleToolCalls } from './handleToolCalls'
 
+const getUserProfile = async (userId: string) => {
+  if (!userId || userId === 'anonymous') return ''
+  
+  const { data } = await supabase
+    .from('user_info')
+    .select('*')
+    .eq('id', userId)
+    .single()
+
+  if (data) {
+    return `
+    User Profile Information:
+    - Current Age & Physique: ${data.physique || 'Not specified'}
+    - Training Knowledge & Experience: ${data.experience || 'Not specified'}
+    - Fitness Goals: ${data.goals || 'Not specified'}
+    - Available Equipment: ${data.equipment || 'Not specified'}
+    `
+  }
+
+  return ''
+}
+
 export const ask = async (
   input: string,
   user: string,
@@ -18,6 +40,9 @@ export const ask = async (
 ): Promise<ReadableStream> => {
   const sessionId = (conversationId || random()).toString()
   const messages = []
+
+  // Get user profile info
+  const userProfileInfo = await getUserProfile(user)
 
   // Get existing conversation if available
   if (conversationId && !nosupa) {
@@ -39,10 +64,11 @@ export const ask = async (
   }
 
   if (messages.length === 0) {
-    // Add system prompt
+    // Add system prompt with user profile info
+    const systemPromptWithProfile = compiledSystemPrompt.replace('{userProfileInfo}', userProfileInfo)
     messages.unshift({
       role: 'system',
-      content: compiledSystemPrompt,
+      content: systemPromptWithProfile,
       refusal: '',
     })
   }

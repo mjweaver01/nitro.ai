@@ -157,8 +157,10 @@ export const useUserStore = defineStore('user', {
     },
 
     async updateUserInfo(info: {
-      physique_and_knowledge?: string
-      workout_equipment?: string
+      physique: string
+      experience: string
+      goals?: string
+      equipment?: string
     }) {
       const client = useClientStore()
       const { data, error } = await client.client

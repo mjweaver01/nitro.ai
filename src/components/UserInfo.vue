@@ -3,11 +3,31 @@
     <h3 class="account-header">Your Training Profile</h3>
     <form @submit.prevent="saveUserInfo">
       <div class="form-group">
-        <label for="physique-knowledge">Physique & Training Knowledge</label>
+        <label for="physique-knowledge">Age & Physique</label>
         <textarea
           id="physique-knowledge"
-          v-model="form.physique_and_knowledge"
-          placeholder="Describe your current physique and lifting experience..."
+          v-model="form.physique"
+          placeholder="Describe your current physique..."
+          rows="4"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="experience">Training Knowledge & Experience</label>
+        <textarea
+          id="experience"
+          v-model="form.experience"
+          placeholder="Describe your training knowledge and experience..."
+          rows="4"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="goals">Fitness Goals</label>
+        <textarea
+          id="goals"
+          v-model="form.goals"
+          placeholder="Describe your fitness goals..."
           rows="4"
         ></textarea>
       </div>
@@ -16,14 +36,14 @@
         <label for="equipment">Available Equipment</label>
         <textarea
           id="equipment"
-          v-model="form.workout_equipment"
+          v-model="form.equipment"
           placeholder="List the equipment you have access to..."
           rows="4"
         ></textarea>
       </div>
 
       <button type="submit" :disabled="saving">
-        {{ saving ? 'Saving...' : 'Save Profile' }}
+        {{ buttonText }}
       </button>
     </form>
   </div>
@@ -38,21 +58,32 @@ export default {
   data() {
     return {
       saving: false,
+      saved: false,
       form: {
-        physique_and_knowledge: '',
-        workout_equipment: '',
+        physique: '',
+        experience: '',
+        goals: '',
+        equipment: '',
       },
     }
   },
   computed: {
     ...mapStores(useUserStore),
+    
+    buttonText() {
+      if (this.saving) return 'Saving...'
+      if (this.saved) return 'Changes Saved'
+      return 'Save Profile'
+    }
   },
   async created() {
     // Load existing user info
     const info = await this.userStore.getUserInfo()
     if (info) {
-      this.form.physique_and_knowledge = info.physique_and_knowledge || ''
-      this.form.workout_equipment = info.workout_equipment || ''
+      this.form.physique = info.physique || ''
+      this.form.experience = info.experience || ''
+      this.form.goals = info.goals || ''
+      this.form.equipment = info.equipment || ''
     }
   },
   methods: {
@@ -60,6 +91,10 @@ export default {
       this.saving = true
       try {
         await this.userStore.updateUserInfo(this.form)
+        this.saved = true
+        setTimeout(() => {
+          this.saved = false
+        }, 2000)
       } catch (error) {
         console.error('Error saving user info:', error)
       }
