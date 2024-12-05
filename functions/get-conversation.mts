@@ -4,6 +4,14 @@ import { getConversation } from '../server/cache'
 export default async (req: Request, context: Context) => {
   const { conversationId, user, nosupa } = await req.json()
 
+  if(!user) {
+    return Response.json({
+      code: 401,
+      message: 'Unauthorized',
+      error: true,
+    })
+  }
+
   if (nosupa) {
     return Response.json({
       code: 400,

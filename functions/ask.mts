@@ -14,6 +14,14 @@ export default async (req: Request, context: Context) => {
   const input = body?.question?.trim() ?? null
   const conversationId = body?.conversationId ?? qs.get('conversationId') ?? null
 
+  if(!user) {
+    return Response.json({
+      code: 401,
+      message: 'Unauthorized',
+      error: true,
+    })
+  }
+
   if (!input) {
     return Response.json({ error: 'No question provided' }, { status: 400 })
   }

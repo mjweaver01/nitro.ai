@@ -724,3 +724,7 @@ a {
   max-width: 400px;
   margin: 0 auto;
 }
+
+.admin {
+  padding: 0 1em 1em;
+}
