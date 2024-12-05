@@ -56,7 +56,7 @@ const searchBooks = async (query: string): Promise<any[]> => {
   const results = fuzzysort.go(query, bookChunks, {
     key: 'content',
     limit: 3,
-    threshold: -10000 // Adjust this to control match sensitivity
+    threshold: -5000 // Adjust this to control match sensitivity
   })
 
   return results.map(result => ({
