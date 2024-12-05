@@ -19,6 +19,10 @@ export const useUserStore = defineStore('user', {
       loggingIn: false,
       loggingOut: false,
       loginError: '',
+      userInfo: {
+        physique: '',
+        equipment: '',
+      },
     }
   },
   getters: {
@@ -136,6 +140,40 @@ export const useUserStore = defineStore('user', {
       }
 
       return true
+    },
+
+    async getUserInfo() {
+      const client = useClientStore()
+      const { data, error } = await client.client
+        .from('user_info')
+        .select('*')
+        .eq('id', this.user.id)
+        .single()
+
+      if (data) {
+        this.userInfo = data
+      }
+      return data
+    },
+
+    async updateUserInfo(info: {
+      physique_and_knowledge?: string
+      workout_equipment?: string
+    }) {
+      const client = useClientStore()
+      const { data, error } = await client.client
+        .from('user_info')
+        .upsert({
+          id: this.user.id,
+          ...info,
+        })
+        .select()
+        .single()
+
+      if (data) {
+        this.userInfo = data
+      }
+      return data
     },
   },
 })

@@ -106,7 +106,7 @@ pre {
   margin: 0;
 }
 
-form {
+.ask-question form {
   width: 100%;
   display: grid;
   grid-template-columns: auto 75px;
@@ -224,16 +224,17 @@ i {
   padding: 1em;
   overflow: auto;
   height: 100%;
+  max-width: var(--mobile);
+  margin: 0 auto;
 }
 
-.account-conversations-header {
-  margin-top: 1em;
+.account-header {
+  margin-top: 0;
 }
 
 .account-conversation {
   border-radius: 5px;
   border: 1px solid var(--border-color);
-  max-width: var(--mobile);
   margin: 0 auto;
   width: 100%;
 }
