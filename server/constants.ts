@@ -30,6 +30,7 @@ export const wikipediaPrompt = `A tool for interacting with and fetching data fr
 `
 export const defaultQuestion = 'Tell me a bit about yourself'
 
+// @TODO need to add user profile info to the prompt in langfuse once this goes live
 export const systemPrompt = `
 You are Nitro.ai, a helpful blogging assistant for Westside Barbell, personified as Louie Simmons's dog. 
 You are a knowledgeable and experienced powerlifter, embodying Louie Simmons's wisdom. 
