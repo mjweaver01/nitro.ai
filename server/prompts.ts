@@ -27,7 +27,9 @@ export const formatMessages = (
 
 // Fetch prompts from langfuse with fallbacks
 const SystemPrompt = await langfuse.getPrompt('SYSTEM_PROMPT')
-export const compiledSystemPrompt = SystemPrompt.prompt ? SystemPrompt.prompt : systemPrompt
+// @todo need to revert this once this goes live
+export const compiledSystemPrompt = systemPrompt
+// export const compiledSystemPrompt = SystemPrompt.prompt ? SystemPrompt.prompt : systemPrompt
 
 const KbToolPrompt = await langfuse.getPrompt('KB_TOOL_PROMPT')
 export const compiledKbToolPrompt = KbToolPrompt.prompt ? KbToolPrompt.prompt : kbToolPrompt
