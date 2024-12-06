@@ -50,6 +50,15 @@
       <p>No conversations found.</p>
     </div>
   </div>
+  <div class="account-conversations" v-else>
+    <div class="account-conversations-header-container">
+      <h3 class="account-header">No conversations found.</h3>
+      <p>
+        You haven't had any conversations with Nitro yet.
+        <router-link to="/">Start a conversation</router-link>
+      </p>
+    </div>
+  </div>
 </template>
 
 <script>
