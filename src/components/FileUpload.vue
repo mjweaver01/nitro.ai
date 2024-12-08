@@ -6,7 +6,7 @@
     <input
       type="file"
       ref="fileInput"
-      accept=".txt,.md,.json,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.gif,.webp"
+      accept=".txt,.md,.json,.csv,.pdf,.png,.jpg,.jpeg,.gif,.webp"
       @change="handleFileSelect"
       style="display: none"
     />
