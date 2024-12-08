@@ -11,15 +11,18 @@
       <div class="ask-question" v-if="userStore?.user?.id">
         <form @submit.prevent="messagesStore?.ask()">
           <div class="input-wrapper">
-            <textarea
-              rows="1"
+            <div class="input-wrapper-inner">
+              <textarea
+                rows="1"
               id="question-input"
               name="question"
               placeholder="Ask anything..."
               v-model="messagesStore.question"
               @keydown.enter.exact.prevent="messagesStore?.ask()"
-              @keydown.up.exact.prevent="messagesStore?.setPrevousQuestion()"
-            />
+                @keydown.up.exact.prevent="messagesStore?.setPrevousQuestion()"
+              />
+              <FileUpload />
+            </div>
             <div class="select">
               <select v-model="messagesStore.model" @change="messagesStore?.clearConversation()">
                 <option v-for="model in models" :value="model.id">
@@ -45,6 +48,8 @@ import { mapStores } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useMessagesStore } from '../stores/messages'
 import { modelOptions } from '../../server/constants'
+import FileUpload from './FileUpload.vue'
+
 export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
@@ -53,6 +58,9 @@ export default {
     return {
       models: modelOptions,
     }
+  },
+  components: {
+    FileUpload,
   },
 }
 </script>

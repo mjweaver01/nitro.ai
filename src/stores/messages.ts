@@ -18,6 +18,12 @@ export const useMessagesStore = defineStore('messages', {
     streaming: false,
     userScrolledUp: false,
     abortController: null,
+    fileCache: {
+      selectedFile: null,
+      filePreview: null,
+      fileContent: null,
+      fileType: null
+    }
   }),
   actions: {
     async ask(sentQuestion = '') {
@@ -31,30 +37,59 @@ export const useMessagesStore = defineStore('messages', {
         const user = useUserStore()
         const conversations = useConversationsStore()
 
-        const question =
-          sentQuestion?.trim() !== ''
-            ? sentQuestion?.trim()
-            : this.question.trim() !== ''
-            ? this.question.trim()
-            : false
-        if (!question || question.length <= 0) return
+        // Create content array for the question
+        const content = []
+
+        // Add text content if exists
+        if (sentQuestion?.trim() || this.question.trim()) {
+          content.push({
+            type: 'text',
+            text: sentQuestion?.trim() || this.question.trim()
+          })
+        }
+
+        // Add file content if exists
+        if (this.fileCache.fileContent) {
+          if (this.fileCache.fileType === 'text' || this.fileCache.fileType === 'binary') {
+            // Estimate tokens (roughly 4 characters per token)
+            const content_str = this.fileCache.fileContent.toString()
+            const estimated_tokens = Math.ceil(content_str.length / 4)
+            
+            // Limit to ~30k tokens (120k characters) to leave room for response
+            const max_chars = 120000
+            let truncated_content = content_str
+            if (content_str.length > max_chars) {
+              truncated_content = content_str.substring(0, max_chars) + 
+                "\n\n[Content truncated due to length...]"
+            }
+
+            content.push({
+              type: 'text',
+              text: `File content from ${this.fileCache.selectedFile?.name}:\n\n${truncated_content}`
+            })
+          } else if (this.fileCache.fileType === 'image_url') {
+            content.push({
+              type: 'image_url',
+              image_url: { url: this.fileCache.fileContent }
+            })
+          }
+        }
+
+        if (content.length === 0) return
 
         this.loading = true
         this.userScrolledUp = false
         this.scrollToBottom()
         this.question = ''
 
+        // Add message to UI
         this.messages.push({
-          content: question,
+          content,
           isUser: true,
         })
 
-        // set nocache on each question for ability to turn it on and off
-        if (window.location.search.includes('nocache=true')) {
-          this.nocache = true
-        } else if (window.location.search.includes('nocache=false')) {
-          this.nocache = false
-        }
+        // Clear file cache after sending
+        this.clearFileCache()
 
         // Initialize the AbortController
         this.abortController = new AbortController()
@@ -65,7 +100,7 @@ export const useMessagesStore = defineStore('messages', {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            question,
+            content,
             conversationId: this.conversationId,
             model: this.model,
             user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
@@ -284,5 +319,32 @@ export const useMessagesStore = defineStore('messages', {
     sanitizeMessage(message) {
       return this.converter.makeHtml(message)
     },
+
+    clearFileCache() {
+      this.fileCache = {
+        selectedFile: null,
+        filePreview: null,
+        fileContent: null,
+        fileType: null
+      }
+    },
+
+    setFileCache(file) {
+      this.fileCache = file
+    },
+
+    addFileMessage() {
+      if (!this.fileCache.fileContent) return
+      
+      // Preview file in messages
+      this.messages.push({
+        content: [{
+          type: this.fileCache.fileType,
+          text: this.fileCache.fileContent,
+          file_name: this.fileCache.selectedFile?.name 
+        }],
+        isUser: true,
+      })
+    }
   },
 })

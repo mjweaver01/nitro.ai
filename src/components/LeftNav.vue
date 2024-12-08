@@ -56,7 +56,7 @@
           @click="messagesStore?.setConversation(conversation, true)"
         >
           <div class="conversation-content">
-            {{ conversation.messages[0].content }}
+            {{ conversation.messages[0].content[0].text }}
           </div>
           <i
             class="pi pi-trash delete-icon"
@@ -110,7 +110,7 @@ export default {
 
       return (
         this.conversationsStore?.conversations?.filter((conversation) =>
-          conversation.messages[0].content.toLowerCase().includes(this.search.toLowerCase()),
+          conversation.messages[0].content[0].text.toLowerCase().includes(this.search.toLowerCase()),
         ) || []
       )
     },

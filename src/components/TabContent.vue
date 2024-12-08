@@ -62,7 +62,7 @@ export default {
 }
 
 .tab-header {
-  padding: 1em;
+  padding: 18px;
   cursor: pointer;
   border-right: 1px solid var(--border-color);
   text-transform: uppercase;
