@@ -27,12 +27,14 @@ setMapStoreSuffix('')
 app.use(pinia)
 app.use(router)
 app.use(VueShowdownPlugin)
-app.use(VueReCaptcha, {
-  siteKey: '6LfHIXIqAAAAAKMmti5gxJUdc4FbCouVzRSjlt95',
-  loaderOptions: {
-    autoHideBadge: true,
-  },
-})
+if (import.meta.env.PROD) {
+  app.use(VueReCaptcha, {
+    siteKey: '6LfHIXIqAAAAAKMmti5gxJUdc4FbCouVzRSjlt95',
+    loaderOptions: {
+      autoHideBadge: true,
+    },
+  })
+}
 
 app.mount('#app')
 

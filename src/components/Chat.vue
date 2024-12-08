@@ -21,9 +21,10 @@
               @keydown.up.exact.prevent="messagesStore?.setPrevousQuestion()"
             />
             <div class="select">
-              <select v-model="messagesStore.llm" @change="messagesStore?.setLlm">
-                <option value="openai">GPT-4o</option>
-                <option value="anthropic">Claude Sonnet</option>
+              <select v-model="messagesStore.model" @change="messagesStore?.clearConversation()">
+                <option v-for="model in models" :value="model.id">
+                  {{ model.value }}
+                </option>
               </select>
             </div>
           </div>
@@ -43,10 +44,15 @@
 import { mapStores } from 'pinia'
 import { useUserStore } from '../stores/user'
 import { useMessagesStore } from '../stores/messages'
-
+import { modelOptions } from '../../server/constants'
 export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
+  },
+  data() {
+    return {
+      models: modelOptions,
+    }
   },
 }
 </script>

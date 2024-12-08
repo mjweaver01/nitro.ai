@@ -4,7 +4,7 @@ import { useReCaptcha } from 'vue-recaptcha-v3'
 
 export const useUserStore = defineStore('user', {
   state: () => {
-    const reCaptcha = useReCaptcha()
+    const reCaptcha = import.meta.env.PROD ? useReCaptcha() : null
 
     return {
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},
@@ -19,6 +19,10 @@ export const useUserStore = defineStore('user', {
       loggingIn: false,
       loggingOut: false,
       loginError: '',
+      userInfo: {
+        physique: '',
+        equipment: '',
+      },
     }
   },
   getters: {
@@ -75,9 +79,11 @@ export const useUserStore = defineStore('user', {
       this.loggingIn = true
       this.loginError = ''
 
+      if (import.meta.env.PROD) {
       const recaptchaResponse = await this.verifyRecaptcha()
       if (!recaptchaResponse) {
         return
+        }
       }
 
       if (this.login.isNew) {
@@ -108,7 +114,7 @@ export const useUserStore = defineStore('user', {
 
     async authUser() {
       const client = useClientStore()
-      const u = await client.client.auth.getUser()
+      const u = await client?.client?.auth?.getUser()
       if (u?.data?.user) {
         this.user = u.data.user
         localStorage.setItem('user', JSON.stringify(this.user))
@@ -134,6 +140,42 @@ export const useUserStore = defineStore('user', {
       }
 
       return true
+    },
+
+    async getUserInfo() {
+      const client = useClientStore()
+      const { data, error } = await client.client
+        .from('user_info')
+        .select('*')
+        .eq('id', this.user.id)
+        .single()
+
+      if (data) {
+        this.userInfo = data
+      }
+      return data
+    },
+
+    async updateUserInfo(info: {
+      physique: string
+      experience: string
+      goals?: string
+      equipment?: string
+    }) {
+      const client = useClientStore()
+      const { data, error } = await client.client
+        .from('user_info')
+        .upsert({
+          id: this.user.id,
+          ...info,
+        })
+        .select()
+        .single()
+
+      if (data) {
+        this.userInfo = data
+      }
+      return data
     },
   },
 })

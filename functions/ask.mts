@@ -8,16 +8,25 @@ export default async (req: Request, context: Context) => {
   const body = await req.json()
   const qs = new URL(req.url).searchParams
   const nocache = body?.nocache ?? qs.get('nocache') === 'true' ?? false
+  const nosupa = body?.nosupa ?? qs.get('nosupa') === 'true' ?? false
   const model = body?.model ?? qs.get('model') ?? 'openai'
   const user = body?.user ?? qs.get('user') ?? 'anonymous'
   const input = body?.question?.trim() ?? null
   const conversationId = body?.conversationId ?? qs.get('conversationId') ?? null
 
+  if(!user) {
+    return Response.json({
+      code: 401,
+      message: 'Unauthorized',
+      error: true,
+    })
+  }
+
   if (!input) {
     return Response.json({ error: 'No question provided' }, { status: 400 })
   }
 
-  if (!nocache) {
+  if (!nocache && !nosupa) {
     const cachedData = await getCache(model, conversationId, user, input)
     const latestCacheHit = cachedData?.[0]
 
@@ -34,7 +43,7 @@ export default async (req: Request, context: Context) => {
           user,
           messages: [
             { role: 'user', content: input },
-            { role: 'ai', content: latestCacheHit.answer },
+            { role: 'assistant', content: latestCacheHit.answer },
           ],
         })
       } catch {}
@@ -48,13 +57,20 @@ export default async (req: Request, context: Context) => {
   }
 
   try {
-    const stream = await askQuestion(input, user, conversationId, model)
+    const stream = await askQuestion(input, user, conversationId, model, nocache, nosupa)
 
-    let fullAnswer = ''
+    if (!stream) {
+      return Response.json({ error: 'Failed to create stream' }, { status: 500 })
+    }
+
     const transformStream = new TransformStream({
       transform(chunk, controller) {
-        fullAnswer += chunk
-        controller.enqueue(chunk)
+        try {
+          controller.enqueue(chunk)
+        } catch (error) {
+          console.error('Transform stream error:', error)
+          controller.error(error)
+        }
       },
     })
 
@@ -66,7 +82,7 @@ export default async (req: Request, context: Context) => {
       },
     })
   } catch (e) {
-    console.error(e)
+    console.error('Stream error:', e)
     return Response.json(
       { error: 'An error occurred while processing your request' },
       { status: 500 },

@@ -55,7 +55,14 @@
           v-for="conversation in filteredConversations"
           @click="messagesStore?.setConversation(conversation, true)"
         >
-          {{ conversation.messages[0].content }}
+          <div class="conversation-content">
+            {{ conversation.messages[0].content }}
+          </div>
+          <i
+            class="pi pi-trash delete-icon"
+            @click.stop.prevent="deleteConversation(conversation.id)"
+            style="color: var(--red)"
+          ></i>
         </div>
       </div>
       <div v-else>
@@ -116,5 +123,36 @@ export default {
   beforeMount() {
     this.conversationsStore?.getConversations()
   },
+  methods: {
+    deleteConversation(conversationId) {
+      if (confirm('Are you sure you want to delete this conversation?')) {
+        this.conversationsStore.deleteConversation(conversationId)
+      }
+    },
+  },
 }
 </script>
+
+<style scoped>
+.conversation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.conversation-content {
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.delete-icon {
+  display: none;
+  margin-left: 8px;
+}
+
+.conversation:hover .delete-icon {
+  display: inline-block;
+}
+</style>
