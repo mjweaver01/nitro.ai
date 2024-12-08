@@ -21,7 +21,7 @@
     >
       <div class="account-conversation-item-header">
         <div class="account-conversation-item-header-left">
-          <h4>"{{ conversation.messages[0].content[0].text ?? conversation.messages[0].content }}"</h4>
+          <h4>"{{ getMessageContent(conversation.messages[0]) }}"</h4>
           <h5>
             {{ conversation.messages.length }} messages with
             <span style="color: var(--blue)">{{ convertModel(conversation.model) }}</span>
@@ -73,8 +73,8 @@ export default {
 
       return this.conversationsStore?.conversations?.filter((conversation) =>
         conversation.messages.some((m) =>
-          m.content.toLowerCase().includes(this.search.toLowerCase()),
-        ),
+          this.getMessageContent(m).toLowerCase().includes(this.search.toLowerCase())
+        )
       )
     },
 
@@ -136,6 +136,15 @@ export default {
     convertModel(model) {
       const modelName = model.includes('mini') ? 'Mini' : model.includes('gpt-4o') ? 'Full' : model
       return `Nitro (${modelName})`
+    },
+
+    getMessageContent(message) {
+      if (!message) return ''
+      if (typeof message.content === 'string') return message.content
+      if (Array.isArray(message.content) && message.content.length > 0) {
+        return message.content[0].text || ''
+      }
+      return ''
     },
   },
 
