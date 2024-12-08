@@ -37,7 +37,7 @@
         <Messages :messages="conversation.messages" />
       </div>
     </div>
-    <div class="load-more" v-if="search?.length === 0">
+    <div class="load-more" v-if="search?.length === 0 && conversationsStore?.conversations?.length > 10">
       <p v-if="!hasMoreConversations">
         All {{ conversationsStore?.conversations?.length }} conversations loaded.
         <a href="#" @click.prevent="scrollToTop">Back to top?</a>
