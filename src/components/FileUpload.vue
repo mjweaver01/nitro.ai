@@ -6,7 +6,7 @@
     <input
       type="file"
       ref="fileInput"
-      accept=".txt,.md,.json,.csv,.doc,.docx,.png,.jpg,.jpeg,.gif,.webp"
+      accept=".txt,.md,.json,.csv,.doc,.docx,.pdf,.png,.jpg,.jpeg,.gif,.webp"
       @change="handleFileSelect"
       style="display: none"
     />
@@ -79,15 +79,31 @@ export default {
     },
     async handleDocumentFile(file) {
       try {
-        // Create a new Blob from the file
-        const blob = new Blob([file], { type: file.type })
-        
-        // Read the blob as an ArrayBuffer first
-        const arrayBuffer = await blob.arrayBuffer()
-        
-        // Convert ArrayBuffer to string
-        const decoder = new TextDecoder('utf-8')
-        const text = decoder.decode(arrayBuffer)
+        // Handle PDF files differently
+        if (file.type === 'application/pdf') {
+          const text = await fetch('/.netlify/functions/pdf-parse', {
+            method: 'POST',
+            body: file
+          })
+          .then(async (response) => {
+            if (!response.ok) throw new Error('Failed to parse PDF');
+            const data = await response.json()
+            return data.text || data
+          });
+          
+          this.messagesStore.setFileCache({
+            selectedFile: file,
+            filePreview: file.name,
+            fileContent: text,
+            fileType: 'text',
+            fileName: file.name
+          })
+        } else {
+          // Handle other document types as before
+          const blob = new Blob([file], { type: file.type })
+          const arrayBuffer = await blob.arrayBuffer()
+          const decoder = new TextDecoder('utf-8')
+          const text = decoder.decode(arrayBuffer)
         
         this.messagesStore.setFileCache({
           selectedFile: file,
@@ -95,7 +111,8 @@ export default {
           fileContent: text,
           fileType: file.type.match(/(text|json|csv|md)/i) ? 'text' : 'file',
           fileName: file.name
-        })
+          })
+        }
       } catch (error) {
         console.error('Error reading file:', error)
       }

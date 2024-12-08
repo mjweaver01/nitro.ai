@@ -29,7 +29,7 @@
         </div>
         <i
           class="pi pi-trash delete-icon"
-          @click.stop="deleteConversation(conversation.id)"
+          @click.stop="conversationsStore?.deleteConversation(conversation.id)"
           style="color: var(--red)"
         ></i>
       </div>

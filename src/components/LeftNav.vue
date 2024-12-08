@@ -60,7 +60,7 @@
           </div>
           <i
             class="pi pi-trash delete-icon"
-            @click.stop.prevent="deleteConversation(conversation.id)"
+            @click.stop.prevent="conversationsStore?.deleteConversation(conversation.id)"
             style="color: var(--red)"
           ></i>
         </div>
@@ -128,11 +128,6 @@ export default {
     newConversation() {
       this.sidebarStore?.setDesktopHide(false)
       this.messagesStore?.clearConversation()
-    },
-    deleteConversation(conversationId) {
-      if (confirm('Are you sure you want to delete this conversation?')) {
-        this.conversationsStore.deleteConversation(conversationId)
-      }
     },
   },
 }

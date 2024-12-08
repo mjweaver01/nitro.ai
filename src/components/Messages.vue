@@ -80,6 +80,8 @@ export default {
   background: var(--light-blue);
   color: var(--blue);
   border-radius: 3px;
+  width: fit-content !important;
+  max-width: 100% !important;
 }
 
 .file-attachment > * {

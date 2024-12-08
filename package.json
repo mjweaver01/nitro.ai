@@ -20,6 +20,7 @@
     "fuzzysort": "^3.0.1",
     "langfuse": "^3.31.1",
     "openai": "^4.68.4",
+    "pdf-parse": "^1.1.1",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "showdown-mathjax": "^1.0.7",
