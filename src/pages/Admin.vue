@@ -121,3 +121,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.admin {
+  padding: 0 1em 1em;
+}
+</style>

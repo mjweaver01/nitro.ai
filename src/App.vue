@@ -4,7 +4,7 @@
       <LeftNav v-if="userStore?.user?.id" />
       <div class="app" :class="{ 'force-hide': sidebarStore?.forceShow }">
         <Banner />
-        <MobileNav v-if="userStore?.user?.id" />
+        <TopNav v-if="userStore?.user?.id" />
         <RouterView />
       </div>
     </div>
@@ -18,7 +18,7 @@ import { useUserStore } from './stores/user'
 import { useMessagesStore } from './stores/messages'
 import { useSidebarStore } from './stores/sidebar'
 import LeftNav from './components/LeftNav.vue'
-import MobileNav from './components/MobileNav.vue'
+import TopNav from './components/TopNav.vue'
 import Banner from './components/Banner.vue'
 
 export default {
@@ -27,7 +27,7 @@ export default {
   },
   components: {
     LeftNav,
-    MobileNav,
+    TopNav,
     Banner,
   },
   async created() {
@@ -46,3 +46,44 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.app {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+
+  &.force-hide {
+    display: none;
+
+    @media (min-width: 768px) {
+      display: flex;
+    }
+  }
+}
+
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+
+  .app-content {
+    display: flex;
+    flex: 1;
+    min-height: 0; /* Crucial for nested flex containers */
+    position: relative;
+  }
+}
+
+@media (min-width: 768px) {
+  .top-nav {
+    display: none;
+  }
+}
+</style>

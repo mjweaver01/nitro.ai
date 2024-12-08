@@ -65,4 +65,36 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.ask-question form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 75px;
+  gap: 0.5em;
+}
+
+.clear {
+  color: rgb(106, 106, 106);
+  font-size: 0.9em;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .clear {
+    position: absolute;
+    top: -1.5rem;
+  }
+}
+
+.current-message {
+  position: relative;
+  padding: 0.5em;
+  border-top: 1px solid var(--border-color);
+}
+
+.current-message-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+</style>

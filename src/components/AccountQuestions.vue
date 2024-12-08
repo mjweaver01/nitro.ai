@@ -21,7 +21,7 @@
     >
       <div class="account-conversation-item-header">
         <div class="account-conversation-item-header-left">
-          <h4>"{{ conversation.messages[0].content[0].text }}"</h4>
+          <h4>"{{ conversation.messages[0].content[0].text ?? conversation.messages[0].content }}"</h4>
           <h5>
             {{ conversation.messages.length }} messages with
             <span style="color: var(--blue)">{{ convertModel(conversation.model) }}</span>
@@ -150,5 +150,11 @@ export default {
 <style scoped>
 .account-conversations-header-container {
   margin-bottom: 1rem;
+}
+
+.load-more {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
 }
 </style>

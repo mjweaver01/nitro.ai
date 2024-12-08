@@ -130,7 +130,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .file-upload {
   position: absolute;
   right: 0;
@@ -153,10 +153,10 @@ export default {
   cursor: pointer;
   padding: 0.5em;
   border-radius: 5px;
-}
-
-.upload-trigger:hover {
-  background-color: var(--light-blue);
+  
+  &:hover {
+    background-color: var(--light-blue);
+  }
 }
 
 .file-preview {
@@ -173,13 +173,13 @@ export default {
   display: flex;
   align-items: flex-start;
   gap: 0.5em;
-}
 
-.file-preview img {
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-  border-radius: 3px;
+  img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    border-radius: 3px;
+  }
 }
 
 .file-info {
@@ -189,20 +189,20 @@ export default {
   padding: 0.5em;
   background: var(--light-blue);
   border-radius: 3px;
-}
 
-.file-info i {
-  font-size: 1.2em;
-  color: var(--blue);
-}
+  i {
+    font-size: 1.2em;
+    color: var(--blue);
+  }
 
-.file-info span {
-  font-size: 0.9em;
-  color: var(--text-color);
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  span {
+    font-size: 0.9em;
+    color: var(--text-color);
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .clear-button {

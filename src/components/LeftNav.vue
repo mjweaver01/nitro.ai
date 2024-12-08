@@ -32,8 +32,8 @@
       'force-hide-desktop': !!sidebarStore?.desktopHide,
     }"
   >
-    <MobileNav />
-    <div class="new-conversation" @click="messagesStore?.clearConversation()">
+    <TopNav />
+    <div class="new-conversation" @click="newConversation()">
       <div class="conversation">
         <span>New Conversation</span>
         <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
@@ -56,7 +56,7 @@
           @click="messagesStore?.setConversation(conversation, true)"
         >
           <div class="conversation-content">
-            {{ conversation.messages[0].content[0].text }}
+            {{ conversation.messages[0].content[0].text ?? conversation.messages[0].content }}
           </div>
           <i
             class="pi pi-trash delete-icon"
@@ -97,11 +97,11 @@ import { useConversationsStore } from '../stores/conversations'
 import { useMessagesStore } from '../stores/messages'
 import { useUserStore } from '../stores/user'
 import { useSidebarStore } from '../stores/sidebar'
-import MobileNav from './MobileNav.vue'
+import TopNav from './TopNav.vue'
 
 export default {
   components: {
-    MobileNav,
+    TopNav,
   },
   computed: {
     ...mapStores(useConversationsStore, useMessagesStore, useUserStore, useSidebarStore),
@@ -109,9 +109,10 @@ export default {
       if (!this.search) return this.conversationsStore?.conversations || []
 
       return (
-        this.conversationsStore?.conversations?.filter((conversation) =>
-          conversation.messages[0].content[0].text.toLowerCase().includes(this.search.toLowerCase()),
-        ) || []
+        this.conversationsStore?.conversations?.filter((conversation) => {
+          const content = conversation.messages[0].content[0].text ?? conversation.messages[0].content  
+          return content.toLowerCase().includes(this.search.toLowerCase())
+        }) || []
       )
     },
   },
@@ -124,6 +125,10 @@ export default {
     this.conversationsStore?.getConversations()
   },
   methods: {
+    newConversation() {
+      this.sidebarStore?.setDesktopHide(false)
+      this.messagesStore?.clearConversation()
+    },
     deleteConversation(conversationId) {
       if (confirm('Are you sure you want to delete this conversation?')) {
         this.conversationsStore.deleteConversation(conversationId)

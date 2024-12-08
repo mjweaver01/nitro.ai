@@ -49,6 +49,7 @@
 
 <script>
 import { mapStores } from 'pinia'
+import { markRaw } from 'vue'
 import { useUserStore } from '../stores/user'
 import AccountQuestions from '../components/AccountQuestions.vue'
 import TabContent from '../components/TabContent.vue'
@@ -65,8 +66,8 @@ export default {
   data() {
     return {
       tabs: [
-        { id: 'conversations', title: 'Conversations', component: AccountQuestions },
-        { id: 'user-info', title: 'Training Profile', component: UserInfo },
+        { id: 'conversations', title: 'Conversations', component: markRaw(AccountQuestions) },
+        { id: 'user-info', title: 'Training Profile', component: markRaw(UserInfo) },
       ],
     }
   },

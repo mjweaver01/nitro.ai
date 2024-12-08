@@ -1,0 +1,141 @@
+.account-header {
+  word-break: break-word;
+  margin-top: 0;
+}
+
+.account {
+  width: 100%;
+  border-top: 1px solid var(--border-color);
+
+  a {
+    display: block;
+    text-decoration: none !important;
+    cursor: pointer;
+    margin: 0.5em;
+    padding: 0.5em;
+    border-radius: 5px;
+    white-space: nowrap;
+
+    @media (min-width: 500px) {
+      margin: 17px;
+    }
+  }
+
+  &:hover a {
+    background: var(--light-blue);
+  }
+}
+
+.logout {
+  p {
+    display: block;
+    text-decoration: none !important;
+    cursor: pointer;
+    margin: 0.5em;
+    padding: 0.5em;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+
+  &:hover p {
+    background: var(--light-blue);
+  }
+}
+
+.account-page {
+  &.top {
+    padding: 0;
+  }
+
+  &-content {
+    @media (min-width: 768px) {
+      display: grid;
+      overflow: hidden;
+    }
+  }
+}
+
+.account-top {
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.775em 1em;
+
+  &-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    text-align: left;
+  }
+
+  .account-header {
+    margin: 0;
+  }
+
+  .logout p {
+    margin: 0;
+  }
+
+  .info-status {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1em;
+
+    > * {
+      margin: 0;
+    }
+  }
+}
+
+.account-conversations {
+  display: flex;
+  flex-flow: column;
+  gap: 1em;
+  padding: 1em;
+  overflow: auto;
+  height: 100%;
+  max-width: var(--mobile);
+  margin: 0 auto;
+}
+
+.account-conversation {
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  margin: 0 auto;
+  width: 100%;
+
+  &:hover {
+    box-shadow: 1px 5px 10px var(--light-blue);
+  }
+
+  .imessage {
+    padding-bottom: 0.5em;
+  }
+
+  &-item {
+    max-height: 300px;
+    overflow: auto;
+    padding: 0.5em 1em;
+
+    &-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1em;
+      padding: 1em;
+      border-bottom: 1px solid var(--border-color);
+
+      &-left {
+        text-align: left;
+      }
+
+      * {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.account-last-login {
+  text-align: left;
+  margin: 0.25em 0 0;
+}

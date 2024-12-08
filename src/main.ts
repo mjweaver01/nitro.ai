@@ -8,9 +8,7 @@ import App from './App.vue'
 import { routes } from './routes'
 
 import 'primeicons/primeicons.css'
-import './styles/index.css'
-import './styles/imessage.css'
-import './styles/loading.css'
+import './styles/index.scss'
 
 const app = createApp(App)
 

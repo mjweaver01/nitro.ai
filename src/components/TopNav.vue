@@ -1,6 +1,6 @@
 <template>
-  <div class="mobile-nav">
-    <h2 class="mobile-nav-hero" @click.prevent="messagesStore?.clearConversation()">
+  <div class="top-nav">
+    <h2 class="top-nav-hero" @click.prevent="messagesStore?.clearConversation()">
       <img src="/wsbb.png" width="40" height="40" alt="Nitro.ai" /> Nitro.ai
     </h2>
     <i
@@ -40,3 +40,58 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  background: var(--white);
+  top: 0;
+  width: 100%;
+  padding-right: 1em;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 2;
+  
+  .force-show-hide-button {
+    display: none;
+    padding: 0.5em;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--light-blue);
+    }
+  }
+
+  .hamburger {
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  @media (min-width: 768px) {
+    padding-right: 0.5em;
+
+    .force-show-hide-button {
+      display: block;
+    }
+  }
+
+
+  .top-nav-hero {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+}
+
+.mobile-nav-right-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>

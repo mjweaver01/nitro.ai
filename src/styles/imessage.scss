@@ -1,0 +1,178 @@
+/* forked from https://codepen.io/AllThingsSmitty/pen/jommGQ */
+.imessage {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 800px;
+  padding: 0;
+  text-align: left;
+
+  p {
+    border-radius: 1.15rem;
+    line-height: 1.25;
+    max-width: 90%;
+    padding: 0.5rem 0.875rem;
+    position: relative;
+    word-wrap: break-word;
+
+    // Nested elements styling
+    &::before,
+    &::after {
+      bottom: -0.1rem;
+      content: '';
+      height: 1rem;
+      position: absolute;
+    }
+
+    * {
+      border-radius: 0;
+    }
+
+    div p {
+      overflow: auto;
+    }
+
+    p {
+      margin-bottom: 1em !important;
+    }
+  }
+
+  // Nested sections/divs/p styling
+  section, div, p {
+    > * {
+      font-size: 1em !important;
+      margin-top: 0 !important;
+      margin-bottom: 1rem !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    img:last-child,
+    .file-attachment:last-child {
+      margin-bottom: 0.25rem !important;
+    }
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    border-radius: 3px;
+  }
+
+  .streaming img {
+    display: none;
+  }
+}
+
+// Message types
+p[class^='from-'] {
+  margin: 0.5rem 0;
+  width: fit-content;
+
+  &.emoji {
+    background: none;
+    font-size: 2.5rem;
+
+    &::before {
+      content: none;
+    }
+  }
+}
+
+// From me messages
+p.from-me {
+  align-self: flex-end;
+  background-color: #248bf5;
+  color: #fff !important;
+
+  &::before {
+    border-bottom-left-radius: 0.8rem 0.7rem;
+    border-right: 1rem solid #248bf5;
+    right: -0.35rem;
+    transform: translate(0, -0.1rem);
+  }
+
+  &::after {
+    background-color: #fff;
+    border-bottom-left-radius: 0.5rem;
+    right: -40px;
+    transform: translate(-30px, -2px);
+    width: 10px;
+  }
+
+  ~ p.from-me {
+    margin: 0.25rem 0 0;
+
+    &:not(:last-child) {
+      margin: 0.25rem 0 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+// From them messages
+p.from-them {
+  align-items: flex-start;
+  background-color: #e5e5ea;
+  color: #000;
+
+  &::before {
+    border-bottom-right-radius: 0.8rem 0.7rem;
+    border-left: 1rem solid #e5e5ea;
+    left: -0.35rem;
+    transform: translate(0, -0.1rem);
+  }
+
+  &::after {
+    background-color: #fff;
+    border-bottom-right-radius: 0.5rem;
+    left: 20px;
+    transform: translate(-30px, -2px);
+    width: 10px;
+  }
+}
+
+// Utility classes
+.no-tail::before {
+  display: none;
+}
+
+.margin-b_none {
+  margin-bottom: 0 !important;
+}
+
+.margin-b_one {
+  margin-bottom: 1rem !important;
+}
+
+.margin-t_one {
+  margin-top: 1rem !important;
+}
+
+// Media queries
+@media (min-width: 500px) {
+  .imessage p {
+    max-width: 75%;
+  }
+}
+
+@media (min-width: 768px) {
+  .imessage {
+    margin-bottom: 1em;
+  }
+}
+
+@media (max-width: 499px) {
+  .imessage {
+    margin: 0 !important;
+  }
+}
