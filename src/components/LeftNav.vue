@@ -65,7 +65,7 @@
           ></i>
         </div>
       </div>
-      <div v-else>
+      <div class="conversations" v-else>
         <div class="conversation">No conversations found.</div>
       </div>
     </div>
