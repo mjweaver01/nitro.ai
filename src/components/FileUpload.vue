@@ -81,23 +81,27 @@ export default {
       try {
         // Handle PDF files differently
         if (file.type === 'application/pdf') {
-          const text = await fetch('/.netlify/functions/pdf-parse', {
-            method: 'POST',
-            body: file
-          })
-          .then(async (response) => {
-            if (!response.ok) throw new Error('Failed to parse PDF');
-            const data = await response.json()
-            return data.text || data
-          });
-          
-          this.messagesStore.setFileCache({
-            selectedFile: file,
-            filePreview: file.name,
-            fileContent: text,
-            fileType: 'text',
-            fileName: file.name
-          })
+          try {
+            const text = await fetch('/.netlify/functions/pdf-parse', {
+              method: 'POST',
+              body: file
+            })
+            .then(async (response) => {
+              if (!response.ok) throw new Error('Failed to parse PDF');
+              const data = await response.json()
+              return data.text || data
+            });
+            
+            this.messagesStore.setFileCache({
+              selectedFile: file,
+              filePreview: file.name,
+              fileContent: text,
+              fileType: 'text',
+              fileName: file.name
+            })
+          } catch (error) {
+            console.error('Error parsing PDF:', error)
+          }
         } else {
           // Handle other document types as before
           const blob = new Blob([file], { type: file.type })
