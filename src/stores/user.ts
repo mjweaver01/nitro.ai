@@ -96,20 +96,22 @@ export const useUserStore = defineStore('user', {
     },
 
     async signOutUser(state) {
-      this.loggingOut = true
+      if (confirm('Are you sure you want to log out?')) {
+        this.loggingOut = true
 
-      try {
-        const client = useClientStore()
-        await client.client.auth.signOut()
-      } catch {}
+        try {
+          const client = useClientStore()
+          await client.client.auth.signOut()
+        } catch {}
 
-      this.user = null
-      localStorage.removeItem('user')
-      localStorage.removeItem('conversations')
+        this.user = null
+        localStorage.removeItem('user')
+        localStorage.removeItem('conversations')
 
-      this.router.push('/login')
+        this.router.push('/login')
 
-      this.loggingOut = false
+        this.loggingOut = false
+      }
     },
 
     async authUser() {
