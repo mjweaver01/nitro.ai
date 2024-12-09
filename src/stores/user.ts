@@ -23,6 +23,7 @@ export const useUserStore = defineStore('user', {
         physique: '',
         equipment: '',
       },
+      userInfoLoading: false,
     }
   },
   getters: {
@@ -145,6 +146,7 @@ export const useUserStore = defineStore('user', {
     },
 
     async getUserInfo() {
+      this.userInfoLoading = true
       const client = useClientStore()
       const { data, error } = await client.client
         .from('user_info')
@@ -155,6 +157,7 @@ export const useUserStore = defineStore('user', {
       if (data) {
         this.userInfo = data
       }
+      this.userInfoLoading = false
       return data
     },
 
@@ -164,6 +167,7 @@ export const useUserStore = defineStore('user', {
       goals?: string
       equipment?: string
     }) {
+      this.userInfoLoading = true
       const client = useClientStore()
       const { data, error } = await client.client
         .from('user_info')
@@ -177,6 +181,7 @@ export const useUserStore = defineStore('user', {
       if (data) {
         this.userInfo = data
       }
+      this.userInfoLoading = false
       return data
     },
   },

@@ -9,6 +9,7 @@
           v-model="form.physique"
           placeholder="Describe your current physique..."
           rows="4"
+          :disabled="userStore.userInfoLoading"
         ></textarea>
       </div>
 
@@ -19,6 +20,7 @@
           v-model="form.experience"
           placeholder="Describe your training knowledge and experience..."
           rows="4"
+          :disabled="userStore.userInfoLoading"
         ></textarea>
       </div>
 
@@ -29,6 +31,7 @@
           v-model="form.goals"
           placeholder="Describe your fitness goals..."
           rows="4"
+          :disabled="userStore.userInfoLoading"
         ></textarea>
       </div>
 
@@ -39,10 +42,11 @@
           v-model="form.equipment"
           placeholder="List the equipment you have access to..."
           rows="4"
+          :disabled="userStore.userInfoLoading"
         ></textarea>
       </div>
 
-      <button type="submit" :disabled="saving">
+      <button type="submit" :disabled="saving || userStore.userInfoLoading">
         {{ buttonText }}
       </button>
     </form>
