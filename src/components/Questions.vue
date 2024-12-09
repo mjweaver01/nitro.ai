@@ -48,4 +48,36 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.questions {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1em;
+  overflow: auto;
+  padding: 1em 0 0.5em;
+  margin: 0 auto;
+  text-align: left;
+  max-width: 800px;
+
+  @media (min-width: 500px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.question {
+  padding: 1em;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+
+  &:hover,
+  &.hover {
+    background: var(--light-blue);
+    cursor: pointer;
+  }
+}
+</style>

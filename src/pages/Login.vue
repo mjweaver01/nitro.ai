@@ -65,3 +65,21 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.login-page {
+  max-width: 600px;
+}
+
+.login-form form {
+  display: flex;
+  flex-flow: column;
+  gap: 1em;
+}
+
+.login-error {
+  color: var(--red);
+  margin: 0;
+  text-align: center;
+}
+</style>
