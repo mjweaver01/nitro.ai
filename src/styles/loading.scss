@@ -43,7 +43,8 @@ $animation-duration: 1.25s;
 }
 
 @keyframes cycleOne {
-  0%, 100% {
+  0%,
+  100% {
     background: $dot-color-fade;
   }
   33.333% {
@@ -55,7 +56,8 @@ $animation-duration: 1.25s;
 }
 
 @keyframes cycleTwo {
-  0%, 100% {
+  0%,
+  100% {
     background: $dot-color-fade;
   }
   33.333% {
@@ -67,10 +69,12 @@ $animation-duration: 1.25s;
 }
 
 @keyframes cycleThree {
-  0%, 100% {
+  0%,
+  100% {
     background: $dot-color-fade;
   }
-  33.333%, 66.6667% {
+  33.333%,
+  66.6667% {
     background: $dot-color-fade;
   }
   99.998% {

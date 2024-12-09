@@ -14,7 +14,7 @@ export default async (req: Request, context: Context) => {
   const content = body?.content ?? null
   const conversationId = body?.conversationId ?? qs.get('conversationId') ?? null
 
-  if(!user) {
+  if (!user) {
     return Response.json({
       code: 401,
       message: 'Unauthorized',

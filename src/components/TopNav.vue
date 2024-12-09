@@ -53,7 +53,7 @@ export default {
   padding-right: 1em;
   border-bottom: 1px solid var(--border-color);
   z-index: 2;
-  
+
   .force-show-hide-button {
     display: none;
     padding: 0.5em;
@@ -78,7 +78,6 @@ export default {
       display: block;
     }
   }
-
 
   .top-nav-hero {
     display: flex;

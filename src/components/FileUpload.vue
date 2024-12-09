@@ -43,7 +43,7 @@ export default {
     },
     isImage() {
       return this.selectedFile?.type.startsWith('image/')
-    }
+    },
   },
   methods: {
     triggerFileInput() {
@@ -72,7 +72,7 @@ export default {
           selectedFile: file,
           filePreview: e.target.result,
           fileContent: e.target.result,
-          fileType: 'image_url'
+          fileType: 'image_url',
         })
       }
       reader.readAsDataURL(file)
@@ -84,20 +84,19 @@ export default {
           try {
             const text = await fetch('/.netlify/functions/pdf-parse', {
               method: 'POST',
-              body: file
-            })
-            .then(async (response) => {
-              if (!response.ok) throw new Error('Failed to parse PDF');
+              body: file,
+            }).then(async (response) => {
+              if (!response.ok) throw new Error('Failed to parse PDF')
               const data = await response.json()
               return data.text || data
-            });
-            
+            })
+
             this.messagesStore.setFileCache({
               selectedFile: file,
               filePreview: file.name,
               fileContent: text,
               fileType: 'text',
-              fileName: file.name
+              fileName: file.name,
             })
           } catch (error) {
             console.error('Error parsing PDF:', error)
@@ -108,13 +107,13 @@ export default {
           const arrayBuffer = await blob.arrayBuffer()
           const decoder = new TextDecoder('utf-8')
           const text = decoder.decode(arrayBuffer)
-        
-        this.messagesStore.setFileCache({
-          selectedFile: file,
-          filePreview: file.name,
-          fileContent: text,
-          fileType: file.type.match(/(text|json|csv|md)/i) ? 'text' : 'file',
-          fileName: file.name
+
+          this.messagesStore.setFileCache({
+            selectedFile: file,
+            filePreview: file.name,
+            fileContent: text,
+            fileType: file.type.match(/(text|json|csv|md)/i) ? 'text' : 'file',
+            fileName: file.name,
           })
         }
       } catch (error) {
@@ -123,31 +122,31 @@ export default {
     },
     getFileType(file) {
       const extension = file.name.split('.').pop().toLowerCase()
-      
+
       if (file.type.startsWith('text/') || ['txt', 'md', 'json', 'csv'].includes(extension)) {
         return 'text'
       }
-      
+
       return 'binary'
     },
     getMimeType(filename) {
       const extension = filename.split('.').pop().toLowerCase()
       const mimeTypes = {
-        'pdf': 'application/pdf',
-        'doc': 'application/msword',
-        'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'txt': 'text/plain',
-        'md': 'text/markdown',
-        'json': 'application/json',
-        'csv': 'text/csv'
+        pdf: 'application/pdf',
+        doc: 'application/msword',
+        docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        txt: 'text/plain',
+        md: 'text/markdown',
+        json: 'application/json',
+        csv: 'text/csv',
       }
       return mimeTypes[extension] || 'application/octet-stream'
     },
     clearFile() {
       this.messagesStore.clearFileCache()
       this.$refs.fileInput.value = ''
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -174,7 +173,7 @@ export default {
   cursor: pointer;
   padding: 0.5em;
   border-radius: 5px;
-  
+
   &:hover {
     background-color: var(--light-blue);
   }

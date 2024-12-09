@@ -10,12 +10,8 @@ import { handleToolCalls } from './handleToolCalls'
 
 const getUserProfile = async (userId: string) => {
   if (!userId || userId === 'anonymous') return ''
-  
-  const { data } = await supabase
-    .from('user_info')
-    .select('*')
-    .eq('id', userId)
-    .single()
+
+  const { data } = await supabase.from('user_info').select('*').eq('id', userId).single()
 
   if (data) {
     return `
@@ -65,7 +61,10 @@ export const ask = async (
 
   if (messages.length === 0) {
     // Add system prompt with user profile info
-    const systemPromptWithProfile = compiledSystemPrompt.replace('{userProfileInfo}', userProfileInfo)
+    const systemPromptWithProfile = compiledSystemPrompt.replace(
+      '{userProfileInfo}',
+      userProfileInfo,
+    )
     messages.unshift({
       role: 'system',
       content: systemPromptWithProfile,
@@ -98,13 +97,16 @@ export const ask = async (
             // Handle all tool calls in this delta
             for (const call of toolCalls) {
               // Get the correct tool call using either id or index
-              const callId = call.id || (call.index !== undefined ? 
-                Array.from(currentToolCalls.keys())[call.index] : null)
-              
+              const callId =
+                call.id ||
+                (call.index !== undefined ? Array.from(currentToolCalls.keys())[call.index] : null)
+
               if (call.id) {
                 // Initialize new tool call
                 if (!currentToolCalls.has(call.id)) {
-                  console.log(`[ask] New tool call: ${call.function?.name || 'unknown'} (${call.id})`)
+                  console.log(
+                    `[ask] New tool call: ${call.function?.name || 'unknown'} (${call.id})`,
+                  )
                   currentToolCalls.set(call.id, {
                     id: call.id,
                     type: call.type || 'function',
@@ -135,12 +137,11 @@ export const ask = async (
             }
           } else if (currentToolCalls.size > 0 && !content) {
             // Only check for completion when we have pending tool calls and no content
-            const completedCalls = Array.from(currentToolCalls.values()).filter(call => {
+            const completedCalls = Array.from(currentToolCalls.values()).filter((call) => {
               try {
                 const args = call.function?.arguments || ''
-                const isComplete = args.trim().startsWith('{') && 
-                                  args.trim().endsWith('}') && 
-                                  call.function?.name
+                const isComplete =
+                  args.trim().startsWith('{') && args.trim().endsWith('}') && call.function?.name
 
                 if (isComplete) {
                   try {
@@ -162,7 +163,7 @@ export const ask = async (
               try {
                 console.log(`[ask] Processing ${completedCalls.length} tool calls`)
                 const toolResult = await handleToolCalls(completedCalls, messages, models[model])
-                
+
                 if (toolResult) {
                   for await (const chunk of toolResult as any) {
                     const content = chunk.choices[0]?.delta?.content
@@ -177,9 +178,9 @@ export const ask = async (
               } catch (error) {
                 console.error('[ask] Error processing tool calls:', error)
               }
-              
+
               // Clear processed tool calls
-              completedCalls.forEach(call => currentToolCalls.delete(call.id))
+              completedCalls.forEach((call) => currentToolCalls.delete(call.id))
             }
           } else if (content) {
             controller.enqueue(encoder.encode(content))

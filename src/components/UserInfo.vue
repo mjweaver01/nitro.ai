@@ -69,12 +69,12 @@ export default {
   },
   computed: {
     ...mapStores(useUserStore),
-    
+
     buttonText() {
       if (this.saving) return 'Saving...'
       if (this.saved) return 'Changes Saved'
       return 'Save Profile'
-    }
+    },
   },
   async created() {
     // Load existing user info

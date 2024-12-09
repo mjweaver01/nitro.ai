@@ -19,21 +19,18 @@ export default async (req: Request, context: Context) => {
             send({ message: 'Seeding complete', complete: true })
             controller.close()
           })
-        }
+        },
       })
 
       return new Response(stream, {
         headers: {
           'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
+          Connection: 'keep-alive',
         },
       })
     } catch (error) {
-      return Response.json(
-        { error: 'Failed to get seeding status' },
-        { status: 500 }
-      )
+      return Response.json({ error: 'Failed to get seeding status' }, { status: 500 })
     }
   }
 
@@ -41,17 +38,17 @@ export default async (req: Request, context: Context) => {
   if (req.method === 'POST') {
     try {
       // Check if request has a body
-      const body = await req.text();
+      const body = await req.text()
       if (!body) {
         return Response.json({
           code: 400,
           message: 'Missing request body',
           error: true,
-        });
+        })
       }
 
       // Parse the JSON body
-      let { user, action } = JSON.parse(body);
+      let { user, action } = JSON.parse(body)
 
       // Validate required fields
       if (!user) {
@@ -59,7 +56,7 @@ export default async (req: Request, context: Context) => {
           code: 401,
           message: 'Unauthorized',
           error: true,
-        });
+        })
       }
 
       if (!action) {
@@ -67,7 +64,7 @@ export default async (req: Request, context: Context) => {
           code: 400,
           message: 'Missing action parameter',
           error: true,
-        });
+        })
       }
 
       if (action === 'clear') {
@@ -77,23 +74,17 @@ export default async (req: Request, context: Context) => {
         seedVectorStore()
         return Response.json({ message: 'Seeding process started' })
       } else {
-        return Response.json(
-          { error: 'Invalid action. Use "seed" or "clear"' },
-          { status: 400 }
-        )
+        return Response.json({ error: 'Invalid action. Use "seed" or "clear"' }, { status: 400 })
       }
     } catch (error) {
       return Response.json({
         code: 400,
         message: 'Invalid JSON in request body',
         error: true,
-      });
+      })
     }
   }
 
   // Handle unsupported methods
-  return Response.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  )
+  return Response.json({ error: 'Method not allowed' }, { status: 405 })
 }

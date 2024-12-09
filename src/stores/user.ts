@@ -80,9 +80,9 @@ export const useUserStore = defineStore('user', {
       this.loginError = ''
 
       if (import.meta.env.PROD) {
-      const recaptchaResponse = await this.verifyRecaptcha()
-      if (!recaptchaResponse) {
-        return
+        const recaptchaResponse = await this.verifyRecaptcha()
+        if (!recaptchaResponse) {
+          return
         }
       }
 

@@ -22,8 +22,8 @@ export const useMessagesStore = defineStore('messages', {
       selectedFile: null,
       filePreview: null,
       fileContent: null,
-      fileType: null
-    }
+      fileType: null,
+    },
   }),
   actions: {
     async ask(sentQuestion = '') {
@@ -44,7 +44,7 @@ export const useMessagesStore = defineStore('messages', {
         if (sentQuestion?.trim() || this.question.trim()) {
           content.push({
             type: 'text',
-            text: sentQuestion?.trim() || this.question.trim()
+            text: sentQuestion?.trim() || this.question.trim(),
           })
         }
 
@@ -54,23 +54,23 @@ export const useMessagesStore = defineStore('messages', {
             // Estimate tokens (roughly 4 characters per token)
             const content_str = this.fileCache.fileContent.toString()
             const estimated_tokens = Math.ceil(content_str.length / 4)
-            
+
             // Limit to ~30k tokens (120k characters) to leave room for response
             const max_chars = 120000
             let truncated_content = content_str
             if (content_str.length > max_chars) {
-              truncated_content = content_str.substring(0, max_chars) + 
-                "\n\n[Content truncated due to length...]"
+              truncated_content =
+                content_str.substring(0, max_chars) + '\n\n[Content truncated due to length...]'
             }
 
             content.push({
               type: 'text',
-              text: `File content from ${this.fileCache.selectedFile?.name}:\n\n${truncated_content}`
+              text: `File content from ${this.fileCache.selectedFile?.name}:\n\n${truncated_content}`,
             })
           } else if (this.fileCache.fileType === 'image_url') {
             content.push({
               type: 'image_url',
-              image_url: { url: this.fileCache.fileContent }
+              image_url: { url: this.fileCache.fileContent },
             })
           }
         }
@@ -325,7 +325,7 @@ export const useMessagesStore = defineStore('messages', {
         selectedFile: null,
         filePreview: null,
         fileContent: null,
-        fileType: null
+        fileType: null,
       }
     },
 
@@ -335,16 +335,18 @@ export const useMessagesStore = defineStore('messages', {
 
     addFileMessage() {
       if (!this.fileCache.fileContent) return
-      
+
       // Preview file in messages
       this.messages.push({
-        content: [{
-          type: this.fileCache.fileType,
-          text: this.fileCache.fileContent,
-          file_name: this.fileCache.selectedFile?.name 
-        }],
+        content: [
+          {
+            type: this.fileCache.fileType,
+            text: this.fileCache.fileContent,
+            file_name: this.fileCache.selectedFile?.name,
+          },
+        ],
         isUser: true,
       })
-    }
+    },
   },
 })

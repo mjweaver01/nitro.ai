@@ -12,9 +12,9 @@
       </div>
     </div>
     <div class="tab-content">
-      <component 
+      <component
         v-if="tabs[activeTab]?.component"
-        :is="tabs[activeTab].component" 
+        :is="tabs[activeTab].component"
         v-bind="tabs[activeTab].props || {}"
       />
       <div v-else v-html="tabs[activeTab]?.content"></div>
@@ -86,4 +86,4 @@ export default {
   padding: 1em;
   background: var(--white);
 }
-</style> 
+</style>

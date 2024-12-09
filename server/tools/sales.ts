@@ -31,9 +31,7 @@ export const salesTool = {
       const results = await searchShopify(question, true)
 
       if (results.length > 0) {
-        console.log(
-          `[sales] found ${results.length} result${results.length !== 1 ? 's' : ''}`,
-        )
+        console.log(`[sales] found ${results.length} result${results.length !== 1 ? 's' : ''}`)
         await generation.end({
           output: JSON.stringify(results[0]),
           level: 'DEFAULT',
@@ -41,27 +39,29 @@ export const salesTool = {
         return results
       } else {
         const noResultsResponse = {
-          content: "I couldn't find any specific products or services matching your request. " +
-                  "Would you like to browse our main product categories, or can I help you find something similar?",
+          content:
+            "I couldn't find any specific products or services matching your request. " +
+            'Would you like to browse our main product categories, or can I help you find something similar?',
           source: 'fallback',
-          type: 'no_results'
+          type: 'no_results',
         }
-        
+
         await generation.end({
           output: JSON.stringify(noResultsResponse),
           level: 'DEFAULT',
         })
-        
+
         return [noResultsResponse]
       }
     } catch (error) {
       const errorResponse = {
-        content: "I apologize, but I'm having trouble accessing our product information right now. " +
-                "Please try again in a moment, or I can help you with something else.",
+        content:
+          "I apologize, but I'm having trouble accessing our product information right now. " +
+          'Please try again in a moment, or I can help you with something else.',
         source: 'error',
-        type: 'error'
+        type: 'error',
       }
-      
+
       await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
@@ -72,4 +72,4 @@ export const salesTool = {
       await langfuse.shutdownAsync()
     }
   },
-} 
+}

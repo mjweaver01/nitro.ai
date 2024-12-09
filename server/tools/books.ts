@@ -17,28 +17,26 @@ export const loadBooks = async () => {
   try {
     const booksDir = path.join(process.cwd(), 'books')
     const files = await fs.readdir(booksDir)
-    
+
     for (const file of files) {
       if (!file.endsWith('.txt')) continue
-      
+
       const content = await fs.readFile(path.join(booksDir, file), 'utf-8')
       const title = file.replace('.txt', '')
-      
+
       // Split into paragraphs/sections
-      const sections = content
-        .split(/\n\n+/)
-        .filter(section => section.trim().length > 0)
-      
+      const sections = content.split(/\n\n+/).filter((section) => section.trim().length > 0)
+
       // Create chunks with context
       sections.forEach((section, index) => {
         bookChunks.push({
           title,
           content: section.trim(),
-          pageNumber: Math.floor(index / 2) + 1 // Rough page number estimation
+          pageNumber: Math.floor(index / 2) + 1, // Rough page number estimation
         })
       })
     }
-    
+
     console.log(`[books] Loaded ${bookChunks.length} chunks from ${files.length} books`)
   } catch (error) {
     console.error('[books] Error loading books:', error)
@@ -56,14 +54,14 @@ const searchBooks = async (query: string): Promise<any[]> => {
   const results = fuzzysort.go(query, bookChunks, {
     key: 'content',
     limit: 3,
-    threshold: -5000 // Adjust this to control match sensitivity
+    threshold: -5000, // Adjust this to control match sensitivity
   })
 
-  return results.map(result => ({
+  return results.map((result) => ({
     content: result.obj.content,
     source: `Book: ${result.obj.title}${result.obj.pageNumber ? ` (Page ${result.obj.pageNumber})` : ''}`,
     type: 'book_content',
-    score: result.score
+    score: result.score,
   }))
 }
 
@@ -105,27 +103,29 @@ export const booksTool = {
         return results
       } else {
         const noResultsResponse = {
-          content: "I couldn't find any specific information about this in our books. " +
-                  "Would you like me to recommend some relevant Westside Barbell books on this topic instead?",
+          content:
+            "I couldn't find any specific information about this in our books. " +
+            'Would you like me to recommend some relevant Westside Barbell books on this topic instead?',
           source: 'fallback',
-          type: 'no_results'
+          type: 'no_results',
         }
-        
+
         await generation.end({
           output: JSON.stringify(noResultsResponse),
           level: 'DEFAULT',
         })
-        
+
         return [noResultsResponse]
       }
     } catch (error) {
       const errorResponse = {
-        content: "I apologize, but I'm having trouble searching through the book content right now. " +
-                "Would you like to ask about something else?",
+        content:
+          "I apologize, but I'm having trouble searching through the book content right now. " +
+          'Would you like to ask about something else?',
         source: 'error',
-        type: 'error'
+        type: 'error',
       }
-      
+
       await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
@@ -135,5 +135,5 @@ export const booksTool = {
     } finally {
       await langfuse.shutdownAsync()
     }
-  }
-} 
+  },
+}

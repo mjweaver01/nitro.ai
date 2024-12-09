@@ -41,28 +41,30 @@ export const knowledgeBaseTool = {
         return results
       } else {
         const noResultsResponse = {
-          content: "I couldn't find any specific information about this in our knowledge base. " +
-                  "However, I can provide some general context based on what I know about Westside Barbell's " +
-                  "training philosophy. Would you like me to explain more about that?",
+          content:
+            "I couldn't find any specific information about this in our knowledge base. " +
+            "However, I can provide some general context based on what I know about Westside Barbell's " +
+            'training philosophy. Would you like me to explain more about that?',
           source: 'fallback',
-          type: 'no_results'
+          type: 'no_results',
         }
-        
+
         await generation.end({
           output: JSON.stringify(noResultsResponse),
           level: 'DEFAULT',
         })
-        
+
         return [noResultsResponse]
       }
     } catch (error) {
       const errorResponse = {
-        content: "I apologize, but I'm having trouble accessing the knowledge base right now. " +
-                "Would you like to rephrase your question or ask about something else?",
+        content:
+          "I apologize, but I'm having trouble accessing the knowledge base right now. " +
+          'Would you like to rephrase your question or ask about something else?',
         source: 'error',
-        type: 'error'
+        type: 'error',
       }
-      
+
       await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
@@ -73,4 +75,4 @@ export const knowledgeBaseTool = {
       await langfuse.shutdownAsync()
     }
   },
-} 
+}

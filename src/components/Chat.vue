@@ -14,11 +14,11 @@
             <div class="input-wrapper-inner">
               <textarea
                 rows="1"
-              id="question-input"
-              name="question"
-              placeholder="Ask anything..."
-              v-model="messagesStore.question"
-              @keydown.enter.exact.prevent="messagesStore?.ask()"
+                id="question-input"
+                name="question"
+                placeholder="Ask anything..."
+                v-model="messagesStore.question"
+                @keydown.enter.exact.prevent="messagesStore?.ask()"
                 @keydown.up.exact.prevent="messagesStore?.setPrevousQuestion()"
               />
               <FileUpload />

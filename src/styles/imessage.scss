@@ -39,7 +39,9 @@
   }
 
   // Nested sections/divs/p styling
-  section, div, p {
+  section,
+  div,
+  p {
     > * {
       font-size: 1em !important;
       margin-top: 0 !important;

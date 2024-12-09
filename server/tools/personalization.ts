@@ -41,28 +41,30 @@ export const personalizationTool = {
         return results
       } else {
         const noResultsResponse = {
-          content: "I don't have any specific personalized information about that yet. " +
-                  "As we continue our conversation, I'll learn more about your preferences and training goals. " +
-                  "Would you like to tell me more about what you're looking to achieve?",
+          content:
+            "I don't have any specific personalized information about that yet. " +
+            "As we continue our conversation, I'll learn more about your preferences and training goals. " +
+            "Would you like to tell me more about what you're looking to achieve?",
           source: 'fallback',
-          type: 'no_results'
+          type: 'no_results',
         }
-        
+
         await generation.end({
           output: JSON.stringify(noResultsResponse),
           level: 'DEFAULT',
         })
-        
+
         return [noResultsResponse]
       }
     } catch (error) {
       const errorResponse = {
-        content: "I apologize, but I'm having trouble accessing your personalized information right now. " +
-                "Would you like to continue our conversation about something else?",
+        content:
+          "I apologize, but I'm having trouble accessing your personalized information right now. " +
+          'Would you like to continue our conversation about something else?',
         source: 'error',
-        type: 'error'
+        type: 'error',
       }
-      
+
       await generation.end({
         output: JSON.stringify(error),
         level: 'ERROR',
@@ -73,4 +75,4 @@ export const personalizationTool = {
       await langfuse.shutdownAsync()
     }
   },
-} 
+}

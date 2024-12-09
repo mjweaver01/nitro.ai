@@ -16,7 +16,7 @@
             :extensions="[showdownMathjax]"
             :options="{ emoji: true, tables: true, math: true }"
           />
-          <div 
+          <div
             v-else-if="content.type === 'text' && content.text?.includes('File content from')"
             class="file-attachment"
           >

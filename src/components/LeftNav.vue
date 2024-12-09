@@ -110,7 +110,8 @@ export default {
 
       return (
         this.conversationsStore?.conversations?.filter((conversation) => {
-          const content = conversation.messages[0].content[0].text ?? conversation.messages[0].content  
+          const content =
+            conversation.messages[0].content[0].text ?? conversation.messages[0].content
           return content.toLowerCase().includes(this.search.toLowerCase())
         }) || []
       )
