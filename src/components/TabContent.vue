@@ -1,23 +1,20 @@
 <template>
   <div class="tab-container">
     <div class="tab-headers">
-      <div
-        v-for="(tab, index) in tabs"
-        :key="index"
-        class="tab-header"
-        :class="{ active: activeTab === index }"
-        @click="setActiveTab(index)"
+      <router-link
+        v-for="tab in tabs"
+        :key="tab.id"
+        :to="tab.path"
+        custom
+        v-slot="{ isActive, navigate }"
       >
-        {{ tab.title }}
-      </div>
+        <div class="tab-header" :class="{ active: isActive }" @click="navigate">
+          {{ tab.title }}
+        </div>
+      </router-link>
     </div>
     <div class="tab-content">
-      <component
-        v-if="tabs[activeTab]?.component"
-        :is="tabs[activeTab].component"
-        v-bind="tabs[activeTab].props || {}"
-      />
-      <div v-else v-html="tabs[activeTab]?.content"></div>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -28,22 +25,7 @@ export default {
     tabs: {
       type: Array,
       required: true,
-      validator: (tabs) => tabs.every((tab) => tab.title && (tab.component || tab.content)),
-    },
-    initialTab: {
-      type: Number,
-      default: 0,
-    },
-  },
-  data() {
-    return {
-      activeTab: this.initialTab,
-    }
-  },
-  methods: {
-    setActiveTab(index) {
-      this.activeTab = index
-      this.$emit('tab-changed', index)
+      validator: (tabs) => tabs.every((tab) => tab.title && tab.path),
     },
   },
 }
