@@ -50,10 +50,10 @@
 <script>
 import { mapStores } from 'pinia'
 import { markRaw } from 'vue'
-import { useUserStore } from '../stores/user'
-import AccountQuestions from '../components/AccountQuestions.vue'
-import TabContent from '../components/TabContent.vue'
-import UserInfo from '../components/UserInfo.vue'
+import { useUserStore } from '@/stores/user'
+import AccountQuestions from '@/components/AccountQuestions.vue'
+import TabContent from '@/components/TabContent.vue'
+import UserInfo from '@/components/UserInfo.vue'
 
 export default {
   components: {

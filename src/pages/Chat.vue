@@ -13,12 +13,12 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useUserStore } from '../stores/user'
-import { useMessagesStore } from '../stores/messages'
-import Hero from '../components/Hero.vue'
-import Questions from '../components/Questions.vue'
-import Messages from '../components/Messages.vue'
-import Chat from '../components/Chat.vue'
+import { useUserStore } from '@/stores/user'
+import { useMessagesStore } from '@/stores/messages'
+import Hero from '@/components/Hero.vue'
+import Questions from '@/components/Questions.vue'
+import Messages from '@/components/Messages.vue'
+import Chat from '@/components/Chat.vue'
 
 export default {
   components: {

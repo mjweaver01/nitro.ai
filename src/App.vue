@@ -48,6 +48,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables.scss' as *;
+
 .app {
   display: flex;
   flex-flow: column;
@@ -58,7 +60,7 @@ export default {
   &.force-hide {
     display: none;
 
-    @media (min-width: 768px) {
+    @media (min-width: $tablet) {
       display: flex;
     }
   }
@@ -81,7 +83,7 @@ export default {
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: $tablet) {
   .top-nav {
     display: none;
   }

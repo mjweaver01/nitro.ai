@@ -29,7 +29,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useMessagesStore } from '../stores/messages'
+import { useMessagesStore } from '@/stores/messages'
 
 export default {
   name: 'FileUpload',

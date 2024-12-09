@@ -1,3 +1,5 @@
+@use '@/styles/variables.scss' as *;
+
 .account-header {
   word-break: break-word;
   margin-top: 0;
@@ -16,7 +18,7 @@
     border-radius: 5px;
     white-space: nowrap;
 
-    @media (min-width: 500px) {
+    @media (min-width: $mobile) {
       margin: 17px;
     }
   }
@@ -48,7 +50,7 @@
   }
 
   &-content {
-    @media (min-width: 768px) {
+    @media (min-width: $tablet) {
       display: grid;
       overflow: hidden;
     }
@@ -93,7 +95,7 @@
   padding: 1em;
   overflow: auto;
   height: 100%;
-  max-width: var(--mobile);
+  max-width: $mobile;
   margin: 0 auto;
 }
 

@@ -1,3 +1,5 @@
+@use '@/styles/variables.scss' as *;
+
 .top {
   flex-grow: 1;
   overflow: scroll;
@@ -19,12 +21,12 @@
 .force-desktop-hide {
   display: none !important;
 
-  @media (min-width: 768px) {
+  @media (min-width: $tablet) {
     display: block !important;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: $tablet) {
   .force-hide-desktop,
   .force-show.force-hide-desktop {
     display: none !important;

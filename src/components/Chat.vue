@@ -23,7 +23,7 @@
               />
               <FileUpload />
             </div>
-            <div class="select">
+            <div class="select model-select">
               <select v-model="messagesStore.model" @change="messagesStore?.clearConversation()">
                 <option v-for="model in models" :value="model.id">
                   {{ model.value }}
@@ -45,10 +45,10 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useUserStore } from '../stores/user'
-import { useMessagesStore } from '../stores/messages'
+import { useUserStore } from '@/stores/user'
+import { useMessagesStore } from '@/stores/messages'
 import { modelOptions } from '../../server/constants'
-import FileUpload from './FileUpload.vue'
+import FileUpload from '@/components/FileUpload.vue'
 
 export default {
   computed: {
@@ -65,7 +65,9 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/styles/variables.scss' as *;
+
 .ask-question form {
   width: 100%;
   display: grid;
@@ -80,10 +82,18 @@ export default {
   cursor: pointer;
 }
 
-@media (min-width: 768px) {
+@media (min-width: $tablet) {
   .clear {
     position: absolute;
     top: -1.5rem;
+  }
+}
+
+.model-select {
+  display: none;
+
+  @media (min-width: $tablet) {
+    display: block;
   }
 }
 

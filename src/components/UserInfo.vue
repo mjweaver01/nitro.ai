@@ -51,7 +51,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useUserStore } from '../stores/user'
+import { useUserStore } from '@/stores/user'
 
 export default {
   name: 'UserInfoForm',
@@ -92,6 +92,7 @@ export default {
       try {
         await this.userStore.updateUserInfo(this.form)
         this.saved = true
+        alert('Profile updated')
         setTimeout(() => {
           this.saved = false
         }, 2000)
@@ -104,9 +105,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@use '@/styles/variables.scss' as *;
+
 .user-info-form {
-  max-width: var(--mobile);
+  max-width: $mobile;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -114,10 +117,10 @@ export default {
 .form-group {
   margin-bottom: 1rem;
   text-align: left;
-}
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.25rem;
+  label {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
 }
 </style>

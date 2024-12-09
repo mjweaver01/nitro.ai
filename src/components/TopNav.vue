@@ -23,8 +23,8 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useMessagesStore } from '../stores/messages'
-import { useSidebarStore } from '../stores/sidebar'
+import { useMessagesStore } from '@/stores/messages'
+import { useSidebarStore } from '@/stores/sidebar'
 
 export default {
   computed: {
@@ -42,6 +42,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables.scss' as *;
+
 .top-nav {
   display: flex;
   align-items: center;
@@ -66,12 +68,12 @@ export default {
   }
 
   .hamburger {
-    @media (min-width: 768px) {
+    @media (min-width: $tablet) {
       display: none;
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: $tablet) {
     padding-right: 0.5em;
 
     .force-show-hide-button {

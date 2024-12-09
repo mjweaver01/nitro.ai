@@ -93,11 +93,11 @@
 <script>
 import { mapStores } from 'pinia'
 import { RouterLink } from 'vue-router'
-import { useConversationsStore } from '../stores/conversations'
-import { useMessagesStore } from '../stores/messages'
-import { useUserStore } from '../stores/user'
-import { useSidebarStore } from '../stores/sidebar'
-import TopNav from './TopNav.vue'
+import { useConversationsStore } from '@/stores/conversations'
+import { useMessagesStore } from '@/stores/messages'
+import { useUserStore } from '@/stores/user'
+import { useSidebarStore } from '@/stores/sidebar'
+import TopNav from '@/components/TopNav.vue'
 
 export default {
   components: {

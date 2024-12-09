@@ -60,8 +60,8 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useConversationsStore } from '../stores/conversations'
-import Messages from './Messages.vue'
+import { useConversationsStore } from '@/stores/conversations'
+import Messages from '@/components/Messages.vue'
 
 export default {
   name: 'AccountQuestions',

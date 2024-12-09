@@ -14,8 +14,8 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useUserStore } from '../stores/user'
-import { useMessagesStore } from '../stores/messages'
+import { useUserStore } from '@/stores/user'
+import { useMessagesStore } from '@/stores/messages'
 
 export default {
   computed: {
@@ -49,6 +49,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@use '@/styles/variables.scss' as *;
+
 .questions {
   display: grid;
   grid-template-columns: 1fr;
@@ -59,7 +61,7 @@ export default {
   text-align: left;
   max-width: 800px;
 
-  @media (min-width: 500px) {
+  @media (min-width: $mobile) {
     grid-template-columns: 1fr 1fr;
   }
 

@@ -52,9 +52,9 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useClientStore } from '../stores/client'
-import { useUserStore } from '../stores/user'
-import Hero from '../components/Hero.vue'
+import { useClientStore } from '@/stores/client'
+import { useUserStore } from '@/stores/user'
+import Hero from '@/components/Hero.vue'
 
 export default {
   components: {

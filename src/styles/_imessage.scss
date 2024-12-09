@@ -1,3 +1,5 @@
+@use '@/styles/variables.scss' as *;
+
 /* forked from https://codepen.io/AllThingsSmitty/pen/jommGQ */
 .imessage {
   display: flex;
@@ -161,19 +163,19 @@ p.from-them {
 }
 
 // Media queries
-@media (min-width: 500px) {
+@media (min-width: $mobile) {
   .imessage p {
     max-width: 75%;
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: $tablet) {
   .imessage {
     margin-bottom: 1em;
   }
 }
 
-@media (max-width: 499px) {
+@media (max-width: #{$mobile - 1}) {
   .imessage {
     margin: 0 !important;
   }

@@ -53,7 +53,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useMessagesStore } from '../stores/messages'
+import { useMessagesStore } from '@/stores/messages'
 import { VueShowdown } from 'vue-showdown'
 import showdownMathjax from 'showdown-mathjax'
 
