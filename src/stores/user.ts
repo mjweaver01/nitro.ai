@@ -147,6 +147,19 @@ export const useUserStore = defineStore('user', {
 
     async getUserInfo() {
       this.userInfoLoading = true
+
+      if (
+        this.userInfo &&
+        Object.values(this.userInfo).some((value) => value?.toString().trim().length > 0)
+      ) {
+        this.userInfoLoading = false
+        return this.userInfo
+      }
+
+      return await this.refreshUserInfo()
+    },
+
+    async refreshUserInfo() {
       const client = useClientStore()
       const { data, error } = await client.client
         .from('user_info')
