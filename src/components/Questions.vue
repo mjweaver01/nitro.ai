@@ -59,7 +59,7 @@ export default {
   padding: 1em 0 0.5em;
   margin: 0 auto;
   text-align: left;
-  max-width: 800px;
+  max-width: $tablet;
 
   @media (min-width: $mobile) {
     grid-template-columns: 1fr 1fr;

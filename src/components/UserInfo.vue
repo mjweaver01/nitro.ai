@@ -113,7 +113,7 @@ export default {
 @use '@/styles/variables.scss' as *;
 
 .user-info-form {
-  max-width: $mobile;
+  max-width: $tablet;
   margin: 0 auto;
   padding: 1rem;
 }

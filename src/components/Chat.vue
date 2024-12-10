@@ -104,7 +104,7 @@ export default {
 }
 
 .current-message-inner {
-  max-width: 800px;
+  max-width: $tablet;
   margin: 0 auto;
 }
 </style>
