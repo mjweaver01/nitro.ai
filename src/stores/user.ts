@@ -4,7 +4,7 @@ import { useReCaptcha } from 'vue-recaptcha-v3'
 
 export const useUserStore = defineStore('user', {
   state: () => {
-    const reCaptcha = useReCaptcha()
+    const reCaptcha = import.meta.env.PROD ? useReCaptcha() : null
 
     return {
       user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {},
@@ -19,6 +19,11 @@ export const useUserStore = defineStore('user', {
       loggingIn: false,
       loggingOut: false,
       loginError: '',
+      userInfo: {
+        physique: '',
+        equipment: '',
+      },
+      userInfoLoading: false,
     }
   },
   getters: {
@@ -75,9 +80,11 @@ export const useUserStore = defineStore('user', {
       this.loggingIn = true
       this.loginError = ''
 
-      const recaptchaResponse = await this.verifyRecaptcha()
-      if (!recaptchaResponse) {
-        return
+      if (import.meta.env.PROD) {
+        const recaptchaResponse = await this.verifyRecaptcha()
+        if (!recaptchaResponse) {
+          return
+        }
       }
 
       if (this.login.isNew) {
@@ -90,25 +97,27 @@ export const useUserStore = defineStore('user', {
     },
 
     async signOutUser(state) {
-      this.loggingOut = true
+      if (confirm('Are you sure you want to log out?')) {
+        this.loggingOut = true
 
-      try {
-        const client = useClientStore()
-        await client.client.auth.signOut()
-      } catch {}
+        try {
+          const client = useClientStore()
+          await client.client.auth.signOut()
+        } catch {}
 
-      this.user = null
-      localStorage.removeItem('user')
-      localStorage.removeItem('conversations')
+        this.user = null
+        localStorage.removeItem('user')
+        localStorage.removeItem('conversations')
 
-      this.router.push('/login')
+        this.router.push('/login')
 
-      this.loggingOut = false
+        this.loggingOut = false
+      }
     },
 
     async authUser() {
       const client = useClientStore()
-      const u = await client.client.auth.getUser()
+      const u = await client?.client?.auth?.getUser()
       if (u?.data?.user) {
         this.user = u.data.user
         localStorage.setItem('user', JSON.stringify(this.user))
@@ -134,6 +143,59 @@ export const useUserStore = defineStore('user', {
       }
 
       return true
+    },
+
+    async getUserInfo() {
+      this.userInfoLoading = true
+
+      if (
+        this.userInfo &&
+        Object.values(this.userInfo).some((value) => value?.toString().trim().length > 0)
+      ) {
+        this.userInfoLoading = false
+        return this.userInfo
+      }
+
+      return await this.refreshUserInfo()
+    },
+
+    async refreshUserInfo() {
+      const client = useClientStore()
+      const { data, error } = await client.client
+        .from('user_info')
+        .select('*')
+        .eq('id', this.user.id)
+        .single()
+
+      if (data) {
+        this.userInfo = data
+      }
+      this.userInfoLoading = false
+      return data
+    },
+
+    async updateUserInfo(info: {
+      physique: string
+      experience: string
+      goals?: string
+      equipment?: string
+    }) {
+      this.userInfoLoading = true
+      const client = useClientStore()
+      const { data, error } = await client.client
+        .from('user_info')
+        .upsert({
+          id: this.user.id,
+          ...info,
+        })
+        .select()
+        .single()
+
+      if (data) {
+        this.userInfo = data
+      }
+      this.userInfoLoading = false
+      return data
     },
   },
 })

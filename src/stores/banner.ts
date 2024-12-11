@@ -23,7 +23,7 @@ export const useBannerStore = defineStore('banner', {
         ></strong>
         `
         : isCyberMonday
-        ? `
+          ? `
         <strong
           ><span style="color: #00ff26">Cyber Monday Sale - </span
           ><span
@@ -36,7 +36,7 @@ export const useBannerStore = defineStore('banner', {
           <span style="color: #00ff26"></span
         ></strong>
       `
-        : `
+          : `
         <strong
           ><span style="color: #00ff26">Westside Barbell: Training Experience [Class:#002] - </span
           ><span

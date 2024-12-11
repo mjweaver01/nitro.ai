@@ -8,9 +8,7 @@ import App from './App.vue'
 import { routes } from './routes'
 
 import 'primeicons/primeicons.css'
-import './styles/index.css'
-import './styles/imessage.css'
-import './styles/loading.css'
+import './styles/index.scss'
 
 const app = createApp(App)
 
@@ -27,12 +25,14 @@ setMapStoreSuffix('')
 app.use(pinia)
 app.use(router)
 app.use(VueShowdownPlugin)
-app.use(VueReCaptcha, {
-  siteKey: '6LfHIXIqAAAAAKMmti5gxJUdc4FbCouVzRSjlt95',
-  loaderOptions: {
-    autoHideBadge: true,
-  },
-})
+if (import.meta.env.PROD) {
+  app.use(VueReCaptcha, {
+    siteKey: '6LfHIXIqAAAAAKMmti5gxJUdc4FbCouVzRSjlt95',
+    loaderOptions: {
+      autoHideBadge: true,
+    },
+  })
+}
 
 app.mount('#app')
 

@@ -4,7 +4,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useBannerStore } from '../stores/banner'
+import { useBannerStore } from '@/stores/banner'
 
 export default {
   computed: {

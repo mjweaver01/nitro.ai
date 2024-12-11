@@ -13,12 +13,12 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useUserStore } from '../stores/user'
-import { useMessagesStore } from '../stores/messages'
-import Hero from '../components/Hero.vue'
-import Questions from '../components/Questions.vue'
-import Messages from '../components/Messages.vue'
-import Chat from '../components/Chat.vue'
+import { useUserStore } from '@/stores/user'
+import { useMessagesStore } from '@/stores/messages'
+import Hero from '@/components/Hero.vue'
+import Questions from '@/components/Questions.vue'
+import Messages from '@/components/Messages.vue'
+import Chat from '@/components/Chat.vue'
 
 export default {
   components: {
@@ -35,8 +35,8 @@ export default {
     if (conversationId?.length > 0) this.messagesStore?.getConversation(conversationId)
 
     const params = new URLSearchParams(window.location.search)
-    const selectedModel = params.get('model') || params.get('llm')
-    if (selectedModel?.length > 0) this.messagesStore.llm = selectedModel
+    const selectedModel = params.get('model')
+    if (selectedModel?.length > 0) this.messagesStore.model = selectedModel
   },
   methods: {
     setUserScrolledUp(e) {

@@ -6,6 +6,7 @@ import { useMessagesStore } from './messages'
 export const useConversationsStore = defineStore('conversations', {
   state: () => {
     return {
+      nosupa: localStorage.getItem('nosupa') === 'true',
       conversations: localStorage.getItem('conversations')
         ? JSON.parse(localStorage.getItem('conversations'))
         : [],
@@ -13,6 +14,7 @@ export const useConversationsStore = defineStore('conversations', {
   },
   actions: {
     getConversations() {
+      if (this.nosupa) return
       const client = useClientStore()
       const user = useUserStore()
 
@@ -30,33 +32,38 @@ export const useConversationsStore = defineStore('conversations', {
     },
 
     setConversation(sentConversation) {
+      if (this.nosupa) return
       const messages = useMessagesStore()
       messages.setConversation(sentConversation, true)
     },
 
     async deleteConversation(conversationId) {
-      const client = useClientStore()
-      const user = useUserStore()
+      if (this.nosupa) return
 
-      if (!client.client || !user.user) return
+      if (confirm('Are you sure you want to delete this conversation?')) {
+        const client = useClientStore()
+        const user = useUserStore()
 
-      try {
-        await client.client
-          .from('conversations')
-          .delete()
-          .eq('id', conversationId)
-          .eq('user', user.user.id)
+        if (!client.client || !user.user) return
 
-        this.conversations = this.conversations.filter((conv) => conv.id !== conversationId)
-        localStorage.setItem('conversations', JSON.stringify(this.conversations))
+        try {
+          await client.client
+            .from('conversations')
+            .delete()
+            .eq('id', conversationId)
+            .eq('user', user.user.id)
 
-        // Clear the current conversation if it's the one being deleted
-        const messagesStore = useMessagesStore()
-        if (messagesStore?.conversationId === conversationId) {
-          messagesStore?.clearConversation()
+          this.conversations = this.conversations.filter((conv) => conv.id !== conversationId)
+          localStorage.setItem('conversations', JSON.stringify(this.conversations))
+
+          // Clear the current conversation if it's the one being deleted
+          const messagesStore = useMessagesStore()
+          if (messagesStore?.conversationId === conversationId) {
+            messagesStore?.clearConversation()
+          }
+        } catch (error) {
+          console.error('Error deleting conversation:', error)
         }
-      } catch (error) {
-        console.error('Error deleting conversation:', error)
       }
     },
   },

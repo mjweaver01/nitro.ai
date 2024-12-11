@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { useUserStore } from './user'
 import { useConversationsStore } from './conversations'
 import { useRouter } from 'vue-router'
+import { defaultModel, models } from '../../server/constants'
 
 export const useMessagesStore = defineStore('messages', {
   state: () => ({
@@ -10,143 +11,198 @@ export const useMessagesStore = defineStore('messages', {
     question: '',
     conversationId: '',
     loading: false,
-    llm: 'openai',
+    model: defaultModel,
     router: useRouter(),
-    nocache: false,
+    nocache: localStorage.getItem('nocache') === 'true',
+    nosupa: localStorage.getItem('nosupa') === 'true',
     streaming: false,
     userScrolledUp: false,
+    abortController: null,
+    fileCache: {
+      selectedFile: null,
+      filePreview: null,
+      fileContent: null,
+      fileType: null,
+    },
   }),
   actions: {
     async ask(sentQuestion = '') {
-      const user = useUserStore()
-      const conversations = useConversationsStore()
-
-      const question =
-        sentQuestion?.trim() !== ''
-          ? sentQuestion?.trim()
-          : this.question.trim() !== ''
-          ? this.question.trim()
-          : false
-      if (!question || question.length <= 0) return
-
-      this.loading = true
-      this.userScrolledUp = false
-      this.scrollToBottom()
-      this.question = ''
-
-      this.messages.push({
-        content: question,
-        isUser: true,
-      })
-
-      // set nocache on each question for ability to turn it on and off
-      if (window.location.search.includes('nocache=true')) {
-        this.nocache = true
-      } else if (window.location.search.includes('nocache=false')) {
-        this.nocache = false
+      if (this.abortController) {
+        this.abortController.abort()
       }
 
-      // Initialize the AbortController
       this.abortController = new AbortController()
 
-      const response = await fetch(`/.netlify/functions/ask${window.location.search}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question,
-          conversationId: this.conversationId,
-          model: this.llm,
-          user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
-          nocache: this.nocache,
-        }),
-        signal: this.abortController.signal,
-      })
+      try {
+        const user = useUserStore()
+        const conversations = useConversationsStore()
 
-      if (!response.ok) {
-        this.loading = false
-        this.messages.push({
-          text: "I'm sorry, I'm having trouble understanding you. Please try again.",
-        })
-        return
-      }
+        // Create content array for the question
+        const content = []
 
-      // Check if the response is JSON (cached) or stream
-      const contentType = response.headers.get('Content-Type')
-      if (contentType && contentType.includes('application/json')) {
-        // Handle cached response
-        const cachedData = await response.json()
-        this.loading = false
+        // Add text content if exists
+        if (sentQuestion?.trim() || this.question.trim()) {
+          content.push({
+            type: 'text',
+            text: sentQuestion?.trim() || this.question.trim(),
+          })
+        }
+
+        // Add file content if exists
+        if (this.fileCache.fileContent) {
+          if (this.fileCache.fileType === 'text' || this.fileCache.fileType === 'binary') {
+            // Estimate tokens (roughly 4 characters per token)
+            const content_str = this.fileCache.fileContent.toString()
+            const estimated_tokens = Math.ceil(content_str.length / 4)
+
+            // Limit to ~30k tokens (120k characters) to leave room for response
+            const max_chars = 120000
+            let truncated_content = content_str
+            if (content_str.length > max_chars) {
+              truncated_content =
+                content_str.substring(0, max_chars) + '\n\n[Content truncated due to length...]'
+            }
+
+            content.push({
+              type: 'text',
+              text: `File content from ${this.fileCache.selectedFile?.name}:\n\n${truncated_content}`,
+            })
+          } else if (this.fileCache.fileType === 'image_url') {
+            content.push({
+              type: 'image_url',
+              image_url: { url: this.fileCache.fileContent },
+            })
+          }
+        }
+
+        if (content.length === 0) return
+
+        this.loading = true
+        this.userScrolledUp = false
+        this.scrollToBottom()
+        this.question = ''
+
+        // Add message to UI
         this.messages.push({
-          text: cachedData.answer,
-          isUser: false,
+          content,
+          isUser: true,
         })
-        if (cachedData.conversationId) {
-          this.conversationId = cachedData.conversationId
-          this.router.push(`/chat/${cachedData.conversationId}`)
-          this.mathjax()
+
+        // Clear file cache after sending
+        this.clearFileCache()
+
+        // Initialize the AbortController
+        this.abortController = new AbortController()
+
+        const response = await fetch(`/.netlify/functions/ask${window.location.search}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content,
+            conversationId: this.conversationId,
+            model: this.model,
+            user: this.isDefaultQuestion ? 'anonymous' : user?.user?.id,
+            nocache: this.nocache,
+            nosupa: this.nosupa,
+          }),
+          signal: this.abortController.signal,
+        })
+
+        if (!response.ok) {
+          this.loading = false
+          this.messages.push({
+            text: "I'm sorry, I'm having trouble understanding you. Please try again.",
+          })
+          return
+        }
+
+        // Check if the response is JSON (cached) or stream
+        const contentType = response.headers.get('Content-Type')
+        if (contentType && contentType.includes('application/json')) {
+          // Handle cached response
+          const cachedData = await response.json()
+          this.loading = false
+          this.messages.push({
+            text: cachedData.answer,
+            isUser: false,
+          })
+          if (cachedData.conversationId) {
+            this.conversationId = cachedData.conversationId
+            this.router.push(`/chat/${cachedData.conversationId}`)
+            this.mathjax()
+          }
+
+          conversations.getConversations()
+          return
+        }
+
+        // Handle streaming response
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder()
+        let aiMessage = { text: '', isUser: false }
+        this.messages.push(aiMessage)
+        let receivedConversationId = null
+        this.streaming = true
+
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) {
+            this.streaming = false
+            this.mathjax()
+            break
+          }
+          const chunk = decoder.decode(value)
+          if (chunk.length > 0) {
+            this.loading = false
+
+            const match = chunk.match(/(\{.*?\})(.*)/)
+            if (match) {
+              try {
+                const jsonData = JSON.parse(match[1])
+                if (jsonData.conversationId) {
+                  receivedConversationId = jsonData.conversationId
+                }
+                this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(
+                  match[2],
+                )
+              } catch (e) {
+                console.error('Error parsing JSON:', e)
+                this.messages[this.messages.length - 1].text +=
+                  this.fixIncompleteMarkdownLinks(chunk)
+              }
+            } else {
+              this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
+            }
+            this.scrollToBottom()
+          }
+        }
+
+        // Finalize the last message
+        this.messages[this.messages.length - 1].text = this.finalizeMarkdown(
+          this.messages[this.messages.length - 1].text,
+        )
+
+        // when it's done
+        this.loading = false
+        this.scrollToBottom()
+
+        if (receivedConversationId) {
+          this.conversationId = receivedConversationId
+          this.router.push(`/chat/${receivedConversationId}`)
         }
 
         conversations.getConversations()
-        return
-      }
-
-      // Handle streaming response
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let aiMessage = { text: '', isUser: false }
-      this.messages.push(aiMessage)
-      let receivedConversationId = null
-      this.streaming = true
-
-      while (true) {
-        const { value, done } = await reader.read()
-        if (done) {
-          this.streaming = false
-          this.mathjax()
-          break
-        }
-        const chunk = decoder.decode(value)
-        if (chunk.length > 0) {
-          this.loading = false
-
-          const match = chunk.match(/(\{.*?\})(.*)/)
-          if (match) {
-            try {
-              const jsonData = JSON.parse(match[1])
-              if (jsonData.conversationId) {
-                receivedConversationId = jsonData.conversationId
-              }
-              this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(
-                match[2],
-              )
-            } catch (e) {
-              console.error('Error parsing JSON:', e)
-              this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
-            }
-          } else {
-            this.messages[this.messages.length - 1].text += this.fixIncompleteMarkdownLinks(chunk)
-          }
-          this.scrollToBottom()
+      } catch (error) {
+        console.error('Error in ask action:', error)
+      } finally {
+        this.streaming = false
+        this.loading = false
+        if (this.abortController) {
+          this.abortController = null
         }
       }
-
-      // Finalize the last message
-      this.messages[this.messages.length - 1].text = this.finalizeMarkdown(
-        this.messages[this.messages.length - 1].text,
-      )
-
-      // when it's done
-      this.loading = false
-      this.scrollToBottom()
-
-      if (receivedConversationId) {
-        this.conversationId = receivedConversationId
-        this.router.push(`/chat/${receivedConversationId}`)
-      }
-
-      conversations.getConversations()
     },
 
     setPrevousQuestion() {
@@ -245,7 +301,7 @@ export const useMessagesStore = defineStore('messages', {
 
     setConversation(sentConversation, scrollToTop = false) {
       this.messages = sentConversation.messages
-      this.llm = sentConversation.model || 'openai'
+      this.model = this.resolveModel(sentConversation.model)
       this.conversationId = sentConversation.id
       this.router.push(`/chat/${this.conversationId}`)
       if (scrollToTop) {
@@ -256,12 +312,41 @@ export const useMessagesStore = defineStore('messages', {
       this.mathjax()
     },
 
+    resolveModel(model) {
+      return models[model] ? model : 'gpt-4o'
+    },
+
     sanitizeMessage(message) {
       return this.converter.makeHtml(message)
     },
 
-    setLlm() {
-      this.clearConversation()
+    clearFileCache() {
+      this.fileCache = {
+        selectedFile: null,
+        filePreview: null,
+        fileContent: null,
+        fileType: null,
+      }
+    },
+
+    setFileCache(file) {
+      this.fileCache = file
+    },
+
+    addFileMessage() {
+      if (!this.fileCache.fileContent) return
+
+      // Preview file in messages
+      this.messages.push({
+        content: [
+          {
+            type: this.fileCache.fileType,
+            text: this.fileCache.fileContent,
+            file_name: this.fileCache.selectedFile?.name,
+          },
+        ],
+        isUser: true,
+      })
     },
   },
 })
