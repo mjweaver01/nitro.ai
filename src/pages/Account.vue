@@ -65,7 +65,7 @@
         >
           <div class="account-conversation-item-header">
             <div class="account-conversation-item-header-left">
-              <h4>"{{ conversation.messages[0].content }}"</h4>
+              <h4>"{{ conversation.messages[0].content[0]?.text ?? conversation.messages[0].content }}"</h4>
               <h5>
                 {{ conversation.messages.length }} messages with
                 <span style="color: var(--blue)">{{ convertModel(conversation.model) }}</span>

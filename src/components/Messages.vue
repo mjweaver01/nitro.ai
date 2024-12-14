@@ -8,7 +8,32 @@
         streaming: messagesStore?.streaming && i === messages.length - 1,
       }"
     >
+      <template v-if="Array.isArray(message.content)">
+        <template v-for="(content, j) in message.content" :key="j">
+          <VueShowdown
+            v-if="content.type === 'text' && !content.text?.includes('File content from')"
+            :markdown="content.text"
+            :extensions="[showdownMathjax]"
+            :options="{ emoji: true, tables: true, math: true }"
+          />
+          <div
+            v-else-if="content.type === 'text' && content.text?.includes('File content from')"
+            class="file-attachment"
+          >
+            <i class="pi pi-file"></i>
+            <span class="file-name">
+              {{ content.text.split('File content from ')[1].split(':')[0] }}
+            </span>
+          </div>
+          <img
+            v-else-if="content.type === 'image_url'"
+            :src="content.image_url.url"
+            :alt="'Uploaded content'"
+          />
+        </template>
+      </template>
       <VueShowdown
+        v-else
         :markdown="message.text?.output ?? message.text ?? message.content"
         :extensions="[showdownMathjax]"
         :options="{ emoji: true, tables: true, math: true }"

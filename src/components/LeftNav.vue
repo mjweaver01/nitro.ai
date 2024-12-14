@@ -55,7 +55,7 @@
           v-for="conversation in filteredConversations"
           @click="messagesStore?.setConversation(conversation, true)"
         >
-          {{ conversation.messages[0].content }}
+          {{ conversation.messages[0].content[0].text ?? conversation.messages[0].content }}
         </div>
       </div>
       <div v-else>
@@ -102,9 +102,11 @@ export default {
       if (!this.search) return this.conversationsStore?.conversations || []
 
       return (
-        this.conversationsStore?.conversations?.filter((conversation) =>
-          conversation.messages[0].content.toLowerCase().includes(this.search.toLowerCase()),
-        ) || []
+        this.conversationsStore?.conversations?.filter((conversation) => {
+          const content =
+            conversation.messages[0].content[0].text ?? conversation.messages[0].content
+          return content.toLowerCase().includes(this.search.toLowerCase())
+        }) || []
       )
     },
   },
