@@ -1,0 +1,41 @@
+@use '@/styles/variables.scss' as *;
+
+.top {
+  flex-grow: 1;
+  overflow: scroll;
+  padding: 1em;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+}
+
+// Force classes
+.force-show {
+  display: block !important;
+}
+
+.force-show-flex {
+  display: flex !important;
+}
+
+.force-desktop-hide {
+  display: none !important;
+
+  @media (min-width: $tablet) {
+    display: block !important;
+  }
+}
+
+@media (min-width: $tablet) {
+  .force-hide-desktop,
+  .force-show.force-hide-desktop {
+    display: none !important;
+  }
+}
+
+.sidebar-item {
+  &:hover {
+    background: var(--light-blue);
+    cursor: pointer;
+  }
+}

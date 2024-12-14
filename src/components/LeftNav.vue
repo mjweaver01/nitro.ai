@@ -32,8 +32,8 @@
       'force-hide-desktop': !!sidebarStore?.desktopHide,
     }"
   >
-    <MobileNav />
-    <div class="new-conversation" @click="messagesStore?.clearConversation()">
+    <TopNav />
+    <div class="new-conversation" @click="newConversation()">
       <div class="conversation">
         <span>New Conversation</span>
         <i class="pi pi-check-square" style="font-size: 0.9rem"></i>
@@ -55,10 +55,17 @@
           v-for="conversation in filteredConversations"
           @click="messagesStore?.setConversation(conversation, true)"
         >
-          {{ conversation.messages[0].content[0].text ?? conversation.messages[0].content }}
+          <div class="conversation-content">
+            {{ conversation.messages[0].content[0].text ?? conversation.messages[0].content }}
+          </div>
+          <i
+            class="pi pi-trash delete-icon"
+            @click.stop.prevent="conversationsStore?.deleteConversation(conversation.id)"
+            style="color: var(--red)"
+          ></i>
         </div>
       </div>
-      <div v-else>
+      <div class="conversations" v-else>
         <div class="conversation">No conversations found.</div>
       </div>
     </div>
@@ -86,15 +93,15 @@
 <script>
 import { mapStores } from 'pinia'
 import { RouterLink } from 'vue-router'
-import { useConversationsStore } from '../stores/conversations'
-import { useMessagesStore } from '../stores/messages'
-import { useUserStore } from '../stores/user'
-import { useSidebarStore } from '../stores/sidebar'
-import MobileNav from './MobileNav.vue'
+import { useConversationsStore } from '@/stores/conversations'
+import { useMessagesStore } from '@/stores/messages'
+import { useUserStore } from '@/stores/user'
+import { useSidebarStore } from '@/stores/sidebar'
+import TopNav from '@/components/TopNav.vue'
 
 export default {
   components: {
-    MobileNav,
+    TopNav,
   },
   computed: {
     ...mapStores(useConversationsStore, useMessagesStore, useUserStore, useSidebarStore),
@@ -118,5 +125,35 @@ export default {
   beforeMount() {
     this.conversationsStore?.getConversations()
   },
+  methods: {
+    newConversation() {
+      this.sidebarStore?.setDesktopHide(false)
+      this.messagesStore?.clearConversation()
+    },
+  },
 }
 </script>
+
+<style scoped>
+.conversation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.conversation-content {
+  text-overflow: ellipsis;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.delete-icon {
+  display: none;
+  margin-left: 8px;
+}
+
+.conversation:hover .delete-icon {
+  display: inline-block;
+}
+</style>

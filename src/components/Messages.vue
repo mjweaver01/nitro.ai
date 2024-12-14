@@ -53,7 +53,7 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useMessagesStore } from '../stores/messages'
+import { useMessagesStore } from '@/stores/messages'
 import { VueShowdown } from 'vue-showdown'
 import showdownMathjax from 'showdown-mathjax'
 
@@ -71,4 +71,77 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.file-attachment {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  padding: 0.25rem !important;
+  background: var(--light-blue);
+  color: var(--blue);
+  border-radius: 3px;
+  width: fit-content !important;
+  max-width: 100% !important;
+}
+
+.file-attachment > * {
+  margin: 0 !important;
+  white-space: nowrap;
+  width: auto !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-attachment i {
+  font-size: 1.2em;
+  color: var(--blue);
+}
+
+.file-name {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.file-indicator {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.file-content {
+  background: var(--light-blue);
+  border-radius: 5px;
+  padding: 1em;
+  margin: 0.5em 0;
+}
+
+.file-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.file-header i {
+  font-size: 1.2em;
+  color: var(--blue);
+}
+
+.file-header span {
+  color: var(--text-color);
+  font-size: 0.9em;
+}
+
+.file-content :deep(pre) {
+  background: var(--white);
+  padding: 1em;
+  border-radius: 3px;
+  overflow-x: auto;
+}
+
+.file-content :deep(code) {
+  font-family: monospace;
+}
+</style>

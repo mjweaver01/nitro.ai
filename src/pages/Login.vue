@@ -52,9 +52,9 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useClientStore } from '../stores/client'
-import { useUserStore } from '../stores/user'
-import Hero from '../components/Hero.vue'
+import { useClientStore } from '@/stores/client'
+import { useUserStore } from '@/stores/user'
+import Hero from '@/components/Hero.vue'
 
 export default {
   components: {
@@ -65,3 +65,21 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.login-page {
+  max-width: 600px;
+}
+
+.login-form form {
+  display: flex;
+  flex-flow: column;
+  gap: 1em;
+}
+
+.login-error {
+  color: var(--red);
+  margin: 0;
+  text-align: center;
+}
+</style>

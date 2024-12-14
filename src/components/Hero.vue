@@ -7,8 +7,8 @@
 
 <script>
 import { mapStores } from 'pinia'
-import { useUserStore } from '../stores/user'
-import { useMessagesStore } from '../stores/messages'
+import { useUserStore } from '@/stores/user'
+import { useMessagesStore } from '@/stores/messages'
 
 export default {
   computed: {

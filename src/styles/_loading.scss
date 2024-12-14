@@ -1,0 +1,83 @@
+// Variables
+$dot-size: 10px;
+$dot-color: rgb(150, 150, 150);
+$dot-color-fade: rgba(150, 150, 150, 0.4);
+$animation-duration: 1.25s;
+
+.loading-message {
+  padding: {
+    top: 0.75em !important;
+    bottom: 0.75em !important;
+  }
+}
+
+.loading {
+  .dot {
+    height: $dot-size;
+    width: $dot-size;
+    border-radius: 50%;
+    background: #c1c1c1;
+    display: block;
+    float: left;
+    margin: 0 0 0 5px;
+
+    &:first-child {
+      margin: 0;
+    }
+
+    &.one {
+      animation: cycleOne $animation-duration ease-in-out infinite;
+      animation-direction: normal;
+    }
+
+    &.two {
+      animation: cycleTwo $animation-duration ease-in-out infinite;
+      animation-direction: normal;
+    }
+
+    &.three {
+      animation: cycleThree $animation-duration ease-in-out infinite;
+      animation-direction: normal;
+    }
+  }
+}
+
+@keyframes cycleOne {
+  0%,
+  100% {
+    background: $dot-color-fade;
+  }
+  33.333% {
+    background: $dot-color;
+  }
+  66.6667% {
+    background: $dot-color-fade;
+  }
+}
+
+@keyframes cycleTwo {
+  0%,
+  100% {
+    background: $dot-color-fade;
+  }
+  33.333% {
+    background: $dot-color-fade;
+  }
+  66.6667% {
+    background: $dot-color;
+  }
+}
+
+@keyframes cycleThree {
+  0%,
+  100% {
+    background: $dot-color-fade;
+  }
+  33.333%,
+  66.6667% {
+    background: $dot-color-fade;
+  }
+  99.998% {
+    background: $dot-color;
+  }
+}
