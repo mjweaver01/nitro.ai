@@ -97,6 +97,7 @@ If there is a product color, include it in the search term.
 For blog searches, extract the key concepts (e.g., "squat", "bench press", "conjugate", "max effort").
 Again, if there is a specific title of a blog post, include it in the search term.
 Terms like "nitro", "louie", "wsbb" can all be used as modifiers.
+Avoid using the word "blog" or "product" in the search term, it's not relevant.
 Respond only with the simplified term, nothing else.
 The type of search is not relevant to return, only the condensed blog or product query.
 `
