@@ -930,10 +930,10 @@ nth-check@^2.0.1:
   dependencies:
     boolbase "^1.0.0"
 
-openai@^4.68.4:
-  version "4.73.1"
-  resolved "https://registry.npmjs.org/openai/-/openai-4.73.1.tgz"
-  integrity sha512-nWImDJBcUsqrhy7yJScXB4+iqjzbUEgzfA3un/6UnHFdwWhjX24oztj69Ped/njABfOdLcO/F7CeWTI5dt8Xmg==
+openai@^4.76.3:
+  version "4.76.3"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-4.76.3.tgz#67ea81b9ad330997593ba8bd0910d2f4a992740a"
+  integrity sha512-BISkI90m8zT7BAMljK0j00TzOoLvmc7AulPxv6EARa++3+hhIK5G6z4xkITurEaA9bvDhQ09kSNKA3DL+rDMwA==
   dependencies:
     "@types/node" "^18.11.18"
     "@types/node-fetch" "^2.6.4"

@@ -93,7 +93,7 @@ export const ask = async (
           const content = chunk.choices[0]?.delta?.content
           const toolCalls = chunk.choices[0]?.delta?.tool_calls
 
-          if (toolCalls) {
+          if (toolCalls?.length > 0) {
             // Handle all tool calls in this delta
             for (const call of toolCalls) {
               // Get the correct tool call using either id or index
@@ -248,9 +248,15 @@ export const ask = async (
         // Send the conversation ID as a JSON string at the end of the stream
         controller.enqueue(encoder.encode(`\n{"conversationId":"${sessionId}"}`))
         controller.close()
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error in stream:', error)
-        controller.error(error)
+        // Send error message to client
+        const errorMessage = {
+          error: true,
+          message: error.message || 'An error occurred while processing your request'
+        }
+        controller.enqueue(encoder.encode(JSON.stringify(errorMessage)))
+        controller.close()
       }
     },
   })

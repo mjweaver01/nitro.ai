@@ -137,7 +137,7 @@ export default {
     },
 
     convertModel(model) {
-      const modelName = model.includes('mini') ? 'Mini' : model.includes('gpt-4o') ? 'Full' : model
+      const modelName = model.includes('gemini') ? 'Gemini' : model.includes('mini') ? '4o Mini' : model.includes('gpt-4o') ? '4o' : model
       return `Nitro (${modelName})`
     },
 

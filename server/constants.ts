@@ -10,18 +10,21 @@ export const fourModel = 'gpt-4-turbo'
 export const fourOModel = 'gpt-4o-2024-05-13'
 export const fourOMiniModel = 'gpt-4o-mini'
 export const oOneModel = 'o1-preview'
+export const geminiModel = 'gemini-1.5-flash'
 
 export const models = {
   'gpt-3.5': threeModel,
   'gpt-4o': fourOModel,
   'gpt-4o-mini': fourOMiniModel,
   'o1-preview': oOneModel,
+  'gemini-1.5-flash': geminiModel,
   embedding: embeddingModel,
 }
 
 export const modelOptions = [
   { value: 'GPT-4o Mini', id: fourOMiniModel },
   { value: 'GPT-4o', id: fourModel },
+  { value: 'Gemini 1.5 Flash', id: geminiModel },
 ]
 
 export const defaultModel = fourOMiniModel
