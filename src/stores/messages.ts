@@ -111,9 +111,12 @@ export const useMessagesStore = defineStore('messages', {
         })
 
         if (!response.ok) {
+          const errorText = await response.text()
           this.loading = false
           this.messages.push({
-            text: "I'm sorry, I'm having trouble understanding you. Please try again.",
+            text: errorText || "I'm sorry, something went wrong. Please try again.",
+            isUser: false,
+            isError: true
           })
           return
         }
@@ -194,8 +197,14 @@ export const useMessagesStore = defineStore('messages', {
         }
 
         conversations.getConversations()
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error in ask action:', error)
+        this.loading = false
+        this.messages.push({
+          text: error.message || "I'm sorry, something went wrong. Please try again.",
+          isUser: false,
+          isError: true
+        })
       } finally {
         this.streaming = false
         this.loading = false
@@ -208,7 +217,7 @@ export const useMessagesStore = defineStore('messages', {
     setPrevousQuestion() {
       if (this.messages.length > 1) {
         const prevUserQuestion = this.messages[this.messages.length - 2]
-        this.question = prevUserQuestion.content
+        this.question = prevUserQuestion.content[0].text || prevUserQuestion.content
       }
     },
 
