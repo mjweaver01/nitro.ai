@@ -24,7 +24,6 @@ export const models = {
 export const modelOptions = [
   { value: 'GPT-4o Mini', id: fourOMiniModel },
   { value: 'GPT-4o', id: fourModel },
-  { value: 'Gemini 1.5 Flash', id: geminiModel },
 ]
 
 export const defaultModel = fourOMiniModel
