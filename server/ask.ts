@@ -93,6 +93,13 @@ export const ask = async (
           const content = chunk.choices[0]?.delta?.content
           const toolCalls = chunk.choices[0]?.delta?.tool_calls
 
+          // First handle any content that comes in
+          if (content) {
+            controller.enqueue(encoder.encode(content))
+            outputCache += content
+          }
+
+          // Then handle tool calls if present
           if (toolCalls?.length > 0) {
             // Handle all tool calls in this delta
             for (const call of toolCalls) {
@@ -135,8 +142,8 @@ export const ask = async (
                 }
               }
             }
-          } else if (currentToolCalls.size > 0 && !content) {
-            // Only check for completion when we have pending tool calls and no content
+          } else if (currentToolCalls.size > 0) {
+            // Only check for completion when we have pending tool calls
             const completedCalls = Array.from(currentToolCalls.values()).filter((call) => {
               try {
                 const args = call.function?.arguments || ''
@@ -182,9 +189,6 @@ export const ask = async (
               // Clear processed tool calls
               completedCalls.forEach((call) => currentToolCalls.delete(call.id))
             }
-          } else if (content) {
-            controller.enqueue(encoder.encode(content))
-            outputCache += content
           }
         }
 

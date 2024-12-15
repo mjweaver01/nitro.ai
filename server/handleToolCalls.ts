@@ -98,30 +98,40 @@ export async function handleToolCalls(
       const distilledQuery = await distillQuery(args.question, messages)
       const result = await tool.function(distilledQuery)
 
-      messages.push({
-        role: 'assistant',
-        content: null,
-        tool_calls: [
-          {
-            id: toolCall.id,
-            type: 'function',
-            function: {
-              name: toolCall.name,
-              arguments: toolCall.arguments,
+      // Format messages based on model type
+      const isGemini = model.includes('gemini')
+      
+      if (!isGemini) {
+        // OpenAI format
+        messages.push({
+          role: 'assistant',
+          content: null,
+          tool_calls: [
+            {
+              id: toolCall.id,
+              type: 'function',
+              function: {
+                name: toolCall.name,
+                arguments: toolCall.arguments,
+              },
             },
-          },
-        ],
-      })
+          ],
+        })
 
-      const limitedResult = result.slice(0, 10000)
+        messages.push({
+          role: 'tool',
+          content: JSON.stringify(result.slice(0, 10000)),
+          tool_call_id: toolCall.id,
+        })
+      } else {
+        // Gemini format - just add the result as context
+        messages.push({
+          role: 'assistant',
+          content: `Here's what I found about "${args.question}": ${JSON.stringify(result.slice(0, 10000))}`,
+        })
+      }
 
-      messages.push({
-        role: 'tool',
-        content: JSON.stringify(limitedResult),
-        tool_call_id: toolCall.id,
-      })
-
-      return limitedResult
+      return result
     } catch (error) {
       console.error('Error executing tool:', error)
       return null
@@ -132,5 +142,18 @@ export async function handleToolCalls(
   await Promise.all(toolCallPromises)
 
   // Create final chat completion with all tool results
-  return await createChatCompletion(messages, model, true)
+  try {
+    const completion = await createChatCompletion(
+      [...messages, {
+        role: 'user',
+        content: 'Please provide a helpful response based on the information above.',
+      }],
+      model,
+      true
+    )
+    return completion
+  } catch (error) {
+    console.error('Error in final chat completion:', error)
+    throw error
+  }
 }
