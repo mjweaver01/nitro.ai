@@ -11,6 +11,7 @@ export const fourOModel = 'gpt-4o'
 export const fourOMiniModel = 'gpt-4o-mini'
 export const oOneModel = 'o1-preview'
 export const geminiModel = 'gemini-2.0-flash-exp'
+export const geminiExpModel = 'gemini-exp-1206'
 
 export const models = {
   'gpt-3.5': threeModel,
@@ -18,6 +19,7 @@ export const models = {
   'gpt-4o-mini': fourOMiniModel,
   'o1-preview': oOneModel,
   'gemini-2.0-flash-exp': geminiModel,
+  'gemini-exp-1206': geminiExpModel,
   embedding: embeddingModel,
 }
 
@@ -25,6 +27,7 @@ export const modelOptions = [
   { value: 'GPT-4o Mini', id: fourOMiniModel },
   { value: 'GPT-4o', id: fourOModel },
   // { value: 'Gemini 2.0 Flash Exp', id: geminiModel },
+  // { value: 'Gemini Exp 1206', id: geminiExpModel },
 ]
 
 export const defaultModel = fourOMiniModel
