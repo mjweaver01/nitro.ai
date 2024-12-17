@@ -231,7 +231,6 @@ export const ask = async (
                 ...messages.filter(
                   (msg) =>
                     msg.content?.length > 0 &&
-                    msg.role !== ('assistant' as ChatCompletionRole) &&
                     msg.role !== ('system' as ChatCompletionRole) &&
                     msg.role !== ('tool' as ChatCompletionRole),
                 ),

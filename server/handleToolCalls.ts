@@ -117,19 +117,13 @@ export async function handleToolCalls(
             },
           ],
         })
-
-        messages.push({
-          role: 'tool',
-          content: JSON.stringify(result.slice(0, 10000)),
-          tool_call_id: toolCall.id,
-        })
-      } else {
-        // Gemini format - just add the result as context
-        messages.push({
-          role: 'assistant',
-          content: `Here's what I found about "${args.question}": ${JSON.stringify(result.slice(0, 10000))}`,
-        })
       }
+
+      messages.push({
+        role: 'tool',
+        content: JSON.stringify(isGemini ? result : result.slice(0, 10000)),
+        tool_call_id: toolCall.id,
+      })
 
       return result
     } catch (error) {
