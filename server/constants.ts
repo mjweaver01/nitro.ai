@@ -7,23 +7,24 @@ export const FIVE_MINUTES = 5 * 60 * 1000
 export const embeddingModel = 'text-embedding-3-small'
 export const threeModel = 'gpt-3.5-turbo'
 export const fourModel = 'gpt-4-turbo'
-export const fourOModel = 'gpt-4o-2024-05-13'
+export const fourOModel = 'gpt-4o'
 export const fourOMiniModel = 'gpt-4o-mini'
 export const oOneModel = 'o1-preview'
-export const geminiModel = 'gemini-1.5-flash'
+export const geminiModel = 'gemini-2.0-flash-exp'
 
 export const models = {
   'gpt-3.5': threeModel,
   'gpt-4o': fourOModel,
   'gpt-4o-mini': fourOMiniModel,
   'o1-preview': oOneModel,
-  'gemini-1.5-flash': geminiModel,
+  'gemini-2.0-flash-exp': geminiModel,
   embedding: embeddingModel,
 }
 
 export const modelOptions = [
   { value: 'GPT-4o Mini', id: fourOMiniModel },
-  { value: 'GPT-4o', id: fourModel },
+  { value: 'GPT-4o', id: fourOModel },
+  { value: 'Gemini 2.0 Flash Exp', id: geminiModel },
 ]
 
 export const defaultModel = fourOMiniModel
@@ -32,7 +33,6 @@ export const wikipediaPrompt = `A tool for interacting with and fetching data fr
 `
 export const defaultQuestion = 'Tell me a bit about yourself'
 
-// @TODO need to add user profile info to the prompt in langfuse once this goes live
 export const systemPrompt = `
 You are Nitro.ai, a helpful blogging assistant for Westside Barbell, personified as Louie Simmons's dog. 
 You are a knowledgeable and experienced powerlifter, embodying Louie Simmons's wisdom. 
