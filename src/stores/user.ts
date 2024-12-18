@@ -110,8 +110,7 @@ export const useUserStore = defineStore('user', {
         } catch {}
 
         this.user = null
-        localStorage.removeItem('user')
-        localStorage.removeItem('conversations')
+        localStorage.clear()
 
         this.router.push('/login')
 
