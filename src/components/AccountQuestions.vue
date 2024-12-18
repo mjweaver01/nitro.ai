@@ -24,7 +24,12 @@
           <h4>"{{ getMessageContent(conversation.messages[0]) }}"</h4>
           <h5>
             {{ conversation.messages.length }} messages with
-            <span style="color: var(--blue)">{{ convertModel(conversation.model) }}</span>
+            <span class="account-conversation-model-wrapper">
+              Nitro (<span class="account-conversation-model">{{
+                convertModel(conversation.model)
+              }}</span
+              >)
+            </span>
           </h5>
         </div>
         <i
@@ -62,6 +67,7 @@
 import { mapStores } from 'pinia'
 import { useConversationsStore } from '@/stores/conversations'
 import Messages from '@/components/Messages.vue'
+import { modelOptions } from '../../server/constants'
 
 export default {
   name: 'AccountQuestions',
@@ -137,8 +143,7 @@ export default {
     },
 
     convertModel(model) {
-      const modelName = model.includes('gemini') ? 'Gemini' : model.includes('mini') ? '4o Mini' : model.includes('gpt-4o') ? '4o' : model
-      return `Nitro (${modelName})`
+      return modelOptions.find((m) => m.id === model)?.label || model
     },
 
     getMessageContent(message) {

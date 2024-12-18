@@ -62,6 +62,9 @@ export default {
   computed: {
     ...mapStores(useMessagesStore),
   },
+  components: {
+    VueShowdown,
+  },
   methods: {
     showdownMathjax,
   },

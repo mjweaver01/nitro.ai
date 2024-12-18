@@ -24,18 +24,18 @@ export const models = {
 }
 
 export const modelOptions = [
-  { value: 'GPT-4o Mini', shortname: '4o Mini', id: fourOMiniModel },
-  { value: 'GPT-4o', shortname: '4o Full', id: fourOModel },
+  { value: 'GPT-4o Mini', label: 'GPT-4o Mini', id: fourOMiniModel },
+  { value: 'GPT-4o', label: 'GPT-4o Full', id: fourOModel },
   {
     value: 'Gemini 2.0 Flash Exp',
-    shortname: 'Gemini 2.0 Flash',
+    label: 'Gemini 2.0 Flash',
     id: geminiModel,
     isGemini: true,
     isAdmin: true,
   },
   {
     value: 'Gemini Exp 1206',
-    shortname: 'Gemini Exp',
+    label: 'Gemini Exp',
     id: geminiExpModel,
     isGemini: true,
     isAdmin: true,

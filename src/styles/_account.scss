@@ -135,6 +135,14 @@
       }
     }
   }
+
+  .account-conversation-model-wrapper {
+    color: var(--blue);
+
+    .account-conversation-model {
+      text-transform: capitalize;
+    }
+  }
 }
 
 .account-last-login {
