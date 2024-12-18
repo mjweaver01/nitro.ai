@@ -15,12 +15,12 @@ const getUserProfile = async (userId: string) => {
 
   if (data) {
     return `
-    User Profile Information:
-    - Current Age & Physique: ${data.physique || 'Not specified'}
-    - Training Knowledge & Experience: ${data.experience || 'Not specified'}
-    - Fitness Goals: ${data.goals || 'Not specified'}
-    - Available Equipment: ${data.equipment || 'Not specified'}
-    `
+  User Profile Information:
+  - Current Age & Physique: ${data.physique || 'Not specified'}
+  - Training Knowledge & Experience: ${data.experience || 'Not specified'}
+  - Fitness Goals: ${data.goals || 'Not specified'}
+  - Available Equipment: ${data.equipment || 'Not specified'}
+  `
   }
 
   return ''
@@ -257,7 +257,7 @@ export const ask = async (
         // Send error message to client
         const errorMessage = {
           error: true,
-          message: error.message || 'An error occurred while processing your request'
+          message: error.message || 'An error occurred while processing your request',
         }
         controller.enqueue(encoder.encode(JSON.stringify(errorMessage)))
         controller.close()

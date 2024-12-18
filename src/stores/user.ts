@@ -53,7 +53,9 @@ export const useUserStore = defineStore('user', {
         this.loginError = u.error.message
       } else if (u.data?.user?.id) {
         this.user = u.data.user
-        localStorage.setItem('user', JSON.stringify(u.data.user))
+        const isAdminUser = await this.isAdmin()
+        this.user.isAdmin = isAdminUser
+        localStorage.setItem('user', JSON.stringify(this.user))
         this.loginError = ''
         this.router.push('/')
       }
@@ -69,8 +71,10 @@ export const useUserStore = defineStore('user', {
       if (u.error && u.error.message) {
         this.loginError = u.error.message
       } else if (u.data?.user?.id) {
-        localStorage.setItem('user', JSON.stringify(u.data.user))
         this.user = u.data.user
+        const isAdminUser = await this.isAdmin()
+        this.user.isAdmin = isAdminUser
+        localStorage.setItem('user', JSON.stringify(this.user))
         this.loginError = ''
         this.router.push('/')
       }
@@ -131,6 +135,15 @@ export const useUserStore = defineStore('user', {
       }).then((res) => res.json())
 
       return s?.code === 200
+    },
+
+    async isAdmin() {
+      const a = await fetch('/.netlify/functions/is-admin', {
+        method: 'POST',
+        body: JSON.stringify({ user: this.user }),
+      }).then((res) => res.json())
+
+      return a?.code === 200
     },
 
     async verifyRecaptcha() {

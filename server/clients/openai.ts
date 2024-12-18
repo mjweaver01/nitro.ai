@@ -1,7 +1,7 @@
 import OpenAI from 'openai'
 import { ChatCompletionMessageParam, ChatCompletionTool } from 'openai/resources/chat/completions'
 import { tools } from '../tools'
-import { models } from '../constants'
+import { modelOptions, models } from '../constants'
 
 export const openai = new OpenAI({
   apiKey: process.env.VITE_OPENAI_API_KEY,
@@ -27,31 +27,34 @@ export const createChatCompletion = async (
       },
     }))
 
-    const isGemini = model.includes('gemini')
+    const isGemini = modelOptions.find((m) => m.id === model)?.isGemini
     const activeClient = isGemini ? gemini : openai
-    
+
     // Create different payload based on the client
-    const payload = isGemini ? {
-      model,
-      messages,
-      stream,
-      tools: formattedTools,
-      tool_choice: 'auto' as const,
-    } : {
-      model,
-      messages,
-      temperature: 0,
-      stream,
-      store: true,
-      tools: formattedTools,
-      tool_choice: 'auto' as const,
-    }
+    const payload = isGemini
+      ? {
+          model,
+          messages,
+          stream,
+          tools: formattedTools,
+          tool_choice: 'auto' as const,
+        }
+      : {
+          model,
+          messages,
+          temperature: 0,
+          stream,
+          store: true,
+          tools: formattedTools,
+          tool_choice: 'auto' as const,
+        }
 
     const completion = await activeClient.chat.completions.create(payload)
 
     return completion
   } catch (error: any) {
-    const errorMessage = error.response?.data?.error?.message || error.message || 'Unknown error occurred'
+    const errorMessage =
+      error.response?.data?.error?.message || error.message || 'Unknown error occurred'
     throw new Error(`OpenAI API Error: ${errorMessage}`)
   }
 }

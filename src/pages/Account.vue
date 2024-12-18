@@ -2,12 +2,14 @@
   <div class="top account-page">
     <div v-if="userStore?.user?.id" class="account-page-content">
       <div class="account-top">
-        <div className="account-top-top">
+        <div class="account-top-top">
           <div>
             <h2 class="account-header">Account</h2>
             <div class="info-status">
               <h4 class="account-header">{{ userStore?.user?.email }}</h4>
-              <div class="pill">{{ userStore?.user?.role }}</div>
+              <div class="pill" :class="{ admin: userStore?.user?.isAdmin }">
+                {{ userStore?.user?.isAdmin ? 'Administrator' : userStore?.user?.role }}
+              </div>
             </div>
           </div>
           <div>

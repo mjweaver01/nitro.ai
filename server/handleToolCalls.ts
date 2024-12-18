@@ -3,7 +3,7 @@ import { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 import { createChatCompletion } from './clients/openai'
 import { openai } from './clients/openai'
 import { compiledDistillQueryPrompt } from './prompts'
-import { threeModel } from './constants'
+import { modelOptions, models, threeModel } from './constants'
 import langfuse from './clients/langfuse'
 
 const distillModel = threeModel
@@ -99,8 +99,7 @@ export async function handleToolCalls(
       const result = await tool.function(distilledQuery)
 
       // Format messages based on model type
-      const isGemini = model.includes('gemini')
-      
+      const isGemini = modelOptions.find((m) => m.id === model)?.isGemini
       if (!isGemini) {
         // OpenAI format
         messages.push({
@@ -138,12 +137,15 @@ export async function handleToolCalls(
   // Create final chat completion with all tool results
   try {
     const completion = await createChatCompletion(
-      [...messages, {
-        role: 'user',
-        content: 'Please provide a helpful response based on the information above.',
-      }],
+      [
+        ...messages,
+        {
+          role: 'user',
+          content: 'Please provide a helpful response based on the information above.',
+        },
+      ],
       model,
-      true
+      true,
     )
     return completion
   } catch (error) {

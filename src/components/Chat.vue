@@ -53,11 +53,9 @@ import FileUpload from '@/components/FileUpload.vue'
 export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
-  },
-  data() {
-    return {
-      models: modelOptions,
-    }
+    models() {
+      return modelOptions.filter((m) => (m.isAdmin ? !!this.userStore.isAdmin : true))
+    },
   },
   components: {
     FileUpload,

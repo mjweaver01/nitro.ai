@@ -33,15 +33,11 @@ export default {
 
   computed: {
     ...mapStores(useUserStore),
-
-    isAdmin() {
-      return this.userStore.user?.email === 'mjweaver01@gmail.com'
-    },
   },
 
   methods: {
     async seedVectorStore() {
-      if (!this.isAdmin) return
+      if (!this.userStore.isAdmin) return
 
       try {
         this.isSeeding = true
@@ -83,7 +79,7 @@ export default {
     },
 
     async clearVectorStore() {
-      if (!this.isAdmin) return
+      if (!this.userStore.isAdmin) return
 
       try {
         const response = await fetch('/.netlify/functions/seed', {
@@ -107,7 +103,7 @@ export default {
 
   async created() {
     // Redirect if not admin
-    if (!this.isAdmin) {
+    if (!this.userStore.isAdmin) {
       this.$router.push('/chat')
     }
   },
