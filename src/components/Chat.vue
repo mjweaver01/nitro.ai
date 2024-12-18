@@ -54,7 +54,7 @@ export default {
   computed: {
     ...mapStores(useUserStore, useMessagesStore),
     models() {
-      return modelOptions.filter((m) => (m.isAdmin ? !!this.userStore.isAdmin : true))
+      return modelOptions.filter((m) => (m.isAdmin ? this.userStore?.user?.isAdmin || false : true))
     },
   },
   components: {
