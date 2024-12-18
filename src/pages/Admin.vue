@@ -1,19 +1,17 @@
 <template>
   <div class="admin">
-    <h1>Admin</h1>
+    <h3>Admin</h3>
 
     <div v-if="seedingStatus">
       <p>Status: {{ seedingStatus }}</p>
     </div>
 
     <div class="admin-actions">
-      <div class="admin-actions-buttons">
-        <button @click="seedVectorStore" :disabled="isSeeding">
-          {{ isSeeding ? 'Seeding...' : 'Seed Vector Store' }}
-        </button>
+      <button @click="seedVectorStore" :disabled="isSeeding">
+        {{ isSeeding ? 'Seeding...' : 'Seed Vector Store' }}
+      </button>
 
-        <button @click="clearVectorStore" :disabled="isSeeding">Clear Vector Store</button>
-      </div>
+      <button @click="clearVectorStore" :disabled="isSeeding">Clear Vector Store</button>
     </div>
   </div>
 </template>
@@ -33,6 +31,13 @@ export default {
 
   computed: {
     ...mapStores(useUserStore),
+  },
+
+  async created() {
+    // Redirect if not admin
+    if (!this.userStore.isAdmin) {
+      this.$router.push('/chat')
+    }
   },
 
   methods: {
@@ -100,18 +105,16 @@ export default {
       }
     },
   },
-
-  async created() {
-    // Redirect if not admin
-    if (!this.userStore.isAdmin) {
-      this.$router.push('/chat')
-    }
-  },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .admin {
   padding: 0 1em 1em;
+
+  .admin-actions {
+    display: flex;
+    gap: 1em;
+  }
 }
 </style>

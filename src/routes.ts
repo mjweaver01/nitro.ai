@@ -17,7 +17,7 @@ export const routes = [
       { path: '', redirect: '/account/conversations' },
       { path: 'conversations', component: AccountQuestions },
       { path: 'profile', component: UserInfo },
+      { path: 'admin', component: Admin },
     ],
   },
-  { path: '/mw', component: Admin },
 ]

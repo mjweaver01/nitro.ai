@@ -60,10 +60,8 @@ export default {
   },
   computed: {
     ...mapStores(useUserStore),
-  },
-  data() {
-    return {
-      tabs: [
+    tabs() {
+      const t = [
         {
           id: 'conversations',
           title: 'Conversations',
@@ -74,8 +72,18 @@ export default {
           title: 'Training Profile',
           path: '/account/profile',
         },
-      ],
-    }
+      ]
+
+      if (this.userStore?.user?.isAdmin) {
+        t.push({
+          id: 'admin',
+          title: 'Admin',
+          path: '/account/admin',
+        })
+      }
+
+      return t
+    },
   },
 }
 </script>
